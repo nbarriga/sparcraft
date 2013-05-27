@@ -31,7 +31,11 @@ void GLFontBase::CreateImpl(const std::string &Filename, GLuint Tex, bool PixelP
 		throw GLFontError::InvalidFile();
     }
 	//Read glFont structure
+#if defined(WIN64) || defined(__x86_64__)
+	size_t rr = fread(&Font, sizeof(GLFONT)-4, 1, Input);
+#else
 	size_t rr = fread(&Font, sizeof(GLFONT), 1, Input);
+#endif
 
 	//Save texture number
 	Font.Tex = Tex;

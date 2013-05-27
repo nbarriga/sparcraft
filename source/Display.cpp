@@ -66,7 +66,11 @@ void Display::OnStart()
     //(*wglGetProcAddress("wglSwapIntervalEXT"));
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+#ifdef __linux__
+    SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 0);
+#else
     SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+#endif
 	screen = SDL_SetVideoMode(windowSizeX, windowSizeY, 32, SDL_OPENGL);
 	SDL_WM_SetCaption("SparCraft Visualization", 0);
 
@@ -975,3 +979,4 @@ const std::string Display::getTextureFileName(const BWAPI::UnitType type) const
 }*/
 
 #endif
+

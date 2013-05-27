@@ -53,7 +53,11 @@ protected:
 	float tx2, ty2;
 	} GLFONTCHAR;
 
-	typedef struct
+#if defined(WIN64) || defined(__x86_64__)
+	typedef struct __attribute__((__packed__))
+#else
+	typedef struct 
+#endif
 	{
 	int Tex;
 	int TexWidth, TexHeight;
