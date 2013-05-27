@@ -26,6 +26,7 @@ class SparCraft::SearchExperiment
     std::vector<GameState>      states;
     Map *                       map;
     bool                        showDisplay;
+    bool						checkCollisions;
 
     std::string                 resultsFile;
     bool                        appendTimeStamp;

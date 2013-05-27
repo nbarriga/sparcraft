@@ -32,6 +32,7 @@ GameState::GameState()
 	, _currentTime(0)
 	, _maxUnits(Constants::Max_Units)
     , _sameHPFrames(0)
+	, checkCollisions(false)
 {
 	_numUnits.fill(0);
 	_prevNumUnits.fill(0);
@@ -218,9 +219,15 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
                 // the final destination position of the unit
                 Position dest = unit.pos() + Position(moveDistance*dir.x(), moveDistance*dir.y());
 
-                // if that poisition on the map is walkable
+                // if that position on the map is walkable
                 if (isWalkable(dest) || (unit.type().isFlyer() && isFlyable(dest)))
 				{
+                	if(checkCollisions){
+                	//1) todo: check for buildings in that position
+                	//			- Map class has info on buildings
+                	//2) todo: check for units in that position
+                	//3) todo: maybe check for units already decided to move through that position
+                	}
                     // add the move to the MoveArray
 					moves.add(UnitAction(unitIndex, playerIndex, UnitActionTypes::MOVE, d, dest));
 				}
@@ -284,7 +291,12 @@ void GameState::performUnitAction(const UnitAction & move)
 	else if (move._moveType == UnitActionTypes::MOVE)
 	{
 		_numMovements[player]++;
-
+		if(checkCollisions){
+		//1) todo: check move against all fixed objects(buildings and not currently moving units) for collisions
+		//			- buildings is easy, it's on the Map class
+		//2) todo: check move against other moves
+		//3) todo: if collision is detected, shorten the move to max distance
+		}
 		ourUnit.move(move, _currentTime);
 	}
 	else if (move._moveType == UnitActionTypes::HEAL)

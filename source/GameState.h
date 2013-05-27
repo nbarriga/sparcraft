@@ -42,6 +42,7 @@ class GameState
 
 public:
 
+    bool 					checkCollisions;
     GameState();
     GameState(const std::string & filename);
 

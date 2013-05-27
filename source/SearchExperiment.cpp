@@ -258,6 +258,15 @@ void SearchExperiment::parseConfigFile(const std::string & filename)
 
             PlayerProperties::Get(playerID).SetResearched(BWAPI::TechTypes::getTechType(techName), true);
         }
+        else if (strcmp(option.c_str(), "Collisions") == 0)
+        {
+        	std::string option;
+        	iss >> option;
+        	if (strcmp(option.c_str(), "true") == 0)
+        	{
+        		checkCollisions = true;
+        	}
+        }
         else
         {
             System::FatalError("Invalid Option in Configuration File: " + option);
@@ -851,6 +860,7 @@ void SearchExperiment::runExperiment()
 				}
 
 				// construct the game
+				states[state].checkCollisions = checkCollisions;
 				Game g(states[state], playerOne, playerTwo, 20000);
 				#ifdef USING_VISUALIZATION_LIBRARIES
                     if (showDisplay)
