@@ -15,5 +15,13 @@ SparCraft:$(OBJECTS)
 
 .cpp.o:
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
+	$(CC) -MM $(CPPFLAGS) $(INCLUDES) -MT $@ -o $*.d $<
+
 .cc.o:
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
+	$(CC) -MM $(CPPFLAGS) $(INCLUDES) -MT $@ -o $*.d $<
+
+clean:
+	rm -f $(OBJECTS) $(OBJECTS:.o=.d) SparCraft
+
+-include $(GLFONTSOURCE:.cc=.d) $(SOURCES:.cpp=.d)
