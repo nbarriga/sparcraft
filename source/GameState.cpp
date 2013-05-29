@@ -136,7 +136,7 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
 
 		if (unit.previousActionTime() == _currentTime && _currentTime != 0)
 		{
-            System::FatalError("Previous Move Took 0 Time: " + unit.previousAction().moveString());
+			System::FatalError("Previous Move Took 0 Time: " + unit.previousAction().moveString());
 		}
 
 		moves.addUnit();
@@ -221,16 +221,17 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
 
                 // if that position on the map is walkable
                 if (isWalkable(dest) || (unit.type().isFlyer() && isFlyable(dest)))
-				{
+                {
                 	if(checkCollisions){
-                	//1) todo: check for buildings in that position
-                	//			- Map class has info on buildings
-                	//2) todo: check for units in that position
-                	//3) todo: maybe check for units already decided to move through that position
+                		if(_map->doesCollide(unit,dest)){
+                			//collision, so we won't add this move
+                			continue;
+                		}
+
                 	}
-                    // add the move to the MoveArray
-					moves.add(UnitAction(unitIndex, playerIndex, UnitActionTypes::MOVE, d, dest));
-				}
+                	// add the move to the MoveArray
+                	moves.add(UnitAction(unitIndex, playerIndex, UnitActionTypes::MOVE, d, dest));
+                }
 			}
 		}
 
@@ -285,6 +286,8 @@ void GameState::performUnitAction(const UnitAction & move)
 			{
 				// if it died, remove it
 				_numUnits[enemyPlayer]--;
+				//update map
+				_map->removeUnit(enemyUnit);
 			}
 		}			
 	}
@@ -294,10 +297,15 @@ void GameState::performUnitAction(const UnitAction & move)
 		if(checkCollisions){
 		//1) todo: check move against all fixed objects(buildings and not currently moving units) for collisions
 		//			- buildings is easy, it's on the Map class
+			if(_map->doesCollide(ourUnit,move.pos())){
+				//todo: shorten or discard move
+			}
 		//2) todo: check move against other moves
+			//need to get list of moves, will check against the next ones in the list
 		//3) todo: if collision is detected, shorten the move to max distance
 		}
 		ourUnit.move(move, _currentTime);
+		//todo: update map
 	}
 	else if (move._moveType == UnitActionTypes::HEAL)
 	{
@@ -495,6 +503,7 @@ void GameState::addUnit(const Unit & u)
     {
         System::FatalError("GameState has non-unique Unit ID values");
     }
+    _map->addUnit(getUnit(u.player(), _numUnits[u.player()]));
 }
 
 // Add a unit with given parameters to the state
@@ -519,6 +528,8 @@ void GameState::addUnit(const BWAPI::UnitType type, const IDType playerID, const
     // And do the clean-up
 	finishedMoving();
 	calculateStartingHealth();
+
+	_map->addUnit(getUnit(playerID, _numUnits[playerID]));
 }
 
 // Add a given unit to the state
@@ -538,6 +549,8 @@ void GameState::addUnitWithID(const Unit & u)
     // And do the clean-up
 	finishedMoving();
 	calculateStartingHealth();
+
+	_map->addUnit(getUnit(u.player(), _numUnits[u.player()]));
 }
 
 void GameState::sortUnits()
@@ -834,13 +847,19 @@ void GameState::setMap(Map * map)
     {
         for (size_t u(0); u<numUnits(p); ++u)
         {
-            const Position & pos(getUnit(p, u).pos());
+        	Unit unit = getUnit(p, u);
+            const Position & pos(unit.pos());
 
             if (!isWalkable(pos))
             {
                 std::stringstream ss;
                 ss << "Unit initial position on non-walkable map tile: " << getUnit(p, u).name() << " (" << pos.x() << "," << pos.y() << ")";
                 System::FatalError(ss.str());
+            }
+            else
+            {
+            	//add units to map
+            	map->addUnit(unit);
             }
         }
     }
