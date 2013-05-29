@@ -26,7 +26,7 @@ namespace SparCraft
                 System::FatalError("Units with just air weapons currently not supported correctly: " + type.getName());
             }
 
-            if (type.isBuilding() && (type != BWAPI::UnitTypes::Protoss_Photon_Cannon || type != BWAPI::UnitTypes::Zerg_Sunken_Colony || type != BWAPI::UnitTypes::Terran_Missile_Turret))
+            if (type.isBuilding() && (type != BWAPI::UnitTypes::Protoss_Photon_Cannon && type != BWAPI::UnitTypes::Zerg_Sunken_Colony && type != BWAPI::UnitTypes::Terran_Missile_Turret))
             {
                 System::FatalError("Non-attacking buildings not currently supported: " + type.getName());
             }
