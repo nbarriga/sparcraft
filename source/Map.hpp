@@ -101,6 +101,16 @@ public:
 		return _buildTileHeight;
 	}
 
+	const bool doesCollide(const SparCraft::Unit & unit, const SparCraft::Position & pixelPosition){
+		//todo: check against other units
+		//todo: check the way, not just the end position
+		BWAPI::Position start(unit.pos().x(),unit.pos().y());
+		BWAPI::Position dest(pixelPosition.x(),pixelPosition.y());
+		BWAPI::TilePosition tStart(start);
+		BWAPI::TilePosition tDest(dest);
+		return _buildingData[tDest.x()][tDest.y()];
+	}
+
 	const bool isWalkable(const SparCraft::Position & pixelPosition) const
 	{
 		const Position & wp(getWalkPosition(pixelPosition));
@@ -201,6 +211,70 @@ public:
 				for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
 				{
 					_unitData[x][y] = true;
+				}
+			}
+		}
+	}
+
+	void addUnit(const SparCraft::Unit & unit)
+	{
+		if (unit.type().isBuilding())
+		{
+			int tx = unit.pos().x() / TILE_SIZE;
+			int ty = unit.pos().y() / TILE_SIZE;
+			int sx = unit.type().tileWidth();
+			int sy = unit.type().tileHeight();
+			for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
+			{
+				for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
+				{
+					_buildingData[x][y] = true;
+				}
+			}
+		}
+		else
+		{
+			int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
+			int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
+			int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
+			int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+			for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
+			{
+				for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
+				{
+					_unitData[x][y] = true;
+				}
+			}
+		}
+	}
+
+	void removeUnit(const SparCraft::Unit & unit)
+	{
+		if (unit.type().isBuilding())
+		{
+			int tx = unit.pos().x() / TILE_SIZE;
+			int ty = unit.pos().y() / TILE_SIZE;
+			int sx = unit.type().tileWidth();
+			int sy = unit.type().tileHeight();
+			for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
+			{
+				for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
+				{
+					_buildingData[x][y] = false;
+				}
+			}
+		}
+		else
+		{
+			int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
+			int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
+			int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
+			int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+			for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
+			{
+				for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
+				{
+					_unitData[x][y] = false;
 				}
 			}
 		}
