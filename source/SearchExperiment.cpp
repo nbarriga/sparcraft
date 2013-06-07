@@ -469,6 +469,14 @@ void SearchExperiment::addPlayer(const std::string & line)
     { 
         players[playerID].push_back(PlayerPtr(new Player_NOKDPS(playerID))); 
     }
+	else if (playerModelID == PlayerModels::Assault)
+	{
+		players[playerID].push_back(PlayerPtr(new Player_Assault(playerID)));
+	}
+	else if (playerModelID == PlayerModels::Defend)
+	{
+		players[playerID].push_back(PlayerPtr(new Player_Defend(playerID)));
+	}
 	else if (playerModelID == PlayerModels::Random)				
     { 
         players[playerID].push_back(PlayerPtr(new Player_Random(playerID))); 
