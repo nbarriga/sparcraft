@@ -42,7 +42,9 @@ public:
 	}
 
 	int & operator [] (const int index)						{ return dist[index]; }
+	const int & operator [] (const int index) const			{ return dist[index]; }
 	int & operator [] (const BWAPI::Position & pos)			{ return dist[getIndex(pos.y() / 32, pos.x() / 32)]; }
+	const int & operator [] (const BWAPI::Position & pos) const{ return dist[getIndex(pos.y() / 32, pos.x() / 32)]; }
 	void setMoveTo(const int index, const char val)			{ moveTo[index] = val; }
 	void setDistance(const int index, const int val)		{ dist[index] = val; }
 	void setStartPosition(const int sr, const int sc)		{ startRow = sr; startCol = sc; }
