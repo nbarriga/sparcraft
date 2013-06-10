@@ -23,8 +23,9 @@ class Map
 	bvv						_unitData;	            // true if unit on build tile [x][y]
 	bvv						_buildingData;          // true if building on build tile [x][y]
 
-	BWAPI::TilePosition 	_goalTile;
-	DistanceMap				_distanceMap;			// distances from every build tile to a goal tile
+	SparCraft::Position 	_goal;
+	DistanceMap				_distanceMapBuild;			// distances from every build tile to a goal tile
+	DistanceMap				_distanceMapWalk;			// distances from every walk tile to a goal tile
 	bool					_validDistances;		// true if distances are valid, false if buildings have changed
 
 	const Position getWalkPosition(const Position & pixelPosition) const
@@ -37,7 +38,8 @@ class Map
         _mapData =          bvv(_walkTileWidth,  std::vector<bool>(_walkTileHeight,  true));
 		_unitData =         bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
 		_buildingData =     bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
-		_distanceMap.reset(_buildTileWidth,_buildTileHeight);
+		_distanceMapBuild.reset(_buildTileWidth,_buildTileHeight);
+		_distanceMapWalk.reset(_walkTileWidth,_walkTileHeight);
 		_validDistances = false;
     }
 
@@ -48,7 +50,8 @@ public:
 		, _walkTileHeight(0)
 		, _buildTileWidth(0)
 		, _buildTileHeight(0)
-		, _distanceMap(0, 0)
+		, _distanceMapBuild(0, 0)
+		, _distanceMapWalk(0, 0)
 		, _validDistances(false)
     {
     }
@@ -59,7 +62,8 @@ public:
 		, _walkTileHeight(bottomRightBuildTileY * 4)
 		, _buildTileWidth(bottomRightBuildTileX)
 		, _buildTileHeight(bottomRightBuildTileY)
-    	, _distanceMap(bottomRightBuildTileX, bottomRightBuildTileY)
+    	, _distanceMapBuild(bottomRightBuildTileX, bottomRightBuildTileY)
+    	, _distanceMapWalk(bottomRightBuildTileX * 4, bottomRightBuildTileY * 4)
     {
         resetVectors();
     }
@@ -69,7 +73,8 @@ public:
 		, _walkTileHeight(game->mapHeight() * 4)
 		, _buildTileWidth(game->mapWidth())
 		, _buildTileHeight(game->mapHeight())
-		, _distanceMap(game->mapWidth(), game->mapHeight())
+		, _distanceMapBuild(game->mapWidth(), game->mapHeight())
+		, _distanceMapWalk(game->mapWidth() * 4, game->mapHeight() * 4)
 	{
 		resetVectors();
 
@@ -111,69 +116,84 @@ public:
 	{
 		return _buildTileHeight;
 	}
+
 	void calculateDistances(){
+		if(!_validDistances){
+//			SparCraft::System::printStackTrace(0);
+			calculateDistances(_distanceMapBuild,_buildTileWidth,_buildTileHeight,_goal.x()/TILE_SIZE,_goal.y()/TILE_SIZE, 1);
+			calculateDistances(_distanceMapWalk,_walkTileWidth,_walkTileHeight,_goal.x()/8,_goal.y()/8, 4);
+		}
+	}
+	void calculateDistances(DistanceMap& dmap,int width, int height, int xGoal, int yGoal, int factor){
 		int fringeSize(1);
 		int fringeIndex(0);
-		std::vector<int> fringe;
-		fringe[0] = _goalTile.x()/TILE_SIZE + (_goalTile.y()/TILE_SIZE)*_buildTileWidth;
+
+		// the size of the map
+		int size = width*height;
+
+		std::vector<int> fringe(size, 0);;
+		fringe[0] = xGoal + yGoal*width;
+//		std::cerr<<"fringe[0]: "<<fringe[0]<<"size "<<fringe.size()<<std::endl;
 
 		// temporary variables used in search loop
 		int currentIndex, nextIndex;
 		int newDist;
 
-		// the size of the map
-		int size = _buildTileWidth*_buildTileHeight;
 
 		// while we still have things left to expand
 		while (fringeIndex < fringeSize)
 		{
 			// grab the current index to expand from the fringe
 			currentIndex = fringe[fringeIndex++];
-			newDist = _distanceMap[currentIndex] + 1;
+			newDist = dmap[currentIndex] + 1;
 
 			// search up
-			nextIndex = (currentIndex > _buildTileWidth) ? (currentIndex - _buildTileWidth) : -1;
-			if ((nextIndex != -1) && _distanceMap[nextIndex] == -1 && !_buildingData[nextIndex/TILE_SIZE][nextIndex%TILE_SIZE])
+			nextIndex = (currentIndex > width) ? (currentIndex - width) : -1;
+			if ((nextIndex != -1) && dmap[nextIndex] == -1
+					&& !_buildingData[(nextIndex%width)/factor][(nextIndex/width)/factor])
 			{
 				// set the distance based on distance to current cell
-				_distanceMap.setDistance(nextIndex, newDist);
-				_distanceMap.setMoveTo(nextIndex, 'D');
+				dmap.setDistance(nextIndex, newDist);
+				dmap.setMoveTo(nextIndex, 'D');
 
 				// put it in the fringe
 				fringe[fringeSize++] = nextIndex;
 			}
 
 			// search down
-			nextIndex = (currentIndex + _buildTileWidth < size) ? (currentIndex + _buildTileWidth) : -1;
-			if ((nextIndex != -1) && _distanceMap[nextIndex] == -1 && !_buildingData[nextIndex/TILE_SIZE][nextIndex%TILE_SIZE])
+			nextIndex = (currentIndex + width < size) ? (currentIndex + width) : -1;
+			if ((nextIndex != -1) && dmap[nextIndex] == -1
+					&& !_buildingData[(nextIndex%width)/factor][(nextIndex/width)/factor])
 			{
 				// set the distance based on distance to current cell
-				_distanceMap.setDistance(nextIndex, newDist);
-				_distanceMap.setMoveTo(nextIndex, 'U');
+				dmap.setDistance(nextIndex, newDist);
+				dmap.setMoveTo(nextIndex, 'U');
 
 				// put it in the fringe
 				fringe[fringeSize++] = nextIndex;
 			}
 
 			// search left
-			nextIndex = (currentIndex % _buildTileWidth > 0) ? (currentIndex - 1) : -1;
-			if ((nextIndex != -1) && _distanceMap[nextIndex] == -1 && !_buildingData[nextIndex/TILE_SIZE][nextIndex%TILE_SIZE])
+			nextIndex = (currentIndex % width > 0) ? (currentIndex - 1) : -1;
+			if ((nextIndex != -1) && dmap[nextIndex] == -1
+					&& !_buildingData[(nextIndex%width)/factor][(nextIndex/width)/factor])
 			{
 				// set the distance based on distance to current cell
-				_distanceMap.setDistance(nextIndex, newDist);
-				_distanceMap.setMoveTo(nextIndex, 'R');
+				dmap.setDistance(nextIndex, newDist);
+				dmap.setMoveTo(nextIndex, 'R');
 
 				// put it in the fringe
 				fringe[fringeSize++] = nextIndex;
 			}
 
 			// search right
-			nextIndex = (currentIndex % _buildTileWidth < _buildTileWidth - 1) ? (currentIndex + 1) : -1;
-			if ((nextIndex != -1) && _distanceMap[nextIndex] == -1 && !_buildingData[nextIndex/TILE_SIZE][nextIndex%TILE_SIZE])
+			nextIndex = (currentIndex % width < width - 1) ? (currentIndex + 1) : -1;
+			if ((nextIndex != -1) && dmap[nextIndex] == -1
+					&& !_buildingData[(nextIndex%width)/factor][(nextIndex/width)/factor])
 			{
 				// set the distance based on distance to current cell
-				_distanceMap.setDistance(nextIndex, newDist);
-				_distanceMap.setMoveTo(nextIndex, 'L');
+				dmap.setDistance(nextIndex, newDist);
+				dmap.setMoveTo(nextIndex, 'L');
 
 				// put it in the fringe
 				fringe[fringeSize++] = nextIndex;
@@ -181,22 +201,31 @@ public:
 		}
 
 		_validDistances=true;
+//		for(int j=0;j<height;j++){
+//			for(int i=0;i<width;i++){
+//				std::cout<<dmap[i+width*j]<<" ";
+//			}
+//			std::cout<<std::endl;
+//		}
+//		std::cout<<std::endl;
 	}
 
 	void setGoal(const SparCraft::Position & goal){
-		_goalTile=BWAPI::TilePosition(BWAPI::Position(goal.x(),goal.y()));
-		calculateDistances();
+		_goal=goal;
+		_validDistances=false;
 	}
 
-	const int getDistanceToGoal(const SparCraft::Position & pixelPosition){
+	const int getDistanceToGoal(const SparCraft::Position & pixelPosition) const{
 		if(!_validDistances){
-			calculateDistances();
+			SparCraft::System::FatalError("Distances not updated on Map");
 		}
-		return _distanceMap[BWAPI::Position(pixelPosition.x(),pixelPosition.y())];
+		return _distanceMapWalk[pixelPosition.x()/8+pixelPosition.y()/8*_walkTileWidth];
+//		return _distanceMapBuild[pixelPosition.x()/32+pixelPosition.y()/32*_buildTileWidth];
 	}
 
 	const int getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition) const{
 		//todo: A*
+		SparCraft::System::FatalError("Not yet Implemented");
 	}
 
 	const bool doesCollide(const SparCraft::Unit & unit, const SparCraft::Position & pixelPosition) const{
