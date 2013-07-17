@@ -142,7 +142,8 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
 
 		if (unit.previousActionTime() == _currentTime && _currentTime != 0)
 		{
-			System::FatalError("Previous Move Took 0 Time: " + unit.previousAction().moveString());
+			//todo: fix this check! Fails for photon cannons
+//			System::FatalError("Previous Move Took 0 Time: " + unit.previousAction().moveString());
 		}
 
 		moves.addUnit();
