@@ -78,9 +78,7 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 				Position ourDest				(ourUnit.x() + Constants::Move_Dir[move._moveIndex][0], 
 												 ourUnit.y() + Constants::Move_Dir[move._moveIndex][1]);
 
-				//todo: this distance needs to take pathfinding into account
-				size_t dist						(closestUnit.getDistanceSqToPosition(ourDest, state.getTime()));
-
+				size_t dist	= state.getMap().getDistanceToGoal(ourDest);
 				if (dist < closestMoveDist)
 				{
 					closestMoveDist = dist;

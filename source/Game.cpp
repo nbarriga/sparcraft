@@ -64,6 +64,8 @@ void Game::play()
         PlayerPtr & toMove = _players[playerToMove];
         PlayerPtr & enemy = _players[state.getEnemy(playerToMove)];
 
+        state.beforeMoving();
+
         // generate the moves possible from this state
         state.generateMoves(moves[toMove->ID()], toMove->ID());
 

@@ -52,6 +52,12 @@ GameState::GameState(const std::string & filename)
     read(filename);
 }
 
+//call this before generating moves
+void GameState::beforeMoving()
+{
+	_map.calculateDistances();
+}
+
 // call this whenever we are done with moves
 void GameState::finishedMoving()
 {

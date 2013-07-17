@@ -813,6 +813,8 @@ void SearchExperiment::runExperiment()
     // set the map file for all states
     for (size_t state(0); state < states.size(); ++state)
 	{
+    	//todo: set actual goal from map
+    	map->setGoal(SparCraft::Position(800,500));
         states[state].setMap(*map);
     }
 
