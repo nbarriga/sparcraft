@@ -484,6 +484,11 @@ public:
 	void load(const std::string & filename)
 	{
 		std::ifstream fin(filename.c_str());
+		if(!fin){
+			std::stringstream ss;
+			ss << "Can't open map file: " << filename;
+			System::FatalError(ss.str());
+		}
 		std::string line;
 		
 		getline(fin, line);
