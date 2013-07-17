@@ -15,7 +15,7 @@ namespace SparCraft
 {
 class GameState 
 {
-    Map *                                                           _map;               
+    Map                                                             _map;
 
     Array2D<Unit, Constants::Num_Players, Constants::Max_Units>     _units;             
     Array2D<int, Constants::Num_Players, Constants::Max_Units>      _unitIndex;        
@@ -48,6 +48,7 @@ public:
 
 	// misc functions
     void                    finishedMoving();
+    void					beforeMoving();
     void                    updateGameTime();
     const bool              playerDead(const IDType & player)                                       const;
     const bool              isTerminal()                                                            const;
@@ -104,8 +105,8 @@ public:
     const bool              bothCanMove()                                                           const;
 		  
     // map-related functions
-    void                    setMap(Map * map);
-    Map *                   getMap()                                                                const;
+    void                    setMap(const Map & map);
+    const Map &             getMap()                                                                const;
     const bool              isWalkable(const Position & pos)                                        const;
     const bool              isFlyable(const Position & pos)                                         const;
 

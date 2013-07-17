@@ -813,7 +813,7 @@ void SearchExperiment::runExperiment()
     // set the map file for all states
     for (size_t state(0); state < states.size(); ++state)
 	{
-        states[state].setMap(map);
+        states[state].setMap(*map);
     }
 
 	#ifdef USING_VISUALIZATION_LIBRARIES

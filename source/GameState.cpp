@@ -28,7 +28,7 @@ public:
 
 // default constructor
 GameState::GameState()
-	: _map(NULL)
+	: _map()
 	, _currentTime(0)
 	, _maxUnits(Constants::Max_Units)
     , _sameHPFrames(0)
@@ -223,7 +223,7 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
                 if (isWalkable(dest) || (unit.type().isFlyer() && isFlyable(dest)))
                 {
                 	if(checkCollisions){
-                		if(_map->doesCollide(unit,dest)){
+                		if(_map.doesCollide(unit,dest)){
                 			//collision, so we won't add this move
                 			continue;
                 		}
@@ -287,7 +287,7 @@ void GameState::performUnitAction(const UnitAction & move)
 				// if it died, remove it
 				_numUnits[enemyPlayer]--;
 				//update map
-				_map->removeUnit(enemyUnit);
+				_map.removeUnit(enemyUnit);
 			}
 		}			
 	}
@@ -297,7 +297,7 @@ void GameState::performUnitAction(const UnitAction & move)
 		if(checkCollisions){
 		//1) todo: check move against all fixed objects(buildings and not currently moving units) for collisions
 		//			- buildings is easy, it's on the Map class
-			if(_map->doesCollide(ourUnit,move.pos())){
+			if(_map.doesCollide(ourUnit,move.pos())){
 				//todo: shorten or discard move
 			}
 		//2) todo: check move against other moves
@@ -376,24 +376,12 @@ Unit & GameState::getUnitByID(const IDType & player, const IDType & unitID)
 
 const bool GameState::isWalkable(const Position & pos) const
 {
-	if (_map)
-	{
-		return _map->isWalkable(pos);
-	}
-
-	// if there is no map, then return true
-	return true;
+	return _map.isWalkable(pos);
 }
 
 const bool GameState::isFlyable(const Position & pos) const
 {
-	if (_map)
-	{
-		return _map->isFlyable(pos);
-	}
-
-	// if there is no map, then return true
-	return true;
+	return _map.isFlyable(pos);
 }
 
 const IDType GameState::getEnemy(const IDType & player) const
@@ -503,7 +491,7 @@ void GameState::addUnit(const Unit & u)
     {
         System::FatalError("GameState has non-unique Unit ID values");
     }
-    _map->addUnit(getUnit(u.player(), _numUnits[u.player()]));
+    _map.addUnit(getUnit(u.player(), _numUnits[u.player()]));
 }
 
 // Add a unit with given parameters to the state
@@ -529,7 +517,7 @@ void GameState::addUnit(const BWAPI::UnitType type, const IDType playerID, const
 	finishedMoving();
 	calculateStartingHealth();
 
-	_map->addUnit(getUnit(playerID, _numUnits[playerID]));
+	_map.addUnit(getUnit(playerID, _numUnits[playerID]));
 }
 
 // Add a given unit to the state
@@ -550,7 +538,7 @@ void GameState::addUnitWithID(const Unit & u)
 	finishedMoving();
 	calculateStartingHealth();
 
-	_map->addUnit(getUnit(u.player(), _numUnits[u.player()]));
+	_map.addUnit(getUnit(u.player(), _numUnits[u.player()]));
 }
 
 void GameState::sortUnits()
@@ -838,7 +826,7 @@ const ScoreType GameState::LTD(const IDType & player) const
 	return (ScoreType)(1000 * sum / _totalLTD[player]);
 }
 
-void GameState::setMap(Map * map)
+void GameState::setMap(const Map & map)
 {
 	_map = map;
 
@@ -859,7 +847,7 @@ void GameState::setMap(Map * map)
             else
             {
             	//add units to map
-            	map->addUnit(unit);
+            	_map.addUnit(unit);
             }
         }
     }
@@ -971,7 +959,7 @@ void GameState::setTotalLTD2(const float & p1, const float & p2)
 	_totalSumSQRT[Players::Player_Two] = p2;
 }
 
-Map * GameState::getMap() const
+const Map & GameState::getMap() const
 {
 	return _map;
 }

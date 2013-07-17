@@ -87,7 +87,7 @@ Map getSampleMap()
 
     // We can set the Map of a GameState via a pointer to the map, as Map objects can be quite large:
     GameState state(getSampleState());
-    state.setMap(&smallMap);
+    state.setMap(smallMap);
 
     return smallMap;
 }
