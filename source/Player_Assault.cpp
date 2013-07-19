@@ -78,7 +78,15 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 				Position ourDest				(ourUnit.x() + Constants::Move_Dir[move._moveIndex][0]*Constants::Move_Distance,
 												 ourUnit.y() + Constants::Move_Dir[move._moveIndex][1]*Constants::Move_Distance);
 
-				size_t dist	= state.getMap().getDistanceToGoal(ourDest);
+				size_t dist;
+				if(closestUnit.canAttackTarget(ourUnit, state.getTime()))
+				{//move towards unit that can hurt us
+					dist=closestUnit.getDistanceSqToPosition(ourDest, state.getTime());
+				}
+				else
+				{//move towards goal
+					dist	= state.getMap().getDistanceToGoal(ourDest);
+				}
 				if (dist < closestMoveDist)
 				{
 					closestMoveDist = dist;
