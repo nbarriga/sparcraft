@@ -75,8 +75,8 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 			}
 			else if (move.type() == UnitActionTypes::MOVE)
 			{
-				Position ourDest				(ourUnit.x() + Constants::Move_Dir[move._moveIndex][0], 
-												 ourUnit.y() + Constants::Move_Dir[move._moveIndex][1]);
+				Position ourDest				(ourUnit.x() + Constants::Move_Dir[move._moveIndex][0]*Constants::Move_Distance,
+												 ourUnit.y() + Constants::Move_Dir[move._moveIndex][1]*Constants::Move_Distance);
 
 				size_t dist	= state.getMap().getDistanceToGoal(ourDest);
 				if (dist < closestMoveDist)
