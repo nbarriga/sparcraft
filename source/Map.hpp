@@ -24,8 +24,9 @@ class Map
 	bvv						_buildingData;          // true if building on build tile [x][y]
 
 	SparCraft::Position 	_goal;
-	DistanceMap				_distanceMapBuild;			// distances from every build tile to a goal tile
-	DistanceMap				_distanceMapWalk;			// distances from every walk tile to a goal tile
+	bool					_hasGoal;				//true if a goal has been set
+	DistanceMap				_distanceMapBuild;		// distances from every build tile to a goal tile
+	DistanceMap				_distanceMapWalk;		// distances from every walk tile to a goal tile
 	bool					_validDistances;		// true if distances are valid, false if buildings have changed
 
 	const Position getWalkPosition(const Position & pixelPosition) const
@@ -41,6 +42,7 @@ class Map
 		_distanceMapBuild.reset(_buildTileWidth,_buildTileHeight);
 		_distanceMapWalk.reset(_walkTileWidth,_walkTileHeight);
 		_validDistances = false;
+		_hasGoal = false;
     }
 
 public:
@@ -50,6 +52,7 @@ public:
 		, _walkTileHeight(0)
 		, _buildTileWidth(0)
 		, _buildTileHeight(0)
+		, _hasGoal(false)
 		, _distanceMapBuild(0, 0)
 		, _distanceMapWalk(0, 0)
 		, _validDistances(false)
@@ -118,7 +121,7 @@ public:
 	}
 
 	void calculateDistances(){
-		if(!_validDistances){
+		if(!_validDistances&&_hasGoal){
 //			SparCraft::System::printStackTrace(0);
 			calculateDistances(_distanceMapBuild,_buildTileWidth,_buildTileHeight,_goal.x()/TILE_SIZE,_goal.y()/TILE_SIZE, 1);
 			calculateDistances(_distanceMapWalk,_walkTileWidth,_walkTileHeight,_goal.x()/8,_goal.y()/8, 4);
@@ -212,7 +215,16 @@ public:
 
 	void setGoal(const SparCraft::Position & goal){
 		_goal=goal;
+		_hasGoal=true;
 		_validDistances=false;
+	}
+
+	const SparCraft::Position & getGoal() const{
+		return _goal;
+	}
+
+	bool hasGoal() const{
+		return _hasGoal;
 	}
 
 	const int getDistanceToGoal(const SparCraft::Position & pixelPosition) const{
@@ -348,9 +360,9 @@ public:
 								" in an already occupied tile");
 					}
 					_buildingData[x][y] = true;
-					_validDistances = false;
 				}
 			}
+			_validDistances = false;
 		}
 		else
 		{
@@ -388,9 +400,9 @@ public:
 								" in an already occupied tile");
 					}
 					_buildingData[x][y] = true;
-					_validDistances = false;
 				}
 			}
+			_validDistances = false;
 		}
 		else
 		{
@@ -421,9 +433,9 @@ public:
 				for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
 				{
 					_buildingData[x][y] = false;
-					_validDistances = false;
 				}
 			}
+			_validDistances = false;
 		}
 		else
 		{
