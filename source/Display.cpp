@@ -246,6 +246,12 @@ void Display::RenderMainMap()
 				RenderTerrain(	std::max(vx0>>3,0), std::max(vy0>>3,0), 
 					std::min((vx1>>3) + 1, mapWidth*4),
 					std::min((vy1>>3) + 1, mapHeight*4));
+				if(state.getMap().hasGoal()){
+					const SparCraft::Position &goalPos= state.getMap().getGoal();
+					glColor3f(1,0,0);
+					DrawCircle(goalPos.x(),goalPos.y(),30,20);
+					DrawCircle(goalPos.x(),goalPos.y(),35,20);
+				}
 				RenderUnits();
 
 				BOOST_FOREACH (const Shape & shape, shapes)
