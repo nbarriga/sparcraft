@@ -231,8 +231,12 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
                 {
                 	if(checkCollisions){
                 		if(_map.doesCollide(unit,dest)){
-                			//collision, so we won't add this move
-                			continue;
+                			//collision, so we won't add this move, but let's try walking less.
+                			moveDistance/=4;
+                			dest = unit.pos() + Position(moveDistance*dir.x(), moveDistance*dir.y());
+                			if(_map.doesCollide(unit,dest)){
+                				continue;
+                			}
                 		}
 
                 	}
