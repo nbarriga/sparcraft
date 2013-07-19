@@ -232,8 +232,7 @@ public:
 		if(!_validDistances){
 			SparCraft::System::FatalError("Distances not updated on Map");
 		}
-		return _distanceMapWalk[pixelPosition.x()/8+pixelPosition.y()/8*_walkTileWidth];
-//		return _distanceMapBuild[pixelPosition.x()/32+pixelPosition.y()/32*_buildTileWidth];
+		return _distanceMapWalk[pixelPosition];
 	}
 
 	const int getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition) const{
