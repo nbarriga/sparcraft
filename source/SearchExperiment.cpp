@@ -265,6 +265,10 @@ void SearchExperiment::parseConfigFile(const std::string & filename)
         	if (strcmp(option.c_str(), "true") == 0)
         	{
         		checkCollisions = true;
+        	}else if (strcmp(option.c_str(), "false") == 0){
+        		checkCollisions = false;
+        	}else{
+        		System::FatalError("Need to specify whether to check for collisions or not");
         	}
         }
         else
