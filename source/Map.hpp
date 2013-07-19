@@ -39,8 +39,8 @@ class Map
         _mapData =          bvv(_walkTileWidth,  std::vector<bool>(_walkTileHeight,  true));
 		_unitData =         bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
 		_buildingData =     bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
-		_distanceMapBuild.reset(_buildTileWidth,_buildTileHeight);
-		_distanceMapWalk.reset(_walkTileWidth,_walkTileHeight);
+		_distanceMapBuild.reset(_buildTileHeight, _buildTileWidth,32);
+		_distanceMapWalk.reset(_walkTileHeight, _walkTileWidth,8);
 		_validDistances = false;
 		_hasGoal = false;
     }
@@ -53,8 +53,8 @@ public:
 		, _buildTileWidth(0)
 		, _buildTileHeight(0)
 		, _hasGoal(false)
-		, _distanceMapBuild(0, 0)
-		, _distanceMapWalk(0, 0)
+		, _distanceMapBuild(0, 0, 32)
+		, _distanceMapWalk(0, 0, 8)
 		, _validDistances(false)
     {
     }
@@ -65,8 +65,8 @@ public:
 		, _walkTileHeight(bottomRightBuildTileY * 4)
 		, _buildTileWidth(bottomRightBuildTileX)
 		, _buildTileHeight(bottomRightBuildTileY)
-    	, _distanceMapBuild(bottomRightBuildTileX, bottomRightBuildTileY)
-    	, _distanceMapWalk(bottomRightBuildTileX * 4, bottomRightBuildTileY * 4)
+    	, _distanceMapBuild(bottomRightBuildTileX, bottomRightBuildTileY, 32)
+    	, _distanceMapWalk(bottomRightBuildTileX * 4, bottomRightBuildTileY * 4, 8)
     {
         resetVectors();
     }
@@ -76,8 +76,8 @@ public:
 		, _walkTileHeight(game->mapHeight() * 4)
 		, _buildTileWidth(game->mapWidth())
 		, _buildTileHeight(game->mapHeight())
-		, _distanceMapBuild(game->mapWidth(), game->mapHeight())
-		, _distanceMapWalk(game->mapWidth() * 4, game->mapHeight() * 4)
+		, _distanceMapBuild(game->mapWidth(), game->mapHeight(), 32)
+		, _distanceMapWalk(game->mapWidth() * 4, game->mapHeight() * 4, 8)
 	{
 		resetVectors();
 
