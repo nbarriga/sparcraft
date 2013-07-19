@@ -90,15 +90,16 @@ public:
 		}
 	}
 	
-    const size_t getPixelWidth() const
-    {
-        return getWalkTileWidth() * 4;
-    }
-
-    const size_t getPixelHeight() const
-    {
-        return getWalkTileHeight() * 4;
-    }
+	//should be 8? commenting out, unused.
+//    const size_t getPixelWidth() const
+//    {
+//        return getWalkTileWidth() * 4;
+//    }
+//
+//    const size_t getPixelHeight() const
+//    {
+//        return getWalkTileHeight() * 4;
+//    }
 
 	const size_t & getWalkTileWidth() const
 	{
