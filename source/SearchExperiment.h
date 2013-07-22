@@ -24,6 +24,7 @@ class TranspositionTable;
 
 class SparCraft::SearchExperiment
 {
+protected:
 	std::vector<PlayerPtr>      players[2];
     std::vector<std::string>    playerStrings[2];
     std::vector<GameState>      states;
