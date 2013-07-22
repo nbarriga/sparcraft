@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "GameState.h"
 #include "SearchExperiment.h"
+#include "BuildingPlacementExperiment.h"
 #include "AnimationFrameData.h"
 
 #ifdef USING_VISUALIZATION_LIBRARIES

@@ -1,6 +1,9 @@
 #pragma once
 
-#include "SparCraft.h"
+#include "Common.h"
+#include "GameState.h"
+#include "Player.h"
+#include "Game.h"
 #include <iomanip>
 
 namespace SparCraft
