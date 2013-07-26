@@ -86,13 +86,13 @@ GAListGenome<T>::write(STD_OSTREAM & os) const
   os.width(10); os << this->hd << " ";
   os.width(10); os << this->hd->next << " ";
   os.width(10); os << this->hd->prev << " ";
-  os.width(10); os << &(DYN_CAST(GANode<T>*, this->hd)->contents) << "\n";
+  os.width(10); os << DYN_CAST(GANode<T>*, this->hd)->contents << "\n";
 
   for(GANodeBASE * tmp=this->hd->next; tmp && tmp != this->hd; tmp=tmp->next){
     os.width(10); os << tmp << " ";
     os.width(10); os << tmp->next << " ";
     os.width(10); os << tmp->prev << " ";
-    os.width(10); os << &(DYN_CAST(GANode<T>*, tmp)->contents) << "\n";
+    os.width(10); os << DYN_CAST(GANode<T>*, tmp)->contents << "\n";
   }
   return 0;
 }
