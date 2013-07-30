@@ -12,23 +12,26 @@ namespace SparCraft {
 
 Gene::Gene(SparCraft::Unit building):
 				_type(building.type()),
-				_pos(building.pos()){
+				_pos(BWAPI::Position(building.pos().x(),building.pos().y())){
 	if(!building.type().isBuilding()){
 		System::FatalError("Only buildings are allowed");
 	}
 }
 
-Gene::Gene():
-				_type(BWAPI::UnitTypes::None),
-				_pos(Position(GARandomInt(-10,10),GARandomInt(-10,10))){
-}
+//Gene::Gene():
+//				_type(BWAPI::UnitTypes::None),
+//				_pos(BWAPI::TilePosition(GARandomInt(0,10),GARandomInt(0,10))){
+//}
 
 void Gene::mutate(){
-	_pos.addPosition(Position(GARandomInt(-10,10),GARandomInt(-10,10)));
+	_pos+=BWAPI::TilePosition(GARandomInt(-2,2),GARandomInt(-2,2));
+	_pos.makeValid();
 }
 
 std::ostream& operator<< (std::ostream& stream, const Gene& building){
-	stream<<"Type: "<<building._type.getName()<<", "<<building._pos.getString()<<std::endl;
+	stream<<"Type: "<<building._type.getName()<<", "<<
+			building._pos.x() << ", " << building._pos.y() << ")"<<
+			std::endl;
 	return stream;
 }
 

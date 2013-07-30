@@ -15,11 +15,12 @@
 namespace SparCraft {
 
 class Gene{
-	BWAPI::UnitType     _type;
-	Position            _pos;
 public:
+	BWAPI::UnitType     _type;
+	BWAPI::TilePosition            _pos;
+
 	Gene(SparCraft::Unit building);
-	Gene();
+//	Gene();
 	void mutate();
 
 	friend std::ostream& operator<< (std::ostream& stream, const Gene& building);

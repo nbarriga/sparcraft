@@ -1,9 +1,13 @@
 #include "BuildingPlacementExperiment.h"
 
-namespace SparCraft {
+#include <ga/GASimpleGA.h>
+#include <ga/GAListGenome.h>
+#include "Gene.h"
+#include "GeneticOperators.h"
 
+namespace SparCraft {
 BuildingPlacementExperiment::BuildingPlacementExperiment(const std::string & configFile):
-			SearchExperiment(configFile){
+							SearchExperiment(configFile),_display(NULL){
 	// TODO Auto-generated constructor stub
 
 }
@@ -12,7 +16,15 @@ BuildingPlacementExperiment::~BuildingPlacementExperiment(){
 	// TODO Auto-generated destructor stub
 }
 
-void BuildingPlacementExperiment::initialize() {
+
+void BuildingPlacementExperiment::runExperiment(){
+	int width    = 10;
+	int height   = 5;
+	int popsize  = 10;
+	int ngen     = 20;
+	float pmut   = 0.1;
+	float pcross = 0.9;
+	GARandomSeed(time(NULL));
 
 	// set the map file for all states
 	for (size_t state(0); state < states.size(); ++state)
@@ -32,10 +44,6 @@ void BuildingPlacementExperiment::initialize() {
 		_display->LoadMapTexture(map, 19);
 	}
 #endif
-
-}
-
-void BuildingPlacementExperiment::iterate() {
 	// for each player one player
 	for (size_t p1Player(0); p1Player < players[0].size(); p1Player++)
 	{
@@ -73,59 +81,48 @@ void BuildingPlacementExperiment::iterate() {
 					p2AB->setTranspositionTable(TTPtr(new TranspositionTable()));
 				}
 
-				// construct the game
-				states[state].checkCollisions = checkCollisions;
-				Game g(states[state], playerOne, playerTwo, 20000);
-#ifdef USING_VISUALIZATION_LIBRARIES
-				if (showDisplay)
-				{
-					g.disp = _display;
-					_display->SetExpDesc(getExpDescription(p1Player, p2Player, state));
-				}
-#endif
+				// Now create the GA and run it.  First we create a genome of the type that
+				// we want to use in the GA.  The ga doesn't operate on this genome in the
+				// optimization - it just uses it to clone a population of genomes.
 
-				// play the game to the end
-				g.play();
+				BWAPI::TilePosition goal(BWAPI::Position(1200,400));
+				std::vector<Unit> emptyList;
+				GeneticOperators::configure(goal,
+						emptyList,
+						emptyList,
+						emptyList,
+						map,_display);
 
-				ScoreType gameEval = g.getState().eval(Players::Player_One, SparCraft::EvaluationMethods::LTD2).val();
+				GAListGenome<Gene> genome(GeneticOperators::Objective);
 
-				numGames[p1Player][p2Player]++;
-				if (gameEval > 0)
-				{
-					numWins[p1Player][p2Player]++;
-				}
-				else if (gameEval < 0)
-				{
-					numLosses[p1Player][p2Player]++;
-				}
-				else if (gameEval == 0)
-				{
-					numDraws[p1Player][p2Player]++;
-				}
+				// Now that we have the genome, we create the genetic algorithm and set
+				// its parameters - number of generations, mutation probability, and crossover
+				// probability.  And finally we tell it to evolve itself.
+				genome.initializer(GeneticOperators::Initializer);
+				genome.mutator(GeneticOperators::Mutator);
 
-				double ms = g.getTime();
-				fprintf(stderr, "%12d %12.2lf\n", gameEval, ms);
 
-				resultsEval[p1Player][p2Player].push_back(gameEval);
-				resultsRounds[p1Player][p2Player].push_back(g.getRounds());
-				resultsTime[p1Player][p2Player].push_back(ms);
 
+
+
+				GASimpleGA ga(genome);
+				ga.populationSize(popsize);
+				ga.nGenerations(ngen);
+				ga.pMutation(pmut);
+				ga.pCrossover(pcross);
+				ga.evolve();
+
+				// Now we print out the best genome that the GA found.
+
+				std::cout << "The GA found:\n" << ga.statistics().bestIndividual() << "\n";
 
 			}
 		}
 	}
-}
 
-void BuildingPlacementExperiment::runExperiment(){
-	initialize();
 
-	bool done=true;
-	do{
-		//set state
 
-		//evaluate
-		iterate();
-	}while(!done);
+
 
 }
 }
