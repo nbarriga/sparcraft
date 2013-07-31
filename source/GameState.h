@@ -36,7 +36,7 @@ class GameState
 
     // checks to see if the unit array is full before adding a unit to the state
     const bool              checkFull(const IDType & player)                                        const;
-    const bool              checkUniqueUnitIDs()                                                    const;
+//    const bool              checkUniqueUnitIDs()                                                    const;
 
     void                    performUnitAction(const UnitAction & theMove);
 

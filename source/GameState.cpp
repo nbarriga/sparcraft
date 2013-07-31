@@ -143,6 +143,8 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
 		if (unit.previousActionTime() == _currentTime && _currentTime != 0)
 		{
 			//todo: fix this check! Fails for photon cannons
+//			std::cerr<<"Previous Move Took 0 Time: "<<unit.previousAction().moveString()<<
+//					" "<<unit.name()<<std::endl;
 //			System::FatalError("Previous Move Took 0 Time: " + unit.previousAction().moveString());
 		}
 
@@ -310,6 +312,7 @@ void GameState::performUnitAction(const UnitAction & move)
 		//			- buildings is easy, it's on the Map class
 			if(_map.doesCollide(ourUnit,move.pos())){
 				//todo: shorten or discard move
+				std::cerr<<"There is a collision: "<<ourUnit.name()<<std::endl;
 			}
 		//2) todo: check move against other moves
 			//need to get list of moves, will check against the next ones in the list
@@ -498,10 +501,10 @@ void GameState::addUnit(const Unit & u)
 	finishedMoving();
 	calculateStartingHealth();
 
-    if (!checkUniqueUnitIDs())
-    {
-        System::FatalError("GameState has non-unique Unit ID values");
-    }
+//    if (!checkUniqueUnitIDs())
+//    {
+//        System::FatalError("GameState has non-unique Unit ID values");
+//    }
     _map.addUnit(getUnit(u.player(), _numUnits[u.player()]));
 }
 
@@ -661,29 +664,29 @@ const IDType GameState::whoCanMove() const
 		return Players::Player_Both;
 	}
 }
-
-const bool GameState::checkUniqueUnitIDs() const
-{
-    std::set<IDType> unitIDs;
-
-    for (size_t p(0); p<Constants::Num_Players; ++p)
-    {
-        for (size_t u(0); u<numUnits(p); ++u)
-        {
-            IDType unitID(getUnit(p, u).ID());
-            if (unitIDs.find(unitID) == unitIDs.end())
-            {
-                return false;
-            }
-            else
-            {
-                unitIDs.insert(unitID);
-            }
-        }
-    }
-
-    return true;
-}
+//This method is wrong!
+//const bool GameState::checkUniqueUnitIDs() const
+//{
+//    std::set<IDType> unitIDs;
+//
+//    for (size_t p(0); p<Constants::Num_Players; ++p)
+//    {
+//        for (size_t u(0); u<numUnits(p); ++u)
+//        {
+//            IDType unitID(getUnit(p, u).ID());
+//            if (unitIDs.find(unitID) == unitIDs.end())
+//            {
+//                return false;
+//            }
+//            else
+//            {
+//                unitIDs.insert(unitID);
+//            }
+//        }
+//    }
+//
+//    return true;
+//}
 
 void GameState::updateGameTime()
 {
@@ -858,6 +861,7 @@ void GameState::setMap(const Map & map)
             else
             {
             	//add units to map
+//            	std::cout<<"adding "<<unit.type().getName()<<" "<<unit.pos().getString()<<std::endl;
             	_map.addUnit(unit);
             }
         }
