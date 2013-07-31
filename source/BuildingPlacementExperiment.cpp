@@ -18,10 +18,8 @@ BuildingPlacementExperiment::~BuildingPlacementExperiment(){
 
 
 void BuildingPlacementExperiment::runExperiment(){
-	int width    = 10;
-	int height   = 5;
-	int popsize  = 10;
-	int ngen     = 20;
+	int popsize  = 4;
+	int ngen     = 10;
 	float pmut   = 0.1;
 	float pcross = 0.9;
 	GARandomSeed(time(NULL));
@@ -86,12 +84,32 @@ void BuildingPlacementExperiment::runExperiment(){
 				// optimization - it just uses it to clone a population of genomes.
 
 				BWAPI::TilePosition goal(BWAPI::Position(1200,400));
-				std::vector<Unit> emptyList;
+
+				std::vector<Unit> buildings,attackers,defenders;
+				int units=states[state].numUnits(Players::Player_One)+states[state].numUnits(Players::Player_Two);
+				for(int i=0;i<units;i++){
+					const Unit &unit=states[state].getUnitByID(i);
+					if(unit.player()==Players::Player_One){//attacker
+						attackers.push_back(unit);
+					}else if(unit.player()==Players::Player_Two){//defender
+						if(unit.type().isBuilding()){
+							buildings.push_back(unit);
+						}else{
+							defenders.push_back(unit);
+						}
+					}else{
+						System::FatalError("More than 2 players?");
+					}
+				}
+				std::cout<<"buildings: "<<buildings.size()<<" , defenders: "<<defenders.size()<<
+						" ,attackers: "<<attackers.size()<<std::endl;
+
 				GeneticOperators::configure(goal,
-						emptyList,
-						emptyList,
-						emptyList,
-						map,_display);
+						buildings,
+						defenders,
+						attackers,
+						map,_display,
+						getExpDescription(0,0,0));
 
 				GAListGenome<Gene> genome(GeneticOperators::Objective);
 
@@ -100,7 +118,7 @@ void BuildingPlacementExperiment::runExperiment(){
 				// probability.  And finally we tell it to evolve itself.
 				genome.initializer(GeneticOperators::Initializer);
 				genome.mutator(GeneticOperators::Mutator);
-
+				genome.crossover(GeneticOperators::Crossover);
 
 
 

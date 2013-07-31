@@ -15,14 +15,16 @@
 namespace SparCraft {
 
 class Gene{
-public:
 	BWAPI::UnitType     _type;
 	BWAPI::TilePosition            _pos;
+public:
+	const BWAPI::UnitType     getType() const;
+	const BWAPI::TilePosition getPos() const;
 
 	Gene(SparCraft::Unit building);
-//	Gene();
-	void mutate();
-
+	//	Gene();
+	void move(BWAPI::TilePosition offset);
+	bool collides(const Gene &other) const;
 	friend std::ostream& operator<< (std::ostream& stream, const Gene& building);
 	friend bool operator== (Gene &b1, Gene &b2);
 	friend bool operator!= (Gene &b1, Gene &b2);
