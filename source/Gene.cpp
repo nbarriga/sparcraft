@@ -37,9 +37,9 @@ std::ostream& operator<< (std::ostream& stream, const Gene& building){
 
 bool Gene::collides(const Gene& other) const{
 	int otherLeft=other.getPos().x();
-	int otherRight=otherLeft+other.getType().tileWidth();
+	int otherRight=otherLeft+other.getType().tileWidth()-1;
 	int otherTop=other.getPos().y();
-	int otherBottom=otherTop+other.getType().tileHeight();
+	int otherBottom=otherTop+other.getType().tileHeight()-1;
 
 	int thisLeft=getPos().x();
 		int thisRight=thisLeft+getType().tileWidth();
@@ -47,12 +47,12 @@ bool Gene::collides(const Gene& other) const{
 		int thisBottom=thisTop+getType().tileHeight();
 
 		if(
-				((thisLeft<otherRight&&thisLeft>otherLeft)||
-						(thisRight>otherLeft&&thisRight<otherRight)
+				((thisLeft<=otherRight&&thisLeft>=otherLeft)||
+						(thisRight>=otherLeft&&thisRight<=otherRight)
 				)&&
 				(
-						(thisTop<otherBottom&&thisTop>otherTop)||
-						(thisBottom>otherTop&&thisBottom<otherBottom)
+						(thisTop<=otherBottom&&thisTop>=otherTop)||
+						(thisBottom>=otherTop&&thisBottom<=otherBottom)
 				)){
 			return true;
 		}else{
@@ -70,6 +70,10 @@ const BWAPI::UnitType Gene::getType() const {
 
 const BWAPI::TilePosition Gene::getPos() const {
 	return _pos;
+}
+
+void Gene::undo(BWAPI::TilePosition offset) {
+	_pos-=offset;
 }
 
 bool operator!= (Gene &b1, Gene &b2){
