@@ -25,7 +25,7 @@ float GeneticOperators::Objective(GAGenome &g) {
 std::cout<<"genome: "<<genome<<std::endl;
 	GameState state;
 	state.checkCollisions=true;
-
+	state.setMap(*_map);
 	for(int i=0;i<genome.size();i++){
 		Gene *gene=genome[i];
 		BWAPI::Position pos(gene->getPos());
@@ -45,7 +45,7 @@ std::cout<<"genome: "<<genome<<std::endl;
 		state.addUnit(*it);
 	}
 
-	state.setMap(*_map);
+
 
 	PlayerPtr ptr1(new Player_Assault(Players::Player_One));
 	PlayerPtr ptr2(new Player_Defend(Players::Player_Two));
@@ -61,9 +61,9 @@ std::cout<<"genome: "<<genome<<std::endl;
 
 	// play the game to the end
 	game.play();
-	int score = game.getState().eval(Players::Player_Two, SparCraft::EvaluationMethods::LTD2).val();
+	int score = game.getState().evalBuildingPlacement(Players::Player_One,Players::Player_Two);
 	std::cout<<"score: "<<score<<std::endl;
-	return score+110000;
+	return score;
 
 }
 
@@ -79,7 +79,7 @@ void GeneticOperators::Initializer(GAGenome& g)//todo: better initializer
 
 		genome.insert(gene,GAListBASE::TAIL);
 	}
-	Mutator(genome,0.5);
+	Mutator(genome,0.5,20);
 }
 
 void GeneticOperators::configure(BWAPI::TilePosition& basePos,
@@ -98,8 +98,36 @@ void GeneticOperators::configure(BWAPI::TilePosition& basePos,
 	_expDesc=expDesc;
 }
 
+int GeneticOperators::Mutator(GAGenome& g, float pmut){
+	return Mutator(g,pmut,2);
+}
 
-int GeneticOperators::Mutator(GAGenome& g, float pmut)
+bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
+		BWAPI::TilePosition& offset) {
+
+
+	BWAPI::TilePosition newPos=genome[pos]->getPos()+offset;
+	if(_map->canBuildHere(newPos)){
+		genome[pos]->move(offset);
+		bool legal=true;
+		for(int j=0; j<genome.size(); j++){
+			if(pos!=j){
+				if(genome[pos]->collides(*genome[j])){
+					legal=false;
+					break;
+				}
+			}
+		}
+		if(!legal){//undo
+			genome[pos]->undo(offset);
+		}
+		return legal;
+	}else{
+		return false;
+	}
+}
+
+int GeneticOperators::Mutator(GAGenome& g, float pmut, int maxJump)
 {
 	std::cout<<"calling Mutator\n";
 	GAListGenome<Gene>& genome = (GAListGenome<Gene>&)g;
@@ -113,22 +141,11 @@ int GeneticOperators::Mutator(GAGenome& g, float pmut)
 	for(int i=0; i<genome.size(); i++){
 		if(GAFlipCoin(pmut)){
 			Gene* gene=genome[i];
-			BWAPI::TilePosition offset(GARandomInt(-2,2),GARandomInt(-2,2));
-			gene->move(offset);
-			bool legal=true;
-			for(int j=0; j<genome.size(); j++){
-				if(i!=j){
-					if(gene->collides(*genome[j])){
-						legal=false;
-					}
-				}
-			}
-			if(!legal){
-				gene->move(BWAPI::TilePosition(0,0)-offset);
-			}else{
+			BWAPI::TilePosition offset(GARandomInt(-maxJump,maxJump),GARandomInt(-maxJump,maxJump));
+			if(moveIfLegal(genome,i,offset)){
 				std::cout<<"mutating"<<std::endl;
+				nMut++;
 			}
-			nMut++;
 		}
 	}
 	if(nMut!=0) genome.swap(0,0);//_evaluated = gaFalse;
@@ -136,19 +153,60 @@ int GeneticOperators::Mutator(GAGenome& g, float pmut)
 
 }
 
+void GeneticOperators::repair(GAListGenome<Gene>& genome, int pos) {
+	int a=0,b=0,distance=0;//start with distance 0, to check if it is currently legal
+	do{
+		for(int a=0;a<=distance;a++){
+			for(int b=0;b<=distance;b++){
+				if(std::max(a,b)==distance){
+					BWAPI::TilePosition offset(a,b);
+					if(moveIfLegal(genome,pos,offset)){
+						if(distance>0){
+							std::cout<<"repaired\n";
+						}
+						return;
+					}else{
+						distance++;
+					}
+				}
+			}
+		}
+	}while(true);
+}
+
+void GeneticOperators::repair(GAListGenome<Gene>& genome) {
+	for(int i=0; i<genome.size(); i++){
+		repair(genome,i);
+	}
+}
+
 int GeneticOperators::Crossover(const GAGenome& parent1, const GAGenome& parent2,
 		GAGenome* child1, GAGenome* child2) {
 	std::cout<<"calling Crossover\n";
 	int children=0;
 	if(child1!=NULL){
-	child1->copy(parent1);
-	children++;
+		child1->copy(parent1);
+		children++;
 	}
 	if(child2!=NULL){
-	child2->copy(parent2);
-	children++;
+		child2->copy(parent2);
+		children++;
 	}
-	std::cout<<children<<" children created"<<std::endl;
+	if(children==2){
+		GAListGenome<Gene>& c1 = *(GAListGenome<Gene>*)child1;
+		GAListGenome<Gene>& c2 = *(GAListGenome<Gene>*)child2;
+		for(int i=0; i<c1.size(); i++){
+			if(GAFlipCoin(0.5)){
+				Gene* temp1=c1[i];
+				Gene* temp2=c2[i];
+				temp1->move(temp2->getPos()-temp1->getPos());
+				temp2->move(temp1->getPos()-temp2->getPos());
+				std::cout<<"exchanging\n";
+			}
+		}
+		repair(c1);
+		repair(c2);
+	}
 	return children;
 }
 

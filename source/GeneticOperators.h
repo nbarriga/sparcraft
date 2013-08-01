@@ -11,9 +11,14 @@
 #include <ga/GAListGenome.h>
 #include "Common.h"
 #include "SparCraft.h"
+#include "Gene.h"
+
 namespace SparCraft {
 
 class GeneticOperators {
+	static void repair(GAListGenome<Gene>& genome, int pos);
+	static void repair(GAListGenome<Gene>& genome);
+	static bool moveIfLegal(GAListGenome<Gene>& genome, int pos, BWAPI::TilePosition& offset);
 public:
 	static BWAPI::TilePosition _basePos;
 	static std::vector<SparCraft::Unit> _buildings;
@@ -32,6 +37,7 @@ public:
 	static float Objective(GAGenome &g);
 	static void	Initializer(GAGenome& g);
 	static int Mutator(GAGenome& g, float pmut);
+	static int Mutator(GAGenome& g, float pmut, int maxJump);
 	static int Crossover(const GAGenome&, const GAGenome&,
 		      GAGenome*, GAGenome*);
 };
