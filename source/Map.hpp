@@ -326,7 +326,10 @@ public:
 
 	const bool canBuildHere(BWAPI::TilePosition pos)
 	{
-		return !_unitData[pos.x()][pos.y()] && !_buildingData[pos.x()][pos.y()];
+		return pos.x()>=0 && pos.y()>=0 && pos.x()<_buildTileWidth && pos.y()<_buildTileHeight &&
+				!_unitData[pos.x()][pos.y()] &&
+				!_buildingData[pos.x()][pos.y()] &&
+				_mapData[pos.x()*4][pos.y()*4];
 	}
 
 	void setBuildingData(BWAPI::Game * game)
@@ -435,6 +438,7 @@ public:
 					_buildingData[x][y] = false;
 				}
 			}
+			std::cerr<<"removed building\n";
 			_validDistances = false;
 		}
 		else
