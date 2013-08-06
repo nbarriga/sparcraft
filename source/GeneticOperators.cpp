@@ -75,11 +75,23 @@ void GeneticOperators::Initializer(GAGenome& g)//todo: better initializer
 
 	for(std::vector<SparCraft::Unit>::const_iterator it=_buildings.begin();
 			it!=_buildings.end();it++){
-		Gene gene(*it);
 
+		BWAPI::TilePosition pos(_basePos);
+		Gene gene(it->type(),pos);
 		genome.insert(gene,GAListBASE::TAIL);
+
+		BWAPI::TilePosition offset;
+		int n=50;
+		do{
+			offset=BWAPI::TilePosition(GARandomInt(-50,50),GARandomInt(-50,50));
+			n--;
+		}while(n>0&&!moveIfLegal(genome,genome.size()-1,offset));
+		if(n==0){
+			System::FatalError("Max amount of retries for initial location failed");
+		}
+
 	}
-	Mutator(genome,0.5,20);
+//	Mutator(genome,0.5,20);
 }
 
 void GeneticOperators::configure(BWAPI::TilePosition& basePos,
@@ -99,7 +111,7 @@ void GeneticOperators::configure(BWAPI::TilePosition& basePos,
 }
 
 int GeneticOperators::Mutator(GAGenome& g, float pmut){
-	return Mutator(g,pmut,2);
+	return Mutator(g,pmut,50);
 }
 
 bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
@@ -141,8 +153,18 @@ int GeneticOperators::Mutator(GAGenome& g, float pmut, int maxJump)
 	for(int i=0; i<genome.size(); i++){
 		if(GAFlipCoin(pmut)){
 			Gene* gene=genome[i];
-			BWAPI::TilePosition offset(GARandomInt(-maxJump,maxJump),GARandomInt(-maxJump,maxJump));
-			if(moveIfLegal(genome,i,offset)){
+//			BWAPI::TilePosition offset(GARandomInt(-maxJump,maxJump),GARandomInt(-maxJump,maxJump));
+//			if(moveIfLegal(genome,i,offset)){
+//				std::cout<<"mutating"<<std::endl;
+//				nMut++;
+//			}
+			BWAPI::TilePosition offset;
+			int n=50;
+			do{
+				offset=BWAPI::TilePosition(GARandomInt(-maxJump,maxJump),GARandomInt(-maxJump,maxJump));
+				n--;
+			}while(n>0&&!moveIfLegal(genome,i,offset));
+			if(n>0){
 				std::cout<<"mutating"<<std::endl;
 				nMut++;
 			}
@@ -206,8 +228,25 @@ int GeneticOperators::Crossover(const GAGenome& parent1, const GAGenome& parent2
 		}
 		repair(c1);
 		repair(c2);
+		c1.swap(0,0);//_evaluated = gaFalse;
+		c2.swap(0,0);//_evaluated = gaFalse;
 	}
 	return children;
 }
 
-} /* namespace SparCraft */
+// The comparator returns a number in the interval [0,1] where 0 means that
+// the two genomes are identical (zero diversity) and 1 means they are
+// completely different (maximum diversity).
+float
+GeneticOperators::Comparator(const GAGenome& g1, const GAGenome& g2) {
+	GAListGenome<Gene>& a = (GAListGenome<Gene> &)g1;
+	GAListGenome<Gene>& b = (GAListGenome<Gene> &)g2;
+	int diffs=0;
+	for(int i=0;i<a.size();i++){
+		if((*a[i])!=(*b[i])){
+			diffs++;
+		}
+	}
+  return diffs/(float)a.size();
+}
+}

@@ -40,6 +40,7 @@ public:
 	static int Mutator(GAGenome& g, float pmut, int maxJump);
 	static int Crossover(const GAGenome&, const GAGenome&,
 		      GAGenome*, GAGenome*);
+	static float Comparator(const GAGenome&, const GAGenome&);
 };
 
 } /* namespace SparCraft */
