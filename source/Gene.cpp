@@ -76,6 +76,10 @@ void Gene::undo(BWAPI::TilePosition offset) {
 	_pos-=offset;
 }
 
+Gene::Gene(BWAPI::UnitType type, BWAPI::TilePosition pos):
+	_type(type),_pos(pos){
+}
+
 bool operator!= (Gene &b1, Gene &b2){
 	return !(b1==b2);
 }

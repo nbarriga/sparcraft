@@ -22,6 +22,7 @@ public:
 	const BWAPI::TilePosition getPos() const;
 
 	Gene(SparCraft::Unit building);
+	Gene(BWAPI::UnitType type,	BWAPI::TilePosition pos);
 	//	Gene();
 	void move(BWAPI::TilePosition offset);
 	void undo(BWAPI::TilePosition offset);
