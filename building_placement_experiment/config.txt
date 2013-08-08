@@ -121,7 +121,7 @@ ResultsFile sample_exp false
 #
 ##################################################
 
-MapFile building_placement_experiment/destination_map.txt
+MapFile building_placement_experiment/destination_map.txt 1200 400
 
 ##################################################
 #

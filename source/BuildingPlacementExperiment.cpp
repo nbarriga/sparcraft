@@ -27,8 +27,6 @@ void BuildingPlacementExperiment::runExperiment(){
 	// set the map file for all states
 	for (size_t state(0); state < states.size(); ++state)
 	{
-		//todo: set actual goal from map
-		map->setGoal(SparCraft::Position(1200,400));
 		states[state].setMap(*map);
 	}
 
