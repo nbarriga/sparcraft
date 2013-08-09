@@ -311,8 +311,11 @@ public:
 				_mapData[pos.x()*4][pos.y()*4];
 	}
 
-	const bool canBuildHere(BWAPI::UnitType type, SparCraft::Position pos)
+	const bool canBuildHere(const BWAPI::UnitType & type, const SparCraft::Position & pos)
 	{
+		if(!type.isBuilding()){
+			System::FatalError("Map::canBuildHere(UnitType,Position) is only meant for building types.");
+		}
 		int tx = pos.x() / TILE_SIZE;
 		int ty = pos.y() / TILE_SIZE;
 		int sx = type.tileWidth();
