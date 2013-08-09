@@ -232,11 +232,11 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
                 if (isWalkable(dest) || (unit.type().isFlyer() && isFlyable(dest)))
                 {
                 	if(checkCollisions){
-                		if(_map.doesCollide(unit,dest)){
+                		if(_map.doesCollide(unit.type(),dest)){
                 			//collision, so we won't add this move, but let's try walking less.
                 			moveDistance/=4;
                 			dest = unit.pos() + Position(moveDistance*dir.x(), moveDistance*dir.y());
-                			if(_map.doesCollide(unit,dest)){
+                			if(_map.doesCollide(unit.type(),dest)){
                 				continue;
                 			}
                 		}
@@ -310,7 +310,7 @@ void GameState::performUnitAction(const UnitAction & move)
 		if(checkCollisions){
 		//1) todo: check move against all fixed objects(buildings and not currently moving units) for collisions
 		//			- buildings is easy, it's on the Map class
-			if(_map.doesCollide(ourUnit,move.pos())){
+			if(_map.doesCollide(ourUnit.type(),move.pos())){
 				//todo: shorten or discard move
 				std::cerr<<"There is a collision: "<<ourUnit.name()<<std::endl;
 			}
