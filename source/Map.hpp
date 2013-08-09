@@ -25,7 +25,6 @@ class Map
 
 	SparCraft::Position 	_goal;
 	bool					_hasGoal;				//true if a goal has been set
-	DistanceMap				_distanceMapBuild;		// distances from every build tile to a goal tile
 	DistanceMap				_distanceMapWalk;		// distances from every walk tile to a goal tile
 	bool					_validDistances;		// true if distances are valid, false if buildings have changed
 
@@ -39,7 +38,6 @@ class Map
         _mapData =          bvv(_walkTileWidth,  std::vector<bool>(_walkTileHeight,  true));
 		_unitData =         bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
 		_buildingData =     bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
-		_distanceMapBuild.reset(_buildTileHeight, _buildTileWidth,32);
 		_distanceMapWalk.reset(_walkTileHeight, _walkTileWidth,8);
 		_validDistances = false;
 		_hasGoal = false;
@@ -53,7 +51,6 @@ public:
 		, _buildTileWidth(0)
 		, _buildTileHeight(0)
 		, _hasGoal(false)
-		, _distanceMapBuild(0, 0, 32)
 		, _distanceMapWalk(0, 0, 8)
 		, _validDistances(false)
     {
@@ -65,7 +62,6 @@ public:
 		, _walkTileHeight(bottomRightBuildTileY * 4)
 		, _buildTileWidth(bottomRightBuildTileX)
 		, _buildTileHeight(bottomRightBuildTileY)
-    	, _distanceMapBuild(bottomRightBuildTileX, bottomRightBuildTileY, 32)
     	, _distanceMapWalk(bottomRightBuildTileX * 4, bottomRightBuildTileY * 4, 8)
     {
         resetVectors();
@@ -76,7 +72,6 @@ public:
 		, _walkTileHeight(game->mapHeight() * 4)
 		, _buildTileWidth(game->mapWidth())
 		, _buildTileHeight(game->mapHeight())
-		, _distanceMapBuild(game->mapWidth(), game->mapHeight(), 32)
 		, _distanceMapWalk(game->mapWidth() * 4, game->mapHeight() * 4, 8)
 	{
 		resetVectors();
@@ -89,17 +84,6 @@ public:
 			}
 		}
 	}
-	
-	//should be 8? commenting out, unused.
-//    const size_t getPixelWidth() const
-//    {
-//        return getWalkTileWidth() * 4;
-//    }
-//
-//    const size_t getPixelHeight() const
-//    {
-//        return getWalkTileHeight() * 4;
-//    }
 
 	const size_t & getWalkTileWidth() const
 	{
@@ -123,12 +107,10 @@ public:
 
 	void calculateDistances(){
 		if(!_validDistances&&_hasGoal){
-//			SparCraft::System::printStackTrace(0);
-			calculateDistances(_distanceMapBuild,_buildTileWidth,_buildTileHeight,_goal.x()/TILE_SIZE,_goal.y()/TILE_SIZE, 1);
-			calculateDistances(_distanceMapWalk,_walkTileWidth,_walkTileHeight,_goal.x()/8,_goal.y()/8, 4);
+			calculateDistances(_distanceMapWalk,_walkTileWidth,_walkTileHeight,_goal.x()/8,_goal.y()/8, 8);
 		}
 	}
-	void calculateDistances(DistanceMap& dmap,int width, int height, int xGoal, int yGoal, int factor){
+	void calculateDistances(DistanceMap& dmap,int width, int height, int xGoal, int yGoal, int tileSize){
 		int fringeSize(1);
 		int fringeIndex(0);
 
@@ -153,8 +135,9 @@ public:
 
 			// search up
 			nextIndex = (currentIndex > width) ? (currentIndex - width) : -1;
-			if ((nextIndex != -1) && dmap[nextIndex] == -1
-					&& !_buildingData[(nextIndex%width)/factor][(nextIndex/width)/factor])
+			if ((nextIndex != -1) && dmap[nextIndex] == -1 &&
+					!_buildingData[(nextIndex%width)*tileSize/TILE_SIZE][(nextIndex/width)*tileSize/TILE_SIZE]&&
+					_mapData[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8])
 			{
 				// set the distance based on distance to current cell
 				dmap.setDistance(nextIndex, newDist);
@@ -166,8 +149,9 @@ public:
 
 			// search down
 			nextIndex = (currentIndex + width < size) ? (currentIndex + width) : -1;
-			if ((nextIndex != -1) && dmap[nextIndex] == -1
-					&& !_buildingData[(nextIndex%width)/factor][(nextIndex/width)/factor])
+			if ((nextIndex != -1) && dmap[nextIndex] == -1 &&
+					!_buildingData[(nextIndex%width)*tileSize/TILE_SIZE][(nextIndex/width)*tileSize/TILE_SIZE] &&
+					_mapData[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8])
 			{
 				// set the distance based on distance to current cell
 				dmap.setDistance(nextIndex, newDist);
@@ -180,7 +164,8 @@ public:
 			// search left
 			nextIndex = (currentIndex % width > 0) ? (currentIndex - 1) : -1;
 			if ((nextIndex != -1) && dmap[nextIndex] == -1
-					&& !_buildingData[(nextIndex%width)/factor][(nextIndex/width)/factor])
+					&& !_buildingData[(nextIndex%width)*tileSize/TILE_SIZE][(nextIndex/width)*tileSize/TILE_SIZE] &&
+					_mapData[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8])
 			{
 				// set the distance based on distance to current cell
 				dmap.setDistance(nextIndex, newDist);
@@ -193,7 +178,8 @@ public:
 			// search right
 			nextIndex = (currentIndex % width < width - 1) ? (currentIndex + 1) : -1;
 			if ((nextIndex != -1) && dmap[nextIndex] == -1
-					&& !_buildingData[(nextIndex%width)/factor][(nextIndex/width)/factor])
+					&& !_buildingData[(nextIndex%width)*tileSize/TILE_SIZE][(nextIndex/width)*tileSize/TILE_SIZE] &&
+					_mapData[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8])
 			{
 				// set the distance based on distance to current cell
 				dmap.setDistance(nextIndex, newDist);
@@ -205,13 +191,6 @@ public:
 		}
 
 		_validDistances=true;
-//		for(int j=0;j<height;j++){
-//			for(int i=0;i<width;i++){
-//				std::cout<<dmap[i+width*j]<<" ";
-//			}
-//			std::cout<<std::endl;
-//		}
-//		std::cout<<std::endl;
 	}
 
 	void setGoal(const SparCraft::Position & goal){
