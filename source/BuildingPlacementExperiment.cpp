@@ -22,6 +22,7 @@ void BuildingPlacementExperiment::runExperiment(){
 	int ngen     = 10;
 	float pmut   = 0.1;
 	float pcross = 0.9;
+	gaDefDivFlag=gaTrue;
 	GARandomSeed(time(NULL));
 
 	// set the map file for all states
@@ -117,7 +118,7 @@ void BuildingPlacementExperiment::runExperiment(){
 				genome.initializer(GeneticOperators::Initializer);
 				genome.mutator(GeneticOperators::Mutator);
 				genome.crossover(GeneticOperators::Crossover);
-
+				genome.comparator(GeneticOperators::Comparator);
 
 
 
@@ -129,8 +130,11 @@ void BuildingPlacementExperiment::runExperiment(){
 				ga.evolve();
 
 				// Now we print out the best genome that the GA found.
-
-				std::cout << "The GA found:\n" << ga.statistics().bestIndividual() << "\n";
+				GAStatistics stats=ga.statistics();
+				//				stats.recordDiversity(gaTrue);
+				std::cout << "The GA found: "<<stats.bestIndividual().evaluate()<<"\n" <<
+						stats.bestIndividual() << "\n";
+				stats.write(std::cout);
 
 			}
 		}
