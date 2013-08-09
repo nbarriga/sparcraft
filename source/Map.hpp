@@ -311,6 +311,24 @@ public:
 				_mapData[pos.x()*4][pos.y()*4];
 	}
 
+	const bool canBuildHere(BWAPI::UnitType type, SparCraft::Position pos)
+	{
+		int tx = pos.x() / TILE_SIZE;
+		int ty = pos.y() / TILE_SIZE;
+		int sx = type.tileWidth();
+		int sy = type.tileHeight();
+		for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
+		{
+			for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
+			{
+				if(!canBuildHere(BWAPI::TilePosition(x,y))){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	void setBuildingData(BWAPI::Game * game)
 	{
 		_buildingData = bvv(getBuildTileWidth(), std::vector<bool>(getBuildTileHeight(), true));
