@@ -380,8 +380,6 @@ public:
 
 	void addUnit(const SparCraft::Unit & unit)
 	{
-//		std::cerr<<"adding unit "<<unit.type().getName()<<std::endl;
-//		System::printStackTrace();
 		if (unit.type().isBuilding())
 		{
 			int tx = unit.pos().x() / TILE_SIZE;
@@ -393,7 +391,7 @@ public:
 				for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
 				{
 					if(!canBuildHere(BWAPI::TilePosition(x,y))){
-						std::cerr<<x<<" "<<y<<" "<<_buildingData[x][y]<<std::endl;
+						std::cerr<<x<<" "<<y<<" "<<_buildingData[x][y]<<" "<<_unitData[x][y]<<" "<<_mapData[x*4][y*4]<<std::endl;
 						System::FatalError("Trying to place a "+unit.type().getName()+
 								" in an already occupied tile");
 					}
@@ -433,7 +431,6 @@ public:
 					_buildingData[x][y] = false;
 				}
 			}
-			std::cerr<<"removed building\n";
 			_validDistances = false;
 		}
 		else
