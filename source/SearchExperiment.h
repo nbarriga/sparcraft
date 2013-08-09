@@ -64,6 +64,10 @@ protected:
 
     Position    getRandomPosition(  const PositionType & xlimit, const PositionType & ylimit);
 
+    void addLegalState(svv & unitTypes, ivv & numUnits,
+    		const PositionType cx[2], const PositionType cy[2],
+    		const PositionType & xRadius, const PositionType & yRadius);
+
     void   addSeparatedState(	std::vector<std::string> & unitTypes, std::vector<int> & numUnits,
                                     const int cx1, const int cy1, const int cx2, const int cy2,
 								    const PositionType & xLimit, const PositionType & yLimit);

@@ -341,6 +341,41 @@ void SearchExperiment::addState(const std::string & line)
             parseStateDescriptionFile(filename);
         }
     }
+    else if (strcmp(stateType.c_str(), "LegalState") == 0)
+    {
+    	int xRadius, yRadius;
+    	int cx[2], cy[2], playerTypes[2];
+    	svv unitVec;
+    	ivv numUnitVec;
+
+    	iss >> xRadius;
+    	iss >> yRadius;
+
+    	for(int player=0;player<2;player++){
+    		unitVec.push_back(sv());
+    		numUnitVec.push_back(iv());
+
+    		iss >> cx[player];
+    		iss >> cy[player];
+    		iss >> playerTypes[player];
+
+
+    		std::string unitType;
+    		int numUnits;
+
+    		for(int i=0;i<playerTypes[player];i++){
+    			iss >> unitType;
+    			iss >> numUnits;
+    			unitVec[player].push_back(unitType);
+    			numUnitVec[player].push_back(numUnits);
+    		}
+    	}
+
+    	for (int i(0); i<numStates; ++i)
+    	{
+    		addLegalState(unitVec, numUnitVec, cx, cy, xRadius, yRadius);
+    	}
+    }
     else if (strcmp(stateType.c_str(), "SeparatedState") == 0)
     {
         int xLimit, yLimit;
@@ -693,6 +728,50 @@ GameState SearchExperiment::getSymmetricState( std::vector<std::string> & unitTy
     //std::cout << std::endl;
 	state.finishedMoving();
 	return state;
+}
+
+void SearchExperiment::addLegalState(svv & unitTypes, ivv & numUnits,
+		const PositionType cx[2], const PositionType cy[2],
+		const PositionType & xRadius, const PositionType & yRadius)
+{
+	GameState state;
+	if(!map){
+		System::FatalError("Need to set map before setting the state.");
+	}
+	Map localMap=*map;
+	for(int player=0;player<2;player++){
+		for (size_t i(0); i<unitTypes[player].size(); ++i)
+		{
+			BWAPI::UnitType type = BWAPI::UnitTypes::getUnitType(unitTypes[player][i]);
+
+			for (int u(0); u<numUnits[player][i]; ++u)
+			{
+
+				//buildings need to be aligned to build tiles.
+				//all units need to be in legal position according to map
+				//units need to be not colliding with each other
+				Position pos;
+				int n=50;
+				do{
+					Position r((rand.nextInt() % (2*xRadius)) - xRadius, (rand.nextInt() % (2*yRadius)) - yRadius);
+					pos = Position(cx[player] + r.x(), cy[player] + r.y());
+					n--;
+				}while(n>0&&
+						(pos.x()<0||pos.y()<0||
+						!localMap.isWalkable(pos)||
+						(type.isBuilding()&&!localMap.canBuildHere(type,pos))));
+				if(n==0){
+					std::cout<<"LegalState retried 50 times to set initial location and failed\n";
+				}
+				SparCraft::Unit unit(type,player,pos);
+				localMap.addUnit(unit);
+				state.addUnit(type, player, pos);
+			}
+		}
+	}
+	state.finishedMoving();
+
+	states.push_back(state);
 }
 
 void SearchExperiment::addSeparatedState(  std::vector<std::string> & unitTypes, std::vector<int> & numUnits,

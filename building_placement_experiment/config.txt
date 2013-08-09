@@ -83,6 +83,18 @@ Player 1 Defend
 
 ##################################################
 #
+#  Map file to use for the simulation, all states will use this map.
+#  Map file is used to define walkable boundaries for the simulation
+#  Comment out line to use no map
+#  No Map - Default map size is 1280*720 pixels all tiles walkable
+#  If this map is specified, all units must be placed on walkable tiles within map boundaries or experiment will not run
+#
+##################################################
+
+MapFile building_placement_experiment/destination_map.txt 240 1776
+
+##################################################
+#
 #  Specify the states in the experiment
 #  See map file description to specify legal unit positions
 #
@@ -95,7 +107,8 @@ Player 1 Defend
 ##################################################
 
 # Sample StateDescriptionFile States
-State StateDescriptionFile 1 building_placement_experiment/city_assault_state.txt
+#State StateDescriptionFile 1 building_placement_experiment/city_assault_state.txt
+State LegalState 1 320 320 1520 1776 2 Protoss_Zealot 4 Protoss_Dragoon 6 240 1776 1 Protoss_Photon_Cannon 7
 
 
 ##################################################
@@ -111,17 +124,6 @@ State StateDescriptionFile 1 building_placement_experiment/city_assault_state.tx
 
 ResultsFile sample_exp false
 
-##################################################
-#
-#  Map file to use for the simulation, all states will use this map.
-#  Map file is used to define walkable boundaries for the simulation
-#  Comment out line to use no map
-#  No Map - Default map size is 1280*720 pixels all tiles walkable
-#  If this map is specified, all units must be placed on walkable tiles within map boundaries or experiment will not run
-#
-##################################################
-
-MapFile building_placement_experiment/destination_map.txt 1200 400
 
 ##################################################
 #
