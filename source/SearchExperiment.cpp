@@ -9,7 +9,7 @@ SearchExperiment::SearchExperiment(const std::string & configFile)
 	, rand(0, std::numeric_limits<int>::max(), 0)
 {
     configFileSmall = getBaseFilename(configFile);
-    map = new Map(40, 22);
+//    map = new Map(40, 22);
     setCurrentDateTime();
     parseConfigFile(configFile);
     writeConfig(configFile);
@@ -892,6 +892,9 @@ std::string SearchExperiment::getBaseFilename(const std::string & filename)
 
 void SearchExperiment::runExperiment()
 {
+	if(!map){
+		map=new Map(40, 22);
+	}
     std::ofstream results(getResultsOutFileName().c_str());
     if (!results.is_open())
     {
@@ -901,8 +904,6 @@ void SearchExperiment::runExperiment()
     // set the map file for all states
     for (size_t state(0); state < states.size(); ++state)
 	{
-    	//todo: set actual goal from map
-    	map->setGoal(SparCraft::Position(800,500));
         states[state].setMap(*map);
     }
 
@@ -970,7 +971,7 @@ void SearchExperiment::runExperiment()
 
 				// play the game to the end
 				g.play();
-				
+
 				ScoreType gameEval = g.getState().eval(Players::Player_One, SparCraft::EvaluationMethods::LTD2).val();
 
                 numGames[p1Player][p2Player]++;
