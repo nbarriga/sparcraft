@@ -219,22 +219,18 @@ public:
 		SparCraft::System::FatalError("Not yet Implemented");
 	}
 
-	const bool doesCollide(const SparCraft::Unit & unit, const SparCraft::Position & pixelPosition) const{
+	const bool doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const{
 		//todo: check against other units
 		//todo: check the way, not just the end position
-		BWAPI::Position start(unit.pos().x(),unit.pos().y());
 		BWAPI::Position dest(pixelPosition.x(),pixelPosition.y());
-		BWAPI::TilePosition tStart(start);
 		BWAPI::TilePosition tDest(dest);
 
 
-		int startX = (dest.x() - unit.type().dimensionLeft()) / TILE_SIZE;
-		int endX   = (dest.x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-		int startY = (dest.y() - unit.type().dimensionUp()) / TILE_SIZE;
-		int endY   = (dest.y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+		int startX = (dest.x() - type.dimensionLeft()) / TILE_SIZE;
+		int endX   = (dest.x() + type.dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
+		int startY = (dest.y() - type.dimensionUp()) / TILE_SIZE;
+		int endY   = (dest.y() + type.dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
 
-//		std::cerr<<unit.type().dimensionLeft()<<" "<<unit.type().dimensionRight()
-//				<<" "<<unit.type().dimensionUp()<<" "<<unit.type().dimensionDown()<<std::endl;
 		for (int x = startX; x <= endX && x < (int)getBuildTileWidth(); ++x)
 		{
 			for (int y = startY; y <= endY && y < (int)getBuildTileHeight(); ++y)
@@ -245,7 +241,6 @@ public:
 			}
 		}
 		return false;
-//		return _buildingData[tDest.x()][tDest.y()];
 	}
 
 	const bool isWalkable(const SparCraft::Position & pixelPosition) const
