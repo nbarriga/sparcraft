@@ -81,7 +81,7 @@ void BuildingPlacementExperiment::runExperiment(){
 				// we want to use in the GA.  The ga doesn't operate on this genome in the
 				// optimization - it just uses it to clone a population of genomes.
 
-				BWAPI::TilePosition goal(BWAPI::Position(1200,400));
+				BWAPI::TilePosition goal(map->getGoal().x()/TILE_SIZE,map->getGoal().y()/TILE_SIZE);
 
 				std::vector<Unit> buildings,attackers,defenders;
 				int units=states[state].numUnits(Players::Player_One)+states[state].numUnits(Players::Player_Two);
