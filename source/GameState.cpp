@@ -506,7 +506,7 @@ void GameState::addUnit(const Unit & u)
 //    {
 //        System::FatalError("GameState has non-unique Unit ID values");
 //    }
-    _map.addUnit(getUnit(u.player(), _numUnits[u.player()]));
+    _map.addUnit(getUnit(u.player(), _numUnits[u.player()]-1));
 }
 
 // Add a unit with given parameters to the state
@@ -532,7 +532,7 @@ void GameState::addUnit(const BWAPI::UnitType type, const IDType playerID, const
 	finishedMoving();
 	calculateStartingHealth();
 
-	_map.addUnit(getUnit(playerID, _numUnits[playerID]));
+	_map.addUnit(getUnit(playerID, _numUnits[playerID]-1));
 }
 
 // Add a given unit to the state
@@ -553,7 +553,7 @@ void GameState::addUnitWithID(const Unit & u)
 	finishedMoving();
 	calculateStartingHealth();
 
-	_map.addUnit(getUnit(u.player(), _numUnits[u.player()]));
+	_map.addUnit(getUnit(u.player(), _numUnits[u.player()-1]));
 }
 
 void GameState::sortUnits()
