@@ -28,7 +28,7 @@ std::cout<<"genome: "<<genome<<std::endl;
 	state.setMap(*_map);
 	for(int i=0;i<genome.size();i++){
 		Gene *gene=genome[i];
-		BWAPI::Position pos(gene->getPos());
+		BWAPI::Position pos(gene->getTilePos());
 //		std::cout<<"building unit: "<<gene->getType().getName()<<std::endl;
 		state.addUnit(gene->getType(),Players::Player_Two,SparCraft::Position(pos.x(),pos.y()));
 	}
@@ -118,8 +118,9 @@ bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
 		BWAPI::TilePosition& offset) {
 
 
-	BWAPI::TilePosition newPos=genome[pos]->getPos()+offset;
-	if(_map->canBuildHere(newPos)){
+	BWAPI::TilePosition newTilePos=genome[pos]->getTilePos()+offset;
+	SparCraft::Position newPos(newTilePos.x()*TILE_SIZE,newTilePos.y()*TILE_SIZE);
+	if(_map->canBuildHere(genome[pos]->getType(),newPos)){
 		genome[pos]->move(offset);
 		bool legal=true;
 		for(int j=0; j<genome.size(); j++){
@@ -221,8 +222,8 @@ int GeneticOperators::Crossover(const GAGenome& parent1, const GAGenome& parent2
 			if(GAFlipCoin(0.5)){
 				Gene* temp1=c1[i];
 				Gene* temp2=c2[i];
-				temp1->move(temp2->getPos()-temp1->getPos());
-				temp2->move(temp1->getPos()-temp2->getPos());
+				temp1->move(temp2->getTilePos()-temp1->getTilePos());
+				temp2->move(temp1->getTilePos()-temp2->getTilePos());
 				std::cout<<"exchanging\n";
 			}
 		}

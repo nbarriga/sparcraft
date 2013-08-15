@@ -36,39 +36,39 @@ std::ostream& operator<< (std::ostream& stream, const Gene& building){
 }
 
 bool Gene::collides(const Gene& other) const{
-	int otherLeft=other.getPos().x();
+	int otherLeft=other.getTilePos().x();
 	int otherRight=otherLeft+other.getType().tileWidth()-1;
-	int otherTop=other.getPos().y();
+	int otherTop=other.getTilePos().y();
 	int otherBottom=otherTop+other.getType().tileHeight()-1;
 
-	int thisLeft=getPos().x();
-		int thisRight=thisLeft+getType().tileWidth();
-		int thisTop=getPos().y();
-		int thisBottom=thisTop+getType().tileHeight();
+	int thisLeft=getTilePos().x();
+	int thisRight=thisLeft+getType().tileWidth()-1;
+	int thisTop=getTilePos().y();
+	int thisBottom=thisTop+getType().tileHeight()-1;
 
-		if(
-				((thisLeft<=otherRight&&thisLeft>=otherLeft)||
-						(thisRight>=otherLeft&&thisRight<=otherRight)
-				)&&
-				(
-						(thisTop<=otherBottom&&thisTop>=otherTop)||
-						(thisBottom>=otherTop&&thisBottom<=otherBottom)
-				)){
-			return true;
-		}else{
-			return false;
+	if(
+			((thisLeft<=otherRight&&thisLeft>=otherLeft)||
+					(thisRight>=otherLeft&&thisRight<=otherRight)
+			)&&
+			(
+					(thisTop<=otherBottom&&thisTop>=otherTop)||
+					(thisBottom>=otherTop&&thisBottom<=otherBottom)
+			)){
+		return true;
+	}else{
+		return false;
 	}
 }
 
 bool operator== (Gene &b1, Gene &b2){
-	return b1.getType()==b2.getType() && b1.getPos()==b2.getPos();
+	return b1.getType()==b2.getType() && b1.getTilePos()==b2.getTilePos();
 }
 
 const BWAPI::UnitType Gene::getType() const {
 	return _type;
 }
 
-const BWAPI::TilePosition Gene::getPos() const {
+const BWAPI::TilePosition Gene::getTilePos() const {
 	return _pos;
 }
 
