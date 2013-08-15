@@ -25,8 +25,7 @@ class Map
 
 	SparCraft::Position 	_goal;
 	bool					_hasGoal;				//true if a goal has been set
-	DistanceMap				_distanceMapWalk;		// distances from every walk tile to a goal tile
-	bool					_validDistances;		// true if distances are valid, false if buildings have changed
+	std::map<SparCraft::Position, DistanceMap> _distanceMaps;//distances from every walk tile to a given position
 
 	const Position getWalkPosition(const Position & pixelPosition) const
 	{
@@ -38,8 +37,7 @@ class Map
         _mapData =          bvv(_walkTileWidth,  std::vector<bool>(_walkTileHeight,  true));
 		_unitData =         bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
 		_buildingData =     bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
-		_distanceMapWalk.reset(_walkTileHeight, _walkTileWidth,8);
-		_validDistances = false;
+		_distanceMaps.clear();
 		_hasGoal = false;
     }
 
@@ -51,8 +49,6 @@ public:
 		, _buildTileWidth(0)
 		, _buildTileHeight(0)
 		, _hasGoal(false)
-		, _distanceMapWalk(0, 0, 8)
-		, _validDistances(false)
     {
     }
 
@@ -62,7 +58,6 @@ public:
 		, _walkTileHeight(bottomRightBuildTileY * 4)
 		, _buildTileWidth(bottomRightBuildTileX)
 		, _buildTileHeight(bottomRightBuildTileY)
-    	, _distanceMapWalk(bottomRightBuildTileX * 4, bottomRightBuildTileY * 4, 8)
     {
         resetVectors();
     }
@@ -72,7 +67,6 @@ public:
 		, _walkTileHeight(game->mapHeight() * 4)
 		, _buildTileWidth(game->mapWidth())
 		, _buildTileHeight(game->mapHeight())
-		, _distanceMapWalk(game->mapWidth() * 4, game->mapHeight() * 4, 8)
 	{
 		resetVectors();
 
@@ -105,11 +99,10 @@ public:
 		return _buildTileHeight;
 	}
 
-	void calculateDistances(){
-		if(!_validDistances&&_hasGoal){
-			calculateDistances(_distanceMapWalk,_walkTileWidth,_walkTileHeight,_goal.x()/8,_goal.y()/8, 8);
-		}
+	void invalidateDistances(){
+		_distanceMaps.clear();
 	}
+
 	void calculateDistances(DistanceMap& dmap,int width, int height, int xGoal, int yGoal, int tileSize){
 		int fringeSize(1);
 		int fringeIndex(0);
@@ -189,14 +182,12 @@ public:
 				fringe[fringeSize++] = nextIndex;
 			}
 		}
-
-		_validDistances=true;
 	}
 
 	void setGoal(const SparCraft::Position & goal){
 		_goal=goal;
 		_hasGoal=true;
-		_validDistances=false;
+		invalidateDistances();
 	}
 
 	const SparCraft::Position & getGoal() const{
@@ -207,16 +198,24 @@ public:
 		return _hasGoal;
 	}
 
-	const int getDistanceToGoal(const SparCraft::Position & pixelPosition) const{
-		if(!_validDistances){
-			SparCraft::System::FatalError("Distances not updated on Map");
+	const int getDistanceToGoal(const SparCraft::Position & pixelPosition){
+		if(!hasGoal()){
+			SparCraft::System::FatalError("Goal not set");
 		}
-		return _distanceMapWalk[pixelPosition];
+		return getDistance(pixelPosition,_goal);
 	}
 
-	const int getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition) const{
+	const int getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition){
 		//todo: A*
-		SparCraft::System::FatalError("Not yet Implemented");
+		std::map<SparCraft::Position, DistanceMap>::const_iterator it=_distanceMaps.find(toPosition);
+		if(it!=_distanceMaps.end()){
+			return it->second[fromPosition];
+		}else if((it=_distanceMaps.find(fromPosition))!=_distanceMaps.end()){
+			return it->second[toPosition];
+		}else{
+			_distanceMaps.insert(std::pair<SparCraft::Position,DistanceMap>(toPosition,DistanceMap(getWalkTileWidth(),getWalkTileHeight(),8)));
+			calculateDistances(_distanceMaps[toPosition],_walkTileWidth,_walkTileHeight,toPosition.x()/8,toPosition.y()/8, 8);
+		}
 	}
 
 	const bool doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const{
@@ -336,7 +335,7 @@ public:
 			if (unit->getType().isBuilding())
 			{
 				addUnit(unit);
-				_validDistances = false;
+				invalidateDistances();
 			}
 		}
 	}
@@ -360,7 +359,7 @@ public:
 					_buildingData[x][y] = true;
 				}
 			}
-			_validDistances = false;
+			invalidateDistances();
 		}
 		else
 		{
@@ -398,7 +397,7 @@ public:
 					_buildingData[x][y] = true;
 				}
 			}
-			_validDistances = false;
+			invalidateDistances();
 		}
 		else
 		{
@@ -431,7 +430,7 @@ public:
 					_buildingData[x][y] = false;
 				}
 			}
-			_validDistances = false;
+			invalidateDistances();
 		}
 		else
 		{

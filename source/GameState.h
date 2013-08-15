@@ -108,7 +108,7 @@ public:
 		  
     // map-related functions
     void                    setMap(const Map & map);
-    const Map &             getMap()                                                                const;
+    Map &             		getMap();
     const bool              isWalkable(const Position & pos)                                        const;
     const bool              isFlyable(const Position & pos)                                         const;
 

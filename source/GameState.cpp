@@ -55,7 +55,6 @@ GameState::GameState(const std::string & filename)
 //call this before generating moves
 void GameState::beforeMoving()
 {
-	_map.calculateDistances();
 }
 
 // call this whenever we are done with moves
@@ -976,7 +975,7 @@ void GameState::setTotalLTD2(const float & p1, const float & p2)
 	_totalSumSQRT[Players::Player_Two] = p2;
 }
 
-const Map & GameState::getMap() const
+Map & GameState::getMap()
 {
 	return _map;
 }
@@ -1025,7 +1024,6 @@ void GameState::write(const std::string & filename) const
 
 bool SparCraft::GameState::goalReached(const IDType& player){
 	if(_map.hasGoal()){
-		_map.calculateDistances();
 		for (IDType u(0); u<numUnits(player); ++u){
 			const Unit & unit(getUnit(player, u));
 			if(_map.getDistanceToGoal(unit.pos())<TILE_SIZE/2){
