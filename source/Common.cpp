@@ -123,7 +123,7 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
                 System::FatalError("Non-attacking buildings not currently supported: " + type.getName());
             }
 
-            if (type.isSpellcaster())
+            if (type.isSpellcaster() && type!=BWAPI::UnitTypes::Terran_Medic)
             {
                 System::FatalError("Spell casting units not currently supported: " + type.getName());
             }

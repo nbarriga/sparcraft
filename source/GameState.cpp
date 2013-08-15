@@ -203,7 +203,9 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
             double defaultMoveDuration      = (double)Constants::Move_Distance / unit.speed();
 
             // if we can currently attack
-            double chosenTime               = std::min(timeUntilAttack, defaultMoveDuration);
+            double chosenTime               = unit.type().canAttack()?
+            		std::min(timeUntilAttack, defaultMoveDuration):
+            		defaultMoveDuration;
 
             // the chosen movement distance
             PositionType moveDistance       = (PositionType)(chosenTime * unit.speed());
