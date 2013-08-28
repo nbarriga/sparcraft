@@ -16,6 +16,7 @@ std::vector<SparCraft::Unit> GeneticOperators::_attackers=std::vector<SparCraft:
 Map* GeneticOperators::_map=NULL;
 Display* GeneticOperators::_display=NULL;
 svv GeneticOperators::_expDesc=svv();
+const int mutDistance=20;
 
 float GeneticOperators::Objective(GAGenome &g) {
 	std::cout<<"calling Objective\n";
@@ -28,9 +29,12 @@ std::cout<<"genome: "<<genome<<std::endl;
 	state.setMap(*_map);
 	for(int i=0;i<genome.size();i++){
 		Gene *gene=genome[i];
-		BWAPI::Position pos(gene->getTilePos());
+		BWAPI::TilePosition pos=gene->getTilePos();
+		BWAPI::UnitType type=gene->getType();
+		float x=pos.x()+type.tileWidth()/2.0f;
+		float y=pos.y()+type.tileHeight()/2.0f;
 //		std::cout<<"building unit: "<<gene->getType().getName()<<std::endl;
-		state.addUnit(gene->getType(),Players::Player_Two,SparCraft::Position(pos.x(),pos.y()));
+		state.addUnit(type,Players::Player_Two,SparCraft::Position(x*TILE_SIZE,y*TILE_SIZE));
 	}
 	for(std::vector<SparCraft::Unit>::const_iterator it=_defenders.begin();
 			it!=_defenders.end();it++){
@@ -73,6 +77,7 @@ void GeneticOperators::Initializer(GAGenome& g)//todo: better initializer
 	GAListGenome<Gene>& genome = (GAListGenome<Gene>&)g;
 	while(genome.head()) genome.destroy(); // destroy any pre-existing list
 
+	bool repair=false;
 	for(std::vector<SparCraft::Unit>::const_iterator it=_buildings.begin();
 			it!=_buildings.end();it++){
 
@@ -83,13 +88,17 @@ void GeneticOperators::Initializer(GAGenome& g)//todo: better initializer
 		BWAPI::TilePosition offset;
 		int n=50;
 		do{
-			offset=BWAPI::TilePosition(GARandomInt(-50,50),GARandomInt(-50,50));
+			offset=BWAPI::TilePosition(GARandomInt(-mutDistance,mutDistance),GARandomInt(-mutDistance,mutDistance));
 			n--;
 		}while(n>0&&!moveIfLegal(genome,genome.size()-1,offset));
 		if(n==0){
-			System::FatalError("Max amount of retries for initial location failed");
+			repair=true;
+			std::cout<<"Max amount of retries for initial location failed\n";
 		}
 
+	}
+	if(repair){
+		GeneticOperators::repair(genome);
 	}
 //	Mutator(genome,0.5,20);
 }
@@ -111,7 +120,7 @@ void GeneticOperators::configure(BWAPI::TilePosition& basePos,
 }
 
 int GeneticOperators::Mutator(GAGenome& g, float pmut){
-	return Mutator(g,pmut,50);
+	return Mutator(g,pmut,mutDistance);
 }
 
 bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
@@ -119,7 +128,10 @@ bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
 
 
 	BWAPI::TilePosition newTilePos=genome[pos]->getTilePos()+offset;
-	SparCraft::Position newPos(newTilePos.x()*TILE_SIZE,newTilePos.y()*TILE_SIZE);
+	BWAPI::UnitType type=genome[pos]->getType();
+	float x=newTilePos.x()+type.tileWidth()/2.0f;
+	float y=newTilePos.y()+type.tileHeight()/2.0f;
+	SparCraft::Position newPos(x*TILE_SIZE,y*TILE_SIZE);
 	if(_map->canBuildHere(genome[pos]->getType(),newPos)){
 		genome[pos]->move(offset);
 		bool legal=true;
@@ -179,21 +191,20 @@ int GeneticOperators::Mutator(GAGenome& g, float pmut, int maxJump)
 void GeneticOperators::repair(GAListGenome<Gene>& genome, int pos) {
 	int a=0,b=0,distance=0;//start with distance 0, to check if it is currently legal
 	do{
-		for(int a=0;a<=distance;a++){
-			for(int b=0;b<=distance;b++){
-				if(std::max(a,b)==distance){
+		for(int a=-distance;a<=distance;a++){
+			for(int b=-distance;b<=distance;b++){
+				if(std::max(std::abs(a),std::abs(b))==distance){
 					BWAPI::TilePosition offset(a,b);
 					if(moveIfLegal(genome,pos,offset)){
 						if(distance>0){
 							std::cout<<"repaired\n";
 						}
 						return;
-					}else{
-						distance++;
 					}
 				}
 			}
 		}
+		distance++;
 	}while(true);
 }
 

@@ -20,8 +20,11 @@ class Map
 	size_t					_buildTileHeight;
 	bvv						_mapData;	            // true if walk tile [x][y] is walkable
 
-	bvv						_unitData;	            // true if unit on build tile [x][y]
-	bvv						_buildingData;          // true if building on build tile [x][y]
+	bvv						_unitDataBuildTile;	            // true if unit on build tile [x][y]
+	bvv						_buildingDataBuildTile;          // true if building on build tile [x][y]
+
+	bvv						_unitDataWalkTile;	            // true if unit on walk tile [x][y]
+	bvv						_buildingDataWalkTile;          // true if building on walk tile [x][y]
 
 	SparCraft::Position 	_goal;
 	bool					_hasGoal;				//true if a goal has been set
@@ -35,8 +38,10 @@ class Map
     void resetVectors()
     {
         _mapData =          bvv(_walkTileWidth,  std::vector<bool>(_walkTileHeight,  true));
-		_unitData =         bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
-		_buildingData =     bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
+		_unitDataBuildTile =         bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
+		_buildingDataBuildTile =     bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
+		_unitDataWalkTile =         bvv(_walkTileWidth, std::vector<bool>(_walkTileHeight, false));
+		_buildingDataWalkTile =     bvv(_walkTileWidth, std::vector<bool>(_walkTileHeight, false));
 		_distanceMaps.clear();
 		_hasGoal = false;
     }
@@ -103,7 +108,29 @@ public:
 		_distanceMaps.clear();
 	}
 
+	std::pair<int,int> getClosestLegal(int xGoal, int yGoal){
+		int distance=0;//start with distance 0, to check if it is currently legal
+		do{
+			for(int a=-distance;a<=distance;a++){
+				for(int b=-distance;b<=distance;b++){
+					if(std::max(std::abs(a),std::abs(b))==distance){
+						if(isWalkable(xGoal+a,yGoal+b)&&!_buildingDataWalkTile[xGoal+a][yGoal+b]){
+							return std::pair<int,int>(xGoal+a,yGoal+b);
+						}
+					}
+				}
+			}
+			distance++;
+		}while(distance<10);
+		return std::pair<int,int>(-1,-1);
+	}
+
 	void calculateDistances(DistanceMap& dmap,int width, int height, int xGoal, int yGoal, int tileSize){
+		std::pair<int,int> legalGoal=getClosestLegal(xGoal,yGoal);
+		if(legalGoal.first!=-1 && legalGoal.second!=-1){
+			xGoal=legalGoal.first;
+			yGoal=legalGoal.second;
+		}
 		int fringeSize(1);
 		int fringeIndex(0);
 
@@ -129,7 +156,7 @@ public:
 			// search up
 			nextIndex = (currentIndex > width) ? (currentIndex - width) : -1;
 			if ((nextIndex != -1) && dmap[nextIndex] == -1 &&
-					!_buildingData[(nextIndex%width)*tileSize/TILE_SIZE][(nextIndex/width)*tileSize/TILE_SIZE]&&
+					!_buildingDataWalkTile[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8]&&
 					_mapData[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8])
 			{
 				// set the distance based on distance to current cell
@@ -143,7 +170,7 @@ public:
 			// search down
 			nextIndex = (currentIndex + width < size) ? (currentIndex + width) : -1;
 			if ((nextIndex != -1) && dmap[nextIndex] == -1 &&
-					!_buildingData[(nextIndex%width)*tileSize/TILE_SIZE][(nextIndex/width)*tileSize/TILE_SIZE] &&
+					!_buildingDataWalkTile[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8] &&
 					_mapData[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8])
 			{
 				// set the distance based on distance to current cell
@@ -157,7 +184,7 @@ public:
 			// search left
 			nextIndex = (currentIndex % width > 0) ? (currentIndex - 1) : -1;
 			if ((nextIndex != -1) && dmap[nextIndex] == -1
-					&& !_buildingData[(nextIndex%width)*tileSize/TILE_SIZE][(nextIndex/width)*tileSize/TILE_SIZE] &&
+					&& !_buildingDataWalkTile[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8] &&
 					_mapData[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8])
 			{
 				// set the distance based on distance to current cell
@@ -171,7 +198,7 @@ public:
 			// search right
 			nextIndex = (currentIndex % width < width - 1) ? (currentIndex + 1) : -1;
 			if ((nextIndex != -1) && dmap[nextIndex] == -1
-					&& !_buildingData[(nextIndex%width)*tileSize/TILE_SIZE][(nextIndex/width)*tileSize/TILE_SIZE] &&
+					&& !_buildingDataWalkTile[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8] &&
 					_mapData[(nextIndex%width)*tileSize/8][(nextIndex/width)*tileSize/8])
 			{
 				// set the distance based on distance to current cell
@@ -214,27 +241,33 @@ public:
 			return it->second[toPosition];
 		}else{
 			_distanceMaps.insert(std::pair<SparCraft::Position,DistanceMap>(toPosition,DistanceMap(getWalkTileWidth(),getWalkTileHeight(),8)));
+			std::cout<<"calculating new distance to building at: "<<toPosition.x()<<" "<<toPosition.y()<<std::endl;
 			calculateDistances(_distanceMaps[toPosition],_walkTileWidth,_walkTileHeight,toPosition.x()/8,toPosition.y()/8, 8);
+			it=_distanceMaps.find(toPosition);
+			if(it!=_distanceMaps.end()){
+				std::cout<<"dist= "<<it->second[fromPosition]<<std::endl;
+				return it->second[fromPosition];
+			}else{
+				System::FatalError("Couldn't find distance we just calculated");
+				return -1;//to avoid warning
+			}
 		}
 	}
 
 	const bool doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const{
 		//todo: check against other units
 		//todo: check the way, not just the end position
-		BWAPI::Position dest(pixelPosition.x(),pixelPosition.y());
-		BWAPI::TilePosition tDest(dest);
 
+		int startX = (pixelPosition.x() - type.dimensionLeft()) / 8;
+		int endX   = (pixelPosition.x() + type.dimensionRight() + 8 - 1) / 8; // Division - round up
+		int startY = (pixelPosition.y() - type.dimensionUp()) / 8;
+		int endY   = (pixelPosition.y() + type.dimensionDown() + 8 - 1) / 8;
 
-		int startX = (dest.x() - type.dimensionLeft()) / TILE_SIZE;
-		int endX   = (dest.x() + type.dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-		int startY = (dest.y() - type.dimensionUp()) / TILE_SIZE;
-		int endY   = (dest.y() + type.dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
-
-		for (int x = startX; x <= endX && x < (int)getBuildTileWidth(); ++x)
+		for (int x = startX; x <= endX && x < (int)getWalkTileWidth(); ++x)
 		{
-			for (int y = startY; y <= endY && y < (int)getBuildTileHeight(); ++y)
+			for (int y = startY; y <= endY && y < (int)getWalkTileHeight(); ++y)
 			{
-				if(_buildingData[x][y] == true){
+				if(_buildingDataWalkTile[x][y] == true){
 					return true;
 				}
 			}
@@ -276,7 +309,7 @@ public:
 
 	const bool getUnitData(const size_t & buildTileX, const size_t & buildTileY) const
 	{
-		return _unitData[buildTileX][buildTileY];
+		return _unitDataBuildTile[buildTileX][buildTileY];
 	}
 
 	void setMapData(const size_t & walkTileX, const size_t & walkTileY, const bool val)
@@ -286,7 +319,7 @@ public:
 
 	void setUnitData(BWAPI::Game * game)
 	{
-		_unitData = bvv(getBuildTileWidth(), std::vector<bool>(getBuildTileHeight(), true));
+		_unitDataBuildTile = bvv(getBuildTileWidth(), std::vector<bool>(getBuildTileHeight(), true));
 
 		BOOST_FOREACH (BWAPI::Unit * unit, game->getAllUnits())
 		{
@@ -300,8 +333,8 @@ public:
 	const bool canBuildHere(BWAPI::TilePosition pos)
 	{
 		return pos.x()>=0 && pos.y()>=0 && pos.x()<_buildTileWidth && pos.y()<_buildTileHeight &&
-				!_unitData[pos.x()][pos.y()] &&
-				!_buildingData[pos.x()][pos.y()] &&
+				!_unitDataBuildTile[pos.x()][pos.y()] &&
+				!_buildingDataBuildTile[pos.x()][pos.y()] &&
 				_mapData[pos.x()*4][pos.y()*4];
 	}
 
@@ -310,13 +343,14 @@ public:
 		if(!type.isBuilding()){
 			System::FatalError("Map::canBuildHere(UnitType,Position) is only meant for building types.");
 		}
-		int tx = pos.x() / TILE_SIZE;
-		int ty = pos.y() / TILE_SIZE;
-		int sx = type.tileWidth();
-		int sy = type.tileHeight();
-		for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
+
+		int startX = (pos.x() - type.dimensionLeft()) / TILE_SIZE;
+		int endX   = (pos.x() + type.dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
+		int startY = (pos.y() - type.dimensionUp()) / TILE_SIZE;
+		int endY   = (pos.y() + type.dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+		for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
 		{
-			for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
+			for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
 			{
 				if(!canBuildHere(BWAPI::TilePosition(x,y))){
 					return false;
@@ -324,11 +358,26 @@ public:
 			}
 		}
 		return true;
+
+//		int tx = pos.x() / TILE_SIZE;
+//		int ty = pos.y() / TILE_SIZE;
+//		int sx = type.tileWidth();
+//		int sy = type.tileHeight();
+//		for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
+//		{
+//			for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
+//			{
+//				if(!canBuildHere(BWAPI::TilePosition(x,y))){
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
 	}
 
 	void setBuildingData(BWAPI::Game * game)
 	{
-		_buildingData = bvv(getBuildTileWidth(), std::vector<bool>(getBuildTileHeight(), true));
+		_buildingDataBuildTile = bvv(getBuildTileWidth(), std::vector<bool>(getBuildTileHeight(), true));
 
 		BOOST_FOREACH (BWAPI::Unit * unit, game->getAllUnits())
 		{
@@ -342,74 +391,53 @@ public:
 
 	void addUnit(BWAPI::Unit * unit)
 	{
-		if (unit->getType().isBuilding())
-		{
-			int tx = unit->getPosition().x() / TILE_SIZE;
-			int ty = unit->getPosition().y() / TILE_SIZE;
-			int sx = unit->getType().tileWidth(); 
-			int sy = unit->getType().tileHeight();
-			for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
-			{
-				for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
-				{
-					if(!canBuildHere(BWAPI::TilePosition(x,y))){
-						System::FatalError("Trying to place a "+unit->getType().getName()+
-								" in an already occupied tile");
-					}
-					_buildingData[x][y] = true;
-				}
-			}
-			invalidateDistances();
-		}
-		else
-		{
-			int startX = (unit->getPosition().x() - unit->getType().dimensionLeft()) / TILE_SIZE;
-			int endX   = (unit->getPosition().x() + unit->getType().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-			int startY = (unit->getPosition().y() - unit->getType().dimensionUp()) / TILE_SIZE;
-			int endY   = (unit->getPosition().y() + unit->getType().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
-			for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
-			{
-				for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
-				{
-					_unitData[x][y] = true;
-				}
-			}
-		}
+		SparCraft::Position pos(unit->getPosition().x(),unit->getPosition().y());
+		SparCraft::Unit spunit(unit->getType(),unit->getPlayer()->getID(),pos);
+		addUnit(spunit);
 	}
 
 	void addUnit(const SparCraft::Unit & unit)
 	{
-		if (unit.type().isBuilding())
+
+		int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
+		int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
+		int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
+		int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+		for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
 		{
-			int tx = unit.pos().x() / TILE_SIZE;
-			int ty = unit.pos().y() / TILE_SIZE;
-			int sx = unit.type().tileWidth();
-			int sy = unit.type().tileHeight();
-			for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
+			for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
 			{
-				for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
-				{
+				if (unit.type().isBuilding()){
 					if(!canBuildHere(BWAPI::TilePosition(x,y))){
-						std::cerr<<x<<" "<<y<<" "<<_buildingData[x][y]<<" "<<_unitData[x][y]<<" "<<_mapData[x*4][y*4]<<std::endl;
+						std::cerr<<"\nwrong place:"<<x<<" "<<y<<" "<<
+								_buildingDataBuildTile[x][y]<<" "<<
+								_unitDataBuildTile[x][y]<<" "<<
+								_mapData[x*4][y*4]<<std::endl;
 						System::FatalError("Trying to place a "+unit.type().getName()+
 								" in an already occupied tile");
 					}
-					_buildingData[x][y] = true;
+					_buildingDataBuildTile[x][y] = true;
+					invalidateDistances();
+				}else{
+					_unitDataBuildTile[x][y] = true;
 				}
 			}
-			invalidateDistances();
 		}
-		else
+
+		startX = (unit.position().x() - unit.type().dimensionLeft()) / 8;
+		endX   = (unit.position().x() + unit.type().dimensionRight() + 8 - 1) / 8; // Division - round up
+		startY = (unit.position().y() - unit.type().dimensionUp()) / 8;
+		endY   = (unit.position().y() + unit.type().dimensionDown() + 8 - 1) / 8;
+		for (int x = startX; x < endX && x < (int)getWalkTileWidth(); ++x)
 		{
-			int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
-			int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-			int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
-			int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
-			for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
+			for (int y = startY; y < endY && y < (int)getWalkTileHeight(); ++y)
 			{
-				for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
-				{
-					_unitData[x][y] = true;
+				if (unit.type().isBuilding()){
+					//won't check if it's a valid location because we already did above.
+					_buildingDataWalkTile[x][y] = true;
+					invalidateDistances();
+				}else{
+					_unitDataWalkTile[x][y] = true;
 				}
 			}
 		}
@@ -417,33 +445,36 @@ public:
 
 	void removeUnit(const SparCraft::Unit & unit)
 	{
-		if (unit.type().isBuilding())
+		int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
+		int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
+		int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
+		int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+		for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
 		{
-			int tx = unit.pos().x() / TILE_SIZE;
-			int ty = unit.pos().y() / TILE_SIZE;
-			int sx = unit.type().tileWidth();
-			int sy = unit.type().tileHeight();
-			for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
+			for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
 			{
-				for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
-				{
-					_buildingData[x][y] = false;
+				if (unit.type().isBuilding()){
+					_buildingDataBuildTile[x][y] = false;
+					invalidateDistances();
+				}else{
+					_unitDataBuildTile[x][y] = false;
 				}
 			}
-			invalidateDistances();
 		}
-		else
+
+		startX = (unit.position().x() - unit.type().dimensionLeft()) / 8;
+		endX   = (unit.position().x() + unit.type().dimensionRight() + 8 - 1) / 8; // Division - round up
+		startY = (unit.position().y() - unit.type().dimensionUp()) / 8;
+		endY   = (unit.position().y() + unit.type().dimensionDown() + 8 - 1) / 8;
+		for (int x = startX; x < endX && x < (int)getWalkTileWidth(); ++x)
 		{
-			int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
-			int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-			int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
-			int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
-			for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
+			for (int y = startY; y < endY && y < (int)getWalkTileHeight(); ++y)
 			{
-				for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
-				{
-					//todo: this won't work if more than one unit occupies the same build tile
-					_unitData[x][y] = false;
+				if (unit.type().isBuilding()){
+					_buildingDataWalkTile[x][y] = false;
+					invalidateDistances();
+				}else{
+					_unitDataWalkTile[x][y] = false;
 				}
 			}
 		}
