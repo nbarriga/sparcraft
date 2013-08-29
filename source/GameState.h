@@ -71,7 +71,11 @@ public:
     const Unit &            getUnitByID(const IDType & player, const IDType & unitID)               const;
           Unit &            getUnitByID(const IDType & player, const IDType & unitID);
     const Unit &            getClosestEnemyUnit(const IDType & player, const IDType & unitIndex);
+    const Unit &            getClosestEnemyBuilding(const IDType & player, const IDType & unitIndex);
     const Unit &            getClosestOurUnit(const IDType & player, const IDType & unitIndex);
+    const Unit &            getClosestOurBuilding(const IDType & player, const IDType & unitIndex);
+    const Unit &            getClosestOurDamagedBuilding(const IDType & player, const IDType & unitIndex);
+    const Unit &            getClosestOurWoundedUnit(const IDType & player, const IDType & unitIndex);
     const Unit &            getUnitDirect(const IDType & player, const IDType & unit)               const;
     const Unit &            getNeutralUnit(const size_t & u)                                        const;
     

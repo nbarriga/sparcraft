@@ -108,6 +108,25 @@ public:
 		_distanceMaps.clear();
 	}
 
+	bool canWalkStraight(Position from ,Position to, int range){
+		Position wpFrom = getWalkPosition(from);
+		Position wpTo = getWalkPosition(to);
+		int xDiff,yDiff;
+		do{
+			if(!isWalkable(wpFrom.x(),wpFrom.y())||_buildingDataWalkTile[wpFrom.x()][wpFrom.y()]){
+				return false;
+			}
+			xDiff=wpTo.x()-wpFrom.x();
+			yDiff=wpTo.y()-wpFrom.y();
+			if(abs(xDiff)>abs(yDiff)){
+				wpFrom=wpFrom+Position((xDiff > 0) - (xDiff < 0),0);
+			}else{
+				wpFrom=wpFrom+Position(0,(yDiff > 0) - (yDiff < 0));
+			}
+		}while(xDiff*yDiff>range*range);
+		return true;
+	}
+
 	std::pair<int,int> getClosestLegal(int xGoal, int yGoal){
 		int distance=0;//start with distance 0, to check if it is currently legal
 		do{
@@ -241,11 +260,11 @@ public:
 			return it->second[toPosition];
 		}else{
 			_distanceMaps.insert(std::pair<SparCraft::Position,DistanceMap>(toPosition,DistanceMap(getWalkTileWidth(),getWalkTileHeight(),8)));
-			std::cout<<"calculating new distance to building at: "<<toPosition.x()<<" "<<toPosition.y()<<std::endl;
+//			std::cout<<"calculating new distance to building at: "<<toPosition.x()<<" "<<toPosition.y()<<std::endl;
 			calculateDistances(_distanceMaps[toPosition],_walkTileWidth,_walkTileHeight,toPosition.x()/8,toPosition.y()/8, 8);
 			it=_distanceMaps.find(toPosition);
 			if(it!=_distanceMaps.end()){
-				std::cout<<"dist= "<<it->second[fromPosition]<<std::endl;
+//				std::cout<<"dist= "<<it->second[fromPosition]<<std::endl;
 				return it->second[fromPosition];
 			}else{
 				System::FatalError("Couldn't find distance we just calculated");

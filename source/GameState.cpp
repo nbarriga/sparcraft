@@ -466,6 +466,134 @@ const Unit & GameState::getClosestEnemyUnit(const IDType & player, const IDType 
 	return getUnit(enemyPlayer, minUnitInd);
 }
 
+const Unit & GameState::getClosestEnemyBuilding(const IDType & player, const IDType & unitIndex)
+{
+	const IDType enemyPlayer(getEnemy(player));
+	const Unit & myUnit(getUnit(player,unitIndex));
+
+	PositionType minDist(1000000);
+	IDType minUnitInd(0);
+    IDType minUnitID(255);
+
+	Position currentPos = myUnit.currentPosition(_currentTime);
+
+	for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
+	{
+		Unit & enemyUnit(getUnit(enemyPlayer, u));
+		if(enemyUnit.type().isBuilding()){
+			PositionType distSq = myUnit.getDistanceSqToUnit(enemyUnit, _currentTime);
+
+			if ((distSq < minDist))// || ((distSq == minDist) && (enemyUnit.ID() < minUnitID)))
+			{
+				minDist = distSq;
+				minUnitInd = u;
+				minUnitID = enemyUnit.ID();
+			}
+			else if ((distSq == minDist) && (enemyUnit.ID() < minUnitID))
+			{
+				minDist = distSq;
+				minUnitInd = u;
+				minUnitID = enemyUnit.ID();
+			}
+		}
+	}
+
+	return getUnit(enemyPlayer, minUnitInd);
+}
+
+const Unit& SparCraft::GameState::getClosestOurBuilding(const IDType& player,
+		const IDType& unitIndex)
+{
+	const Unit & myUnit(getUnit(player,unitIndex));
+
+	size_t minDist(1000000);
+	IDType minUnitInd(0);
+
+	Position currentPos = myUnit.currentPosition(_currentTime);
+
+	for (IDType u(0); u<_numUnits[player]; ++u)
+	{
+
+		Unit & ourUnit(getUnit(player, u));
+
+		if(ourUnit.type().isBuilding()){
+			//size_t distSq(myUnit.distSq(getUnit(enemyPlayer,u)));
+			size_t distSq(currentPos.getDistanceSq(ourUnit.currentPosition(_currentTime)));
+
+			if (distSq < minDist)
+			{
+				minDist = distSq;
+				minUnitInd = u;
+			}
+		}
+	}
+
+	return getUnit(player, minUnitInd);
+}
+
+const Unit& SparCraft::GameState::getClosestOurDamagedBuilding(
+		const IDType& player, const IDType& unitIndex)
+{
+	const Unit & myUnit(getUnit(player,unitIndex));
+
+	size_t minDist(1000000);
+	IDType minUnitInd(0);
+
+	Position currentPos = myUnit.currentPosition(_currentTime);
+
+	for (IDType u(0); u<_numUnits[player]; ++u)
+	{
+
+		Unit & ourUnit(getUnit(player, u));
+
+		if(ourUnit.type().isBuilding()&&ourUnit.currentHP()<ourUnit.maxHP()){
+			//size_t distSq(myUnit.distSq(getUnit(enemyPlayer,u)));
+			size_t distSq(currentPos.getDistanceSq(ourUnit.currentPosition(_currentTime)));
+
+			if (distSq < minDist)
+			{
+				minDist = distSq;
+				minUnitInd = u;
+			}
+		}
+	}
+
+	return getUnit(player, minUnitInd);
+}
+
+const Unit& SparCraft::GameState::getClosestOurWoundedUnit(const IDType& player,
+		const IDType& unitIndex)
+{
+	const Unit & myUnit(getUnit(player,unitIndex));
+
+	size_t minDist(1000000);
+	IDType minUnitInd(0);
+
+	Position currentPos = myUnit.currentPosition(_currentTime);
+
+	for (IDType u(0); u<_numUnits[player]; ++u)
+	{
+		Unit & ourUnit(getUnit(player, u));
+
+		if (u == unitIndex || ourUnit.canHeal())
+		{
+			continue;
+		}
+
+		if(ourUnit.currentHP()<ourUnit.maxHP()){
+			size_t distSq(currentPos.getDistanceSq(getUnit(player, u).currentPosition(_currentTime)));
+
+			if (distSq < minDist)
+			{
+				minDist = distSq;
+				minUnitInd = u;
+			}
+		}
+	}
+
+	return getUnit(player, minUnitInd);
+}
+
 const bool GameState::checkFull(const IDType & player) const
 {
     if (numUnits(player) >= Constants::Max_Units)
