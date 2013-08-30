@@ -2,14 +2,13 @@
 
 using namespace SparCraft;
 
-Player_Defend::Player_Defend (const IDType & playerID)
-{
-	_playerID = playerID;
+Player_Defend::Player_Defend (const IDType & playerID){
+	_playerID=playerID;
 }
 
 void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
-    moveVec.clear();
+	moveVec.clear();
 	IDType enemy(state.getEnemy(_playerID));
 
 	Array<int, Constants::Max_Units> hpRemaining;
@@ -22,21 +21,26 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 	for (IDType u(0); u<moves.numUnits(); ++u)
 	{
 		bool foundUnitAction						(false);
+		bool foundUnitMove						(false);
 		size_t actionMoveIndex					(0);
 		double actionHighestDPS					(0);
 		size_t closestMoveIndex					(0);
 		unsigned long long closestMoveDist		(std::numeric_limits<unsigned long long>::max());
 		
-		const Unit & ourUnit				(state.getUnit(_playerID, u));
-		const Unit & closestUnit			(ourUnit.canHeal() ? state.getClosestOurUnit(_playerID, u) : state.getClosestEnemyUnit(_playerID, u));
+		const SparCraft::Unit & ourUnit				(state.getUnit(_playerID, u));
 
+		size_t mdist	= state.getMap().getDistanceToGoal(ourUnit.pos());
+//		std::cout<<"Unit: "<<ourUnit.name()<<" dist to goal: "<<mdist<<
+//						" pos: "<<ourUnit.x()<<" "<<ourUnit.y()<<
+//						" range: "<<ourUnit.range()<<
+//						" size:"<<ourUnit.type().dimensionLeft()<<" "<<ourUnit.type().dimensionRight()<<std::endl;
 		for (size_t m(0); m<moves.numMoves(u); ++m)
 		{
 			const UnitAction move						(moves.getMove(u, m));
 				
 			if ((move.type() == UnitActionTypes::ATTACK) && (hpRemaining[move._moveIndex] > 0))
 			{
-				const Unit & target				(state.getUnit(state.getEnemy(move.player()), move._moveIndex));
+				const SparCraft::Unit & target				(state.getUnit(state.getEnemy(move.player()), move._moveIndex));
 				double dpsHPValue =				(target.dpf() / hpRemaining[move._moveIndex]);
 
 				if (dpsHPValue > actionHighestDPS)
@@ -55,7 +59,7 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 			}
 			else if (move.type() == UnitActionTypes::HEAL)
 			{
-				const Unit & target				(state.getUnit(move.player(), move._moveIndex));
+				const SparCraft::Unit & target				(state.getUnit(move.player(), move._moveIndex));
 				double dpsHPValue =				(target.dpf() / hpRemaining[move._moveIndex]);
 
 				if (dpsHPValue > actionHighestDPS)
@@ -67,7 +71,9 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 			}
 			else if (move.type() == UnitActionTypes::RELOAD)
 			{
-				if (ourUnit.canAttackTarget(closestUnit, state.getTime()))
+				const boost::optional<Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
+				if (closestUnitOpt.is_initialized()&&
+						ourUnit.canAttackTarget(closestUnitOpt.get(), state.getTime()))
 				{
 					closestMoveIndex = m;
 					break;
@@ -75,28 +81,61 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 			}
 			else if (move.type() == UnitActionTypes::MOVE)
 			{
-				Position ourDest				(ourUnit.x() + Constants::Move_Dir[move._moveIndex][0], 
-												 ourUnit.y() + Constants::Move_Dir[move._moveIndex][1]);
+				Position ourDest=move.pos();
+				size_t dist=INT_MAX;
+				const boost::optional<Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
 
-				//todo: this distance needs to take pathfinding into account
-				size_t dist						(closestUnit.getDistanceSqToPosition(ourDest, state.getTime()));
+				if (closestUnitOpt.is_initialized()&&
+						closestUnitOpt.get().previousAction().type()!=UnitActionTypes::MOVE)
+				{
+					dist = state.getMap().getDistance(ourDest,closestUnitOpt.get().pos());
+				}
+				else if (closestUnitOpt.is_initialized()&&
+						state.getMap().canWalkStraight(ourDest,closestUnitOpt.get().pos(), ourUnit.range()))
+				{
+					dist = sqrt(closestUnitOpt.get().getDistanceSqToPosition(ourDest, state.getTime()));
+				}
+				else
+				{
+					const boost::optional<Unit&> & closestDamagedBuildingOpt=state.getClosestOurDamagedBuildingOpt(_playerID, u);
+					if(closestDamagedBuildingOpt.is_initialized()){
+						dist = state.getMap().getDistance(ourDest,closestDamagedBuildingOpt.get().pos());
+					}else{
+						const boost::optional<Unit&> & closestOurBuildingOpt	= state.getClosestOurBuildingOpt(_playerID, u);
+						if(closestOurBuildingOpt.is_initialized()){
+							dist = state.getMap().getDistance(ourDest,closestOurBuildingOpt.get().pos());
+							if(dist<1){//no path to nearest building?
+								//stay put
+								std::cerr<"eh?";
+							}
+						}
+					}
+				}
 
 				if (dist < closestMoveDist)
 				{
 					closestMoveDist = dist;
 					closestMoveIndex = m;
+					foundUnitMove=true;
 				}
+
 			}
 		}
 
-		size_t bestMoveIndex(foundUnitAction ? actionMoveIndex : closestMoveIndex);
+
 
 		UnitAction theMove(moves.getMove(u, actionMoveIndex));
 		if (theMove.type() == UnitActionTypes::ATTACK)
 		{
 			hpRemaining[theMove.index()] -= state.getUnit(_playerID, theMove.unit()).damage();
 		}
-			
-		moveVec.push_back(moves.getMove(u, bestMoveIndex));
+//		size_t bestMoveIndex(foundUnitAction ? actionMoveIndex : closestMoveIndex);
+		if(foundUnitAction){
+			moveVec.push_back(moves.getMove(u, actionMoveIndex));
+		}else if(foundUnitMove){
+			moveVec.push_back(moves.getMove(u, closestMoveIndex));
+		}else{
+			moveVec.push_back(UnitAction(u, _playerID, UnitActionTypes::PASS, 0));
+		}
 	}
 }

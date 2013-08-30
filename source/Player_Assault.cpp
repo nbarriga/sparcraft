@@ -2,9 +2,9 @@
 
 using namespace SparCraft;
 
-Player_Assault::Player_Assault (const IDType & playerID)
-{
-	_playerID = playerID;
+Player_Assault::Player_Assault (const IDType & playerID){
+	_playerID=playerID;
+
 }
 
 void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
@@ -27,38 +27,50 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 		size_t closestMoveIndex					(0);
 		unsigned long long closestMoveDist		(std::numeric_limits<unsigned long long>::max());
 		
-		const Unit & ourUnit				(state.getUnit(_playerID, u));
-		const Unit & closestUnit			(ourUnit.canHeal() ? state.getClosestOurUnit(_playerID, u) : state.getClosestEnemyUnit(_playerID, u));
+		const SparCraft::Unit & ourUnit				(state.getUnit(_playerID, u));
 
+		size_t mdist	= state.getMap().getDistanceToGoal(ourUnit.pos());
+//		std::cout<<"Unit: "<<ourUnit.name()<<" dist to goal: "<<mdist<<
+//				" pos: "<<ourUnit.x()<<" "<<ourUnit.y()<<
+//				" range: "<<ourUnit.range()<<
+//				" size:"<<ourUnit.type().dimensionLeft()<<" "<<ourUnit.type().dimensionRight()<<std::endl;
 		for (size_t m(0); m<moves.numMoves(u); ++m)
 		{
 			const UnitAction move						(moves.getMove(u, m));
 				
 			if ((move.type() == UnitActionTypes::ATTACK) && (hpRemaining[move._moveIndex] > 0))
 			{
-				const Unit & target				(state.getUnit(state.getEnemy(move.player()), move._moveIndex));
-				double dpsHPValue =				(target.dpf() / hpRemaining[move._moveIndex]);
+				const SparCraft::Unit & target				(state.getUnit(state.getEnemy(move.player()), move._moveIndex));
+				if(target.type().canAttack()){
+					double dpsHPValue =				(target.dpf() / hpRemaining[move._moveIndex]);
+					//				std::cout<<"Attack: "<<target.name()<<std::endl;
+					if (dpsHPValue > actionHighestDPS)
+					{
+						actionHighestDPS = dpsHPValue;
+						actionMoveIndex = m;
+						foundUnitAction = true;
+					}
 
-				if (dpsHPValue > actionHighestDPS)
-				{
-					actionHighestDPS = dpsHPValue;
-					actionMoveIndex = m;
-					foundUnitAction = true;
+					if (move._moveIndex >= state.numUnits(enemy))
+					{
+						int e = enemy;
+						int pl = _playerID;
+						printf("wtf\n");
+					}
+				}else{
+					if(actionHighestDPS==0){
+						actionHighestDPS = 0.01;
+						actionMoveIndex = m;
+						foundUnitAction = true;
+					}
 				}
-
-                if (move._moveIndex >= state.numUnits(enemy))
-                {
-                    int e = enemy;
-                    int pl = _playerID;
-                    printf("wtf\n");
-                }
 			}
 			else if (move.type() == UnitActionTypes::HEAL)
 			{
-				const Unit & target				(state.getUnit(move.player(), move._moveIndex));
+				const SparCraft::Unit & target				(state.getUnit(move.player(), move._moveIndex));
 				double dpsHPValue =				(target.dpf() / hpRemaining[move._moveIndex]);
-
-				if (dpsHPValue > actionHighestDPS)
+//				std::cout<<"Heal: "<<target.name()<<std::endl;
+				if (dpsHPValue >= actionHighestDPS)
 				{
 					actionHighestDPS = dpsHPValue;
 					actionMoveIndex = m;
@@ -67,7 +79,10 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 			}
 			else if (move.type() == UnitActionTypes::RELOAD)
 			{
-				if (ourUnit.canAttackTarget(closestUnit, state.getTime()))
+//				std::cout<<"Reload"<<std::endl;
+				const boost::optional<Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
+				if (closestUnitOpt.is_initialized()&&
+						ourUnit.canAttackTarget(closestUnitOpt.get(), state.getTime()))
 				{
 					closestMoveIndex = m;
 					break;
@@ -75,17 +90,45 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 			}
 			else if (move.type() == UnitActionTypes::MOVE)
 			{
-				Position ourDest				(ourUnit.x() + Constants::Move_Dir[move._moveIndex][0]*Constants::Move_Distance,
-												 ourUnit.y() + Constants::Move_Dir[move._moveIndex][1]*Constants::Move_Distance);
+				Position ourDest=move.pos();
+				int dist=INT_MAX;
+				if(ourUnit.canHeal()){//medic
+					const boost::optional<Unit&> & closestWoundedOpt	=state.getClosestOurWoundedUnitOpt(_playerID, u);
+					if(closestWoundedOpt.is_initialized()&&
+							closestWoundedOpt.get().previousAction().type()!=UnitActionTypes::MOVE)
+					{
+						dist = state.getMap().getDistance(ourDest,closestWoundedOpt.get().pos());
+					}
+					else if(closestWoundedOpt.is_initialized()&&
+							state.getMap().canWalkStraight(ourDest,closestWoundedOpt.get().pos(), ourUnit.range()))
+					{
+						dist = sqrt(closestWoundedOpt.get().getDistanceSqToPosition(ourDest, state.getTime()));
+					}
+					else
+					{
+						dist = state.getMap().getDistanceToGoal(ourDest);//walk towards goal?
+					}
+				}else{//not a medic
+					const boost::optional<Unit&> & closestBuildingOpt	=state.getClosestEnemyBuildingOpt(_playerID, u);
+					if(closestBuildingOpt.is_initialized()){
+						int distBuilding = state.getMap().getDistance(ourDest,closestBuildingOpt.get().pos());
+						int distGoal = state.getMap().getDistanceToGoal(ourDest);
+						dist = ((distBuilding>0 && distBuilding<distGoal) ||
+								closestBuildingOpt.get().canAttackTarget(ourUnit, state.getTime()))?distBuilding:distGoal;
+					}else{//no enemy buildings alive
+						const boost::optional<Unit&> & closestEnemyOpt	=state.getClosestEnemyUnitOpt(_playerID, u);
+						if(closestEnemyOpt.is_initialized()&&
+								closestEnemyOpt.get().canAttackTarget(ourUnit, state.getTime())){//move towards unit that can hurt us
+							if(state.getMap().canWalkStraight(ourDest,closestEnemyOpt.get().pos(), ourUnit.range())){
+								dist = sqrt(closestEnemyOpt.get().getDistanceSqToPosition(ourDest, state.getTime()));
+							}else{//no direct line towards enemy, lets go to goal
+								dist = state.getMap().getDistanceToGoal(ourDest);//walk towards goal?
+							}
 
-				size_t dist;
-				if(closestUnit.canAttackTarget(ourUnit, state.getTime()))
-				{//move towards unit that can hurt us
-					dist=closestUnit.getDistanceSqToPosition(ourDest, state.getTime());
-				}
-				else
-				{//move towards goal
-					dist	= state.getMap().getDistanceToGoal(ourDest);
+						}else{//closest enemy can't hurt us, move towards goal
+							dist = state.getMap().getDistanceToGoal(ourDest);
+						}
+					}
 				}
 				if (dist < closestMoveDist)
 				{

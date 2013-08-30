@@ -12,6 +12,8 @@
 #include <ios>
 #include <iostream>
 #include <cstdlib>
+#include <boost/optional.hpp>
+#include <boost/none.hpp>
 
 #define USING_VISUALIZATION_LIBRARIES
 
