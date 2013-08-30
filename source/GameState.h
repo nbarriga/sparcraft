@@ -80,6 +80,8 @@ public:
     const boost::optional<Unit&> getClosestOurBuildingOpt(const IDType & player, const IDType & unitIndex);
     const boost::optional<Unit&> getClosestOurDamagedBuildingOpt(const IDType & player, const IDType & unitIndex);
     const boost::optional<Unit&> getClosestOurWoundedUnitOpt(const IDType & player, const IDType & unitIndex);
+    const boost::optional<const Unit&> getClosestOurPylonOpt(const IDType & player, const IDType & unitIndex) const;
+
     const Unit &            getUnitDirect(const IDType & player, const IDType & unit)               const;
     const Unit &            getNeutralUnit(const size_t & u)                                        const;
     

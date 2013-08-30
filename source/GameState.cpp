@@ -152,13 +152,19 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
 		// generate attack moves
 		if (unit.canAttackNow())
 		{
-			for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
-			{
-				const Unit & enemyUnit(getUnit(enemyPlayer, u));
-				if (unit.canAttackTarget(enemyUnit, _currentTime) && enemyUnit.isAlive())
+			const boost::optional<const Unit&> & closestSupplyOpt = getClosestOurPylonOpt(playerIndex, unitIndex);
+			if(!unit.type().requiresPsi()||
+					(closestSupplyOpt.is_initialized()&&
+							(sqrt(closestSupplyOpt.get().getDistanceSqToUnit(unit,firstUnitMoveTime))<
+									closestSupplyOpt.get().type().sightRange()))){
+				for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
 				{
-					moves.add(UnitAction(unitIndex, playerIndex, UnitActionTypes::ATTACK, u));
-                    //moves.add(UnitAction(unitIndex, playerIndex, UnitActionTypes::ATTACK, unit.ID()));
+					const Unit & enemyUnit(getUnit(enemyPlayer, u));
+					if (unit.canAttackTarget(enemyUnit, _currentTime) && enemyUnit.isAlive())
+					{
+						moves.add(UnitAction(unitIndex, playerIndex, UnitActionTypes::ATTACK, u));
+						//moves.add(UnitAction(unitIndex, playerIndex, UnitActionTypes::ATTACK, unit.ID()));
+					}
 				}
 			}
 		}
@@ -690,6 +696,40 @@ const boost::optional<Unit&> SparCraft::GameState::getClosestOurWoundedUnitOpt(c
 		return boost::optional<Unit&>(getUnit(player, minUnitInd));
 	}else{
 		return boost::optional<Unit&>(boost::none);
+	}
+}
+
+const boost::optional<const Unit&> SparCraft::GameState::getClosestOurPylonOpt(const IDType& player,
+		const IDType& unitIndex) const
+{
+	const Unit & myUnit(getUnit(player,unitIndex));
+
+	size_t minDist(10000000);
+	IDType minUnitInd(0);
+	bool found(false);
+
+	Position currentPos = myUnit.currentPosition(_currentTime);
+
+	for (IDType u(0); u<_numUnits[player]; ++u)
+	{
+
+		const Unit & ourUnit(getUnit(player, u));
+		if(ourUnit.type().supplyProvided()>0&& ourUnit.isAlive()){
+			//size_t distSq(myUnit.distSq(getUnit(enemyPlayer,u)));
+			size_t distSq(currentPos.getDistanceSq(ourUnit.currentPosition(_currentTime)));
+			if (distSq < minDist)
+			{
+				minDist = distSq;
+				minUnitInd = u;
+				found = true;
+			}
+		}
+	}
+
+	if(found){
+		return boost::optional<const Unit&>(getUnit(player, minUnitInd));
+	}else{
+		return boost::optional<const Unit&>(boost::none);
 	}
 }
 
