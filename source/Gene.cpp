@@ -60,6 +60,36 @@ bool Gene::collides(const Gene& other) const{
 	}
 }
 
+bool Gene::collides(const SparCraft::Unit& other) const {
+	if(!other.type().isBuilding()){
+		System::FatalError("This method is only intended for buildings");
+	}
+	int otherLeft=(other.pos().x()-other.type().dimensionLeft())/TILE_SIZE;
+	int otherRight=otherLeft+other.type().tileWidth()-1;
+	int otherTop=(other.pos().y()-other.type().dimensionUp())/TILE_SIZE;
+	int otherBottom=otherTop+other.type().tileHeight()-1;
+
+	int thisLeft=getTilePos().x();
+	int thisRight=thisLeft+getType().tileWidth()-1;
+	int thisTop=getTilePos().y();
+	int thisBottom=thisTop+getType().tileHeight()-1;
+//	std::cout<<"checking "<<getType().getName()<<" at "<<getTilePos().x()<<" "<<getTilePos().y()<<std::endl;
+//	std::cout<<otherLeft<<" "<<otherRight<<" "<<otherTop<<" "<<otherBottom<<std::endl;
+
+	if(
+			((thisLeft<=otherRight&&thisLeft>=otherLeft)||
+					(thisRight>=otherLeft&&thisRight<=otherRight)
+			)&&
+			(
+					(thisTop<=otherBottom&&thisTop>=otherTop)||
+					(thisBottom>=otherTop&&thisBottom<=otherBottom)
+			)){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 bool operator== (Gene &b1, Gene &b2){
 	return b1.getType()==b2.getType() && b1.getTilePos()==b2.getTilePos();
 }

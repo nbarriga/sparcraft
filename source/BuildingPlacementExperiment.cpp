@@ -84,7 +84,7 @@ void BuildingPlacementExperiment::runExperiment(){
 
 				BWAPI::TilePosition goal(map->getGoal().x()/TILE_SIZE,map->getGoal().y()/TILE_SIZE);
 
-				std::vector<Unit> buildings,attackers,defenders;
+				std::vector<Unit> fixedBuildings,buildings,attackers,defenders;
 				int units=states[state].numUnits(Players::Player_One)+states[state].numUnits(Players::Player_Two);
 				for(int i=0;i<units;i++){
 					const Unit &unit=states[state].getUnitByID(i);
@@ -100,10 +100,21 @@ void BuildingPlacementExperiment::runExperiment(){
 						System::FatalError("More than 2 players?");
 					}
 				}
-				std::cout<<"buildings: "<<buildings.size()<<" , defenders: "<<defenders.size()<<
-						" ,attackers: "<<attackers.size()<<std::endl;
+				const SparCraft::Unit nexus(BWAPI::UnitTypes::Protoss_Nexus,
+						Players::Player_Two,
+						SparCraft::Position(TILE_SIZE*2+BWAPI::UnitTypes::Protoss_Nexus.tileWidth()/2.0f*TILE_SIZE,
+								TILE_SIZE*55+BWAPI::UnitTypes::Protoss_Nexus.tileHeight()/2.0f*TILE_SIZE));
+				fixedBuildings.push_back(nexus);
+
+				std::cout<<"fixed buildings: "<<fixedBuildings.size()<<
+						", buildings: "<<buildings.size()<<
+						", defenders: "<<defenders.size()<<
+						",attackers: "<<attackers.size()<<std::endl;
+
+
 
 				GeneticOperators::configure(goal,
+						fixedBuildings,
 						buildings,
 						defenders,
 						attackers,

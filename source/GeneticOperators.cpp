@@ -10,6 +10,7 @@
 
 namespace SparCraft {
 BWAPI::TilePosition GeneticOperators::_basePos;
+std::vector<SparCraft::Unit> GeneticOperators::_fixedBuildings=std::vector<SparCraft::Unit>();
 std::vector<SparCraft::Unit> GeneticOperators::_buildings=std::vector<SparCraft::Unit>();
 std::vector<SparCraft::Unit> GeneticOperators::_defenders=std::vector<SparCraft::Unit>();
 std::vector<SparCraft::Unit> GeneticOperators::_attackers=std::vector<SparCraft::Unit>();
@@ -27,6 +28,12 @@ std::cout<<"genome: "<<genome<<std::endl;
 	GameState state;
 	state.checkCollisions=true;
 	state.setMap(*_map);
+	for(std::vector<SparCraft::Unit>::const_iterator it=_fixedBuildings.begin();
+				it!=_fixedBuildings.end();it++){
+			assert(it->player()==Players::Player_Two);
+	//		std::cout<<"defender unit: "<<it->type().getName()<<std::endl;
+			state.addUnit(*it);
+	}
 	for(int i=0;i<genome.size();i++){
 		Gene *gene=genome[i];
 		BWAPI::TilePosition pos=gene->getTilePos();
@@ -104,6 +111,7 @@ void GeneticOperators::Initializer(GAGenome& g)//todo: better initializer
 }
 
 void GeneticOperators::configure(BWAPI::TilePosition& basePos,
+		std::vector<SparCraft::Unit>& fixedBuildings,
 		std::vector<SparCraft::Unit>& buildings,
 		std::vector<SparCraft::Unit>& defenders,
 		std::vector<SparCraft::Unit>& attackers,
@@ -111,6 +119,7 @@ void GeneticOperators::configure(BWAPI::TilePosition& basePos,
 		Display* display,
 		 svv expDesc) {
 	_basePos=basePos;
+	_fixedBuildings=fixedBuildings;
 	_buildings=buildings;
 	_defenders=defenders;
 	_attackers=attackers;
@@ -141,6 +150,13 @@ bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
 					legal=false;
 					break;
 				}
+			}
+		}
+		for(std::vector<SparCraft::Unit>::const_iterator it=_fixedBuildings.begin();
+				it!=_fixedBuildings.end() && legal;it++){
+			if(genome[pos]->collides(*it)){
+				legal=false;
+				break;
 			}
 		}
 		if(legal&&type.requiresPsi()&&!isPowered(genome,pos,newPos)){

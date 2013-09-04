@@ -27,6 +27,7 @@ public:
 	void move(BWAPI::TilePosition offset);
 	void undo(BWAPI::TilePosition offset);
 	bool collides(const Gene &other) const;
+	bool collides(const SparCraft::Unit &other) const;
 	friend std::ostream& operator<< (std::ostream& stream, const Gene& building);
 	friend bool operator== (Gene &b1, Gene &b2);
 	friend bool operator!= (Gene &b1, Gene &b2);
