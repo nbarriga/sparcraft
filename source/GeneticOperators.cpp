@@ -143,6 +143,12 @@ bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
 				}
 			}
 		}
+		if(legal&&type.requiresPsi()&&!isPowered(genome,pos,newPos)){
+			legal=false;
+		}
+		if(legal&&(type==BWAPI::UnitTypes::Protoss_Pylon)&&!isPowered(genome)){
+			legal=false;
+		}
 		if(!legal){//undo
 			genome[pos]->undo(offset);
 		}
@@ -150,6 +156,45 @@ bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
 	}else{
 		return false;
 	}
+}
+
+bool GeneticOperators::isPowered(GAListGenome<Gene>& genome, int except, const SparCraft::Position &pos){
+	for(int i=0;i<genome.size();i++){
+		if(i!=except){
+			Gene *gene=genome[i];
+			BWAPI::UnitType type=gene->getType();
+			BWAPI::TilePosition tilePos=gene->getTilePos();
+			float x=tilePos.x()+type.tileWidth()/2.0f;
+			float y=tilePos.y()+type.tileHeight()/2.0f;
+			SparCraft::Position genePos(x*TILE_SIZE,y*TILE_SIZE);
+			if(type==BWAPI::UnitTypes::Protoss_Pylon){
+//				std::cout<<pos.getString()<<" "<<genePos.getString()<<" "<<genePos.getDistance(pos)<<" "<<
+//						type.sightRange()<<std::endl;
+				if(genePos.getDistance(pos)<type.sightRange()){
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+//for each building that requires PSI, check that it has it
+bool GeneticOperators::isPowered(GAListGenome<Gene>& genome){
+	for(int i=0;i<genome.size();i++){
+		Gene *gene=genome[i];
+		BWAPI::UnitType type=gene->getType();
+		BWAPI::TilePosition tilePos=gene->getTilePos();
+		float x=tilePos.x()+type.tileWidth()/2.0f;
+		float y=tilePos.y()+type.tileHeight()/2.0f;
+		SparCraft::Position genePos(x*TILE_SIZE,y*TILE_SIZE);
+		if(type.requiresPsi()){
+			if(!isPowered(genome,i,genePos)){
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 int GeneticOperators::Mutator(GAGenome& g, float pmut, int maxJump)

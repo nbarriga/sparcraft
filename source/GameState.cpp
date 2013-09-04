@@ -152,11 +152,7 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
 		// generate attack moves
 		if (unit.canAttackNow())
 		{
-			const boost::optional<const Unit&> & closestSupplyOpt = getClosestOurPylonOpt(playerIndex, unitIndex);
-			if(!unit.type().requiresPsi()||
-					(closestSupplyOpt.is_initialized()&&
-							(sqrt(closestSupplyOpt.get().getDistanceSqToUnit(unit,firstUnitMoveTime))<
-									closestSupplyOpt.get().type().sightRange()))){
+			if(!unit.type().requiresPsi()||isPowered(unit.pos(),playerIndex)){
 				for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
 				{
 					const Unit & enemyUnit(getUnit(enemyPlayer, u));
@@ -262,7 +258,15 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
 		}
 	}
 }
-
+bool GameState::isPowered(const SparCraft::Position &pos, const IDType & player) const{
+	const boost::optional<const Unit&> & closestSupplyOpt = getClosestOurPylonOpt(player, pos);
+	if(closestSupplyOpt.is_initialized()&&
+			(sqrt(closestSupplyOpt.get().getDistanceSqToPosition(pos,0))<
+					closestSupplyOpt.get().type().sightRange())){
+		return true;
+	}
+	return false;
+}
 
 void GameState::makeMoves(const std::vector<UnitAction> & moves)
 {    
@@ -700,23 +704,20 @@ const boost::optional<Unit&> SparCraft::GameState::getClosestOurWoundedUnitOpt(c
 }
 
 const boost::optional<const Unit&> SparCraft::GameState::getClosestOurPylonOpt(const IDType& player,
-		const IDType& unitIndex) const
+		const SparCraft::Position &pos) const
 {
-	const Unit & myUnit(getUnit(player,unitIndex));
 
 	size_t minDist(10000000);
 	IDType minUnitInd(0);
 	bool found(false);
 
-	Position currentPos = myUnit.currentPosition(_currentTime);
 
 	for (IDType u(0); u<_numUnits[player]; ++u)
 	{
-
 		const Unit & ourUnit(getUnit(player, u));
-		if(ourUnit.type().supplyProvided()>0&& ourUnit.isAlive()){
+		if((ourUnit.type()==BWAPI::UnitTypes::Protoss_Pylon) && ourUnit.isAlive()){
 			//size_t distSq(myUnit.distSq(getUnit(enemyPlayer,u)));
-			size_t distSq(currentPos.getDistanceSq(ourUnit.currentPosition(_currentTime)));
+			size_t distSq(pos.getDistanceSq(ourUnit.currentPosition(_currentTime)));
 			if (distSq < minDist)
 			{
 				minDist = distSq;
@@ -731,6 +732,13 @@ const boost::optional<const Unit&> SparCraft::GameState::getClosestOurPylonOpt(c
 	}else{
 		return boost::optional<const Unit&>(boost::none);
 	}
+}
+
+const boost::optional<const Unit&> SparCraft::GameState::getClosestOurPylonOpt(const IDType& player,
+		const IDType& unitIndex) const
+{
+	const Unit & myUnit(getUnit(player,unitIndex));
+	return getClosestOurPylonOpt(player,myUnit.currentPosition(_currentTime));
 }
 
 const bool GameState::checkFull(const IDType & player) const

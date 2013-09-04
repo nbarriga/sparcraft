@@ -74,6 +74,7 @@ public:
     const Unit& getClosestEnemyUnit(const IDType & player, const IDType & unitIndex);
     const Unit& getClosestOurUnit(const IDType & player, const IDType & unitIndex);
 
+    bool isPowered(const SparCraft::Position &pos, const IDType & player) const;
     const boost::optional<Unit&> getClosestEnemyUnitOpt(const IDType & player, const IDType & unitIndex);
     const boost::optional<Unit&> getClosestEnemyBuildingOpt(const IDType & player, const IDType & unitIndex);
     const boost::optional<Unit&> getClosestOurUnitOpt(const IDType & player, const IDType & unitIndex);
@@ -81,6 +82,7 @@ public:
     const boost::optional<Unit&> getClosestOurDamagedBuildingOpt(const IDType & player, const IDType & unitIndex);
     const boost::optional<Unit&> getClosestOurWoundedUnitOpt(const IDType & player, const IDType & unitIndex);
     const boost::optional<const Unit&> getClosestOurPylonOpt(const IDType & player, const IDType & unitIndex) const;
+    const boost::optional<const Unit&> getClosestOurPylonOpt(const IDType & player, const SparCraft::Position &pos) const;
 
     const Unit &            getUnitDirect(const IDType & player, const IDType & unit)               const;
     const Unit &            getNeutralUnit(const size_t & u)                                        const;

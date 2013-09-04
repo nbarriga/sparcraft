@@ -19,6 +19,8 @@ class GeneticOperators {
 	static void repair(GAListGenome<Gene>& genome, int pos);
 	static void repair(GAListGenome<Gene>& genome);
 	static bool moveIfLegal(GAListGenome<Gene>& genome, int pos, BWAPI::TilePosition& offset);
+	static bool isPowered(GAListGenome<Gene>& genome, int except, const SparCraft::Position &pos);
+	static bool isPowered(GAListGenome<Gene>& genome);
 public:
 	static BWAPI::TilePosition _basePos;
 	static std::vector<SparCraft::Unit> _buildings;
