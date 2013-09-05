@@ -97,15 +97,17 @@ void GeneticOperators::Initializer(GAGenome& g)//todo: better initializer
 		do{
 			offset=BWAPI::TilePosition(GARandomInt(-mutDistance,mutDistance),GARandomInt(-mutDistance,mutDistance));
 			n--;
-		}while(n>0&&!moveIfLegal(genome,genome.size()-1,offset));
+		}while(n>0&&!moveIfLegal(genome,genome.size()-1,offset, true));
 		if(n==0){
 			repair=true;
-			std::cout<<"Max amount of retries for initial location failed\n";
+			std::cout<<"Max amount of retries for initial location failed, will try to repair\n";
 		}
 
 	}
 	if(repair){
-		GeneticOperators::repair(genome);
+		if(!GeneticOperators::repair(genome)){
+			System::FatalError("Couldn't repair at initializer");
+		}
 	}
 //	Mutator(genome,0.5,20);
 }
@@ -133,7 +135,7 @@ int GeneticOperators::Mutator(GAGenome& g, float pmut){
 }
 
 bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
-		BWAPI::TilePosition& offset) {
+		BWAPI::TilePosition& offset, bool checkPowered) {
 
 
 	BWAPI::TilePosition newTilePos=genome[pos]->getTilePos()+offset;
@@ -159,11 +161,12 @@ bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
 				break;
 			}
 		}
-		if(legal&&type.requiresPsi()&&!isPowered(genome,pos,newPos)){
-			legal=false;
-		}
-		if(legal&&(type==BWAPI::UnitTypes::Protoss_Pylon)&&!isPowered(genome)){
-			legal=false;
+		if(checkPowered && legal){
+			if(type.requiresPsi()&&!isPowered(genome,pos,newPos)){
+				legal=false;
+			}else if((type==BWAPI::UnitTypes::Protoss_Pylon)&&!isPowered(genome)){
+				legal=false;
+			}
 		}
 		if(!legal){//undo
 			genome[pos]->undo(offset);
@@ -237,7 +240,7 @@ int GeneticOperators::Mutator(GAGenome& g, float pmut, int maxJump)
 			do{
 				offset=BWAPI::TilePosition(GARandomInt(-maxJump,maxJump),GARandomInt(-maxJump,maxJump));
 				n--;
-			}while(n>0&&!moveIfLegal(genome,i,offset));
+			}while(n>0&&!moveIfLegal(genome,i,offset, true));
 			if(n>0){
 				std::cout<<"mutating"<<std::endl;
 				nMut++;
@@ -249,30 +252,34 @@ int GeneticOperators::Mutator(GAGenome& g, float pmut, int maxJump)
 
 }
 
-void GeneticOperators::repair(GAListGenome<Gene>& genome, int pos) {
+bool GeneticOperators::repair(GAListGenome<Gene>& genome, int pos) {
 	int a=0,b=0,distance=0;//start with distance 0, to check if it is currently legal
 	do{
 		for(int a=-distance;a<=distance;a++){
 			for(int b=-distance;b<=distance;b++){
 				if(std::max(std::abs(a),std::abs(b))==distance){
 					BWAPI::TilePosition offset(a,b);
-					if(moveIfLegal(genome,pos,offset)){
+					if(moveIfLegal(genome,pos,offset,genome[pos]->getType()!=BWAPI::UnitTypes::Protoss_Pylon)){
 						if(distance>0){
 							std::cout<<"repaired\n";
 						}
-						return;
+						return true;
 					}
 				}
 			}
 		}
 		distance++;
-	}while(true);
+	}while(distance<mutDistance);
+	std::cerr<<"repair failed (non fatal): "<<genome[pos]->getType().getName()<<std::endl;
+	return false;
 }
 
-void GeneticOperators::repair(GAListGenome<Gene>& genome) {
+bool GeneticOperators::repair(GAListGenome<Gene>& genome) {
+	bool repaired=true;
 	for(int i=0; i<genome.size(); i++){
-		repair(genome,i);
+		repaired=repaired&&(repair(genome,i)||genome[i]->getType()==BWAPI::UnitTypes::Protoss_Pylon);
 	}
+	return repaired;
 }
 
 int GeneticOperators::Crossover(const GAGenome& parent1, const GAGenome& parent2,
@@ -288,21 +295,28 @@ int GeneticOperators::Crossover(const GAGenome& parent1, const GAGenome& parent2
 		children++;
 	}
 	if(children==2){
-		GAListGenome<Gene>& c1 = *(GAListGenome<Gene>*)child1;
-		GAListGenome<Gene>& c2 = *(GAListGenome<Gene>*)child2;
-		for(int i=0; i<c1.size(); i++){
-			if(GAFlipCoin(0.5)){
-				Gene* temp1=c1[i];
-				Gene* temp2=c2[i];
-				temp1->move(temp2->getTilePos()-temp1->getTilePos());
-				temp2->move(temp1->getTilePos()-temp2->getTilePos());
-				std::cout<<"exchanging\n";
+		bool repaired;
+		do{
+			GAListGenome<Gene>& c1 = *(GAListGenome<Gene>*)child1;
+			GAListGenome<Gene>& c2 = *(GAListGenome<Gene>*)child2;
+			for(int i=0; i<c1.size(); i++){
+				if(GAFlipCoin(0.5)){
+					Gene* temp1=c1[i];
+					Gene* temp2=c2[i];
+					temp1->move(temp2->getTilePos()-temp1->getTilePos());
+					temp2->move(temp1->getTilePos()-temp2->getTilePos());
+					std::cout<<"exchanging\n";
+				}
 			}
-		}
-		repair(c1);
-		repair(c2);
-		c1.swap(0,0);//_evaluated = gaFalse;
-		c2.swap(0,0);//_evaluated = gaFalse;
+			if(!(repair(c1)&&repair(c2))){
+				repaired=false;
+				std::cerr<<"couldn't repair after crossover (not fatal)\n";
+			}else{
+				repaired=true;
+				c1.swap(0,0);//_evaluated = gaFalse;
+				c2.swap(0,0);//_evaluated = gaFalse;
+			}
+		}while(!repaired);
 	}
 	return children;
 }
