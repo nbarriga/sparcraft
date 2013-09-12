@@ -139,6 +139,12 @@ bool GeneticOperators::moveIfLegal(GAListGenome<Gene>& genome, int pos,
 
 
 	BWAPI::TilePosition newTilePos=genome[pos]->getTilePos()+offset;
+//	if((newTilePos.x()<0)
+//			|| (newTilePos.x()>=_map->getBuildTileWidth())
+//			|| (newTilePos.y()<0)
+//			|| (newTilePos.y()>=_map->getBuildTileHeight())){
+//		return false;
+//	}
 	BWAPI::UnitType type=genome[pos]->getType();
 	float x=newTilePos.x()+type.tileWidth()/2.0f;
 	float y=newTilePos.y()+type.tileHeight()/2.0f;

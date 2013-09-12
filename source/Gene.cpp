@@ -11,13 +11,18 @@
 
 namespace SparCraft {
 
-Gene::Gene(SparCraft::Unit building):
-				_type(building.type()),
-				_pos(BWAPI::Position(building.pos().x(),building.pos().y())){
-	if(!building.type().isBuilding()){
-		System::FatalError("Only buildings are allowed");
-	}
+Gene::Gene(BWAPI::UnitType type, BWAPI::TilePosition pos):
+	_type(type),_pos(pos){
 }
+
+//Gene::Gene(SparCraft::Unit building):
+//				_type(building.type()),
+//				_pos(BWAPI::Position(building.pos().x()-building.type().dimensionLeft(),
+//						building.pos().y()-building.type().dimensionUp())){
+//	if(!building.type().isBuilding()){
+//		System::FatalError("Only buildings are allowed");
+//	}
+//}
 
 //Gene::Gene():
 //				_type(BWAPI::UnitTypes::None),
@@ -104,10 +109,6 @@ const BWAPI::TilePosition Gene::getTilePos() const {
 
 void Gene::undo(BWAPI::TilePosition offset) {
 	_pos-=offset;
-}
-
-Gene::Gene(BWAPI::UnitType type, BWAPI::TilePosition pos):
-	_type(type),_pos(pos){
 }
 
 bool operator!= (Gene &b1, Gene &b2){

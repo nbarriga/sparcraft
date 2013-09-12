@@ -18,9 +18,9 @@ BuildingPlacementExperiment::~BuildingPlacementExperiment(){
 
 
 void BuildingPlacementExperiment::runExperiment(){
-	int popsize  = 4;
+	int popsize  = 10;
 	int ngen     = 10;
-	float pmut   = 0.1;
+	float pmut   = 0.025;
 	float pcross = 0.9;
 	gaDefDivFlag=gaTrue;
 	GARandomSeed(time(NULL));
@@ -138,6 +138,10 @@ void BuildingPlacementExperiment::runExperiment(){
 				ga.nGenerations(ngen);
 				ga.pMutation(pmut);
 				ga.pCrossover(pcross);
+//				GATournamentSelector sel;
+//				ga.selector(sel);
+				//				ga.elitist(gaTrue);
+
 				ga.evolve();
 
 				// Now we print out the best genome that the GA found.
