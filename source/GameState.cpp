@@ -777,10 +777,10 @@ void GameState::addUnit(const Unit & u)
 	finishedMoving();
 	calculateStartingHealth();
 
-//    if (!checkUniqueUnitIDs())
-//    {
-//        System::FatalError("GameState has non-unique Unit ID values");
-//    }
+    if (!checkUniqueUnitIDs())
+    {
+        System::FatalError("GameState has non-unique Unit ID values");
+    }
     _map.addUnit(getUnit(u.player(), _numUnits[u.player()]-1));
 }
 
@@ -807,6 +807,10 @@ void GameState::addUnit(const BWAPI::UnitType type, const IDType playerID, const
 	finishedMoving();
 	calculateStartingHealth();
 
+    if (!checkUniqueUnitIDs())
+    {
+        System::FatalError("GameState has non-unique Unit ID values");
+    }
 	_map.addUnit(getUnit(playerID, _numUnits[playerID]-1));
 }
 
@@ -828,6 +832,10 @@ void GameState::addUnitWithID(const Unit & u)
 	finishedMoving();
 	calculateStartingHealth();
 
+    if (!checkUniqueUnitIDs())
+    {
+        System::FatalError("GameState has non-unique Unit ID values");
+    }
 	_map.addUnit(getUnit(u.player(), _numUnits[u.player()-1]));
 }
 
@@ -940,29 +948,29 @@ const IDType GameState::whoCanMove() const
 		return Players::Player_Both;
 	}
 }
-//This method is wrong!
-//const bool GameState::checkUniqueUnitIDs() const
-//{
-//    std::set<IDType> unitIDs;
-//
-//    for (size_t p(0); p<Constants::Num_Players; ++p)
-//    {
-//        for (size_t u(0); u<numUnits(p); ++u)
-//        {
-//            IDType unitID(getUnit(p, u).ID());
-//            if (unitIDs.find(unitID) == unitIDs.end())
-//            {
-//                return false;
-//            }
-//            else
-//            {
-//                unitIDs.insert(unitID);
-//            }
-//        }
-//    }
-//
-//    return true;
-//}
+
+const bool GameState::checkUniqueUnitIDs() const
+{
+	std::set<IDType> unitIDs;
+
+	for (size_t p(0); p<Constants::Num_Players; ++p)
+	{
+		for (size_t u(0); u<numUnits(p); ++u)
+		{
+			IDType unitID(getUnit(p, u).ID());
+			if (unitIDs.find(unitID) != unitIDs.end())
+			{
+				return false;
+			}
+			else
+			{
+				unitIDs.insert(unitID);
+			}
+		}
+	}
+
+	return true;
+}
 
 void GameState::updateGameTime()
 {

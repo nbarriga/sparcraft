@@ -118,15 +118,44 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
                 System::FatalError("Units with just air weapons currently not supported correctly: " + type.getName());
             }
 
-            if (type.isBuilding() && (type != BWAPI::UnitTypes::Protoss_Photon_Cannon && type != BWAPI::UnitTypes::Zerg_Sunken_Colony && type != BWAPI::UnitTypes::Terran_Missile_Turret))
-            {
-                System::FatalError("Non-attacking buildings not currently supported: " + type.getName());
-            }
+//            if (type.isBuilding() && (type != BWAPI::UnitTypes::Protoss_Photon_Cannon && type != BWAPI::UnitTypes::Zerg_Sunken_Colony && type != BWAPI::UnitTypes::Terran_Missile_Turret))
+//            {
+//                System::FatalError("Non-attacking buildings not currently supported: " + type.getName());
+//            }
 
             if (type.isSpellcaster() && type!=BWAPI::UnitTypes::Terran_Medic)
             {
                 System::FatalError("Spell casting units not currently supported: " + type.getName());
             }
         }
+
+        bool isSupportedUnitType(const BWAPI::UnitType & type)
+        {
+        	if (type == BWAPI::UnitTypes::None || type == BWAPI::UnitTypes::Unknown)
+        	{
+        		return false;
+        	}
+
+        	if (type == BWAPI::UnitTypes::Protoss_Corsair ||
+        			type == BWAPI::UnitTypes::Zerg_Devourer ||
+        			type == BWAPI::UnitTypes::Zerg_Scourge ||
+        			type == BWAPI::UnitTypes::Terran_Valkyrie)
+        	{
+        		return false;
+        	}
+
+//        	if (type.isBuilding() && (type != BWAPI::UnitTypes::Protoss_Photon_Cannon || type != BWAPI::UnitTypes::Zerg_Sunken_Colony || type != BWAPI::UnitTypes::Terran_Missile_Turret))
+//        	{
+//        		return false;
+//        	}
+
+        	if (type.isSpellcaster() && type!=BWAPI::UnitTypes::Terran_Medic)
+        	{
+        		return false;
+        	}
+
+        	return true;
+        }
+
     }
 };

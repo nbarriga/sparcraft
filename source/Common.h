@@ -77,6 +77,7 @@ namespace SparCraft
         void printStackTrace(int skip = 0, FILE *out = stderr, unsigned int max_frames = 10);
         void FatalError(const std::string & errorMessage);
         void checkSupportedUnitType(const BWAPI::UnitType & type);
+        bool isSupportedUnitType(const BWAPI::UnitType & type);
     }
 };
 

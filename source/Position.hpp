@@ -26,6 +26,13 @@ public:
 	{
 	}
 
+    Position(const BWAPI::Position & p)
+        : _x(p.x())
+        , _y(p.y())
+    {
+
+    }
+
 	const bool operator < (const Position & rhs) const
 	{
         return (x() < rhs.x()) || ((x() == rhs.x()) && y() < rhs.y());
