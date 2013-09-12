@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 
 	try
 	{
-		if(argc>2){
+		if(argc>=2){
 			std::string experimentArg, configArg;
 
 			boost::program_options::options_description desc("Allowed options");
@@ -30,9 +30,6 @@ int main(int argc, char *argv[])
 			}
 			if(experimentArg.compare("search")==0){
 				SparCraft::SearchExperiment exp(configArg);
-				exp.runExperiment();
-			}else if(experimentArg.compare("placement")==0){
-				SparCraft::BuildingPlacementExperiment exp(configArg);
 				exp.runExperiment();
 			}else{
 				SparCraft::System::FatalError("Error parsing arguments");
