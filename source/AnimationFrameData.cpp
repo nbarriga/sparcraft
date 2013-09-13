@@ -17,6 +17,8 @@ void AnimationFrameData::init()
     attackFrameData[BWAPI::UnitTypes::Protoss_Scout.getID()]				= AttackFrameData(2, 2);
     attackFrameData[BWAPI::UnitTypes::Protoss_Corsair.getID()]				= AttackFrameData(8, 8);
     attackFrameData[BWAPI::UnitTypes::Protoss_Arbiter.getID()]				= AttackFrameData(2, 2);
+    attackFrameData[BWAPI::UnitTypes::Protoss_Archon.getID()]               = AttackFrameData(1, 1);
+    attackFrameData[BWAPI::UnitTypes::Protoss_Photon_Cannon.getID()]        = AttackFrameData(1, 1);
 
     // Terran Units
     attackFrameData[BWAPI::UnitTypes::Terran_SCV.getID()]					= AttackFrameData(2, 2);
@@ -30,6 +32,7 @@ void AnimationFrameData::init()
     attackFrameData[BWAPI::UnitTypes::Terran_Wraith.getID()]				= AttackFrameData(2, 2);
     attackFrameData[BWAPI::UnitTypes::Terran_Battlecruiser.getID()]			= AttackFrameData(2, 2);
     attackFrameData[BWAPI::UnitTypes::Terran_Valkyrie.getID()]				= AttackFrameData(40, 40);
+    attackFrameData[BWAPI::UnitTypes::Terran_Missile_Turret.getID()]        = AttackFrameData(1, 1);
 
     // Zerg Units
     attackFrameData[BWAPI::UnitTypes::Zerg_Drone.getID()]					= AttackFrameData(2, 2);
@@ -39,6 +42,8 @@ void AnimationFrameData::init()
     attackFrameData[BWAPI::UnitTypes::Zerg_Ultralisk.getID()]				= AttackFrameData(14, 14);
     attackFrameData[BWAPI::UnitTypes::Zerg_Mutalisk.getID()]				= AttackFrameData(1, 1);
     attackFrameData[BWAPI::UnitTypes::Zerg_Devourer.getID()]				= AttackFrameData(9, 9);
+    attackFrameData[BWAPI::UnitTypes::Zerg_Sunken_Colony.getID()]           = AttackFrameData(1, 1);
+    attackFrameData[BWAPI::UnitTypes::Zerg_Spore_Colony.getID()]            = AttackFrameData(1, 1);
 }
 
 const AttackFrameData & AnimationFrameData::getAttackFrames(const BWAPI::UnitType & type)

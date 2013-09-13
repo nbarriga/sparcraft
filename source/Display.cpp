@@ -420,9 +420,11 @@ void Display::DrawExperiment(int x, int y)
     int colwidth = 100;
     int playerspacing = 350;
 
-    // Player 1 Settings
+    std::stringstream ss;
+    ss << "Game Frame: " << state.getTime();
+
     glColor3f(1.0, 0.0, 0.0);
-    DrawText(x, y , size, "Experiment Progress");
+    DrawText(x, y , size, ss.str());
     glColor3f(1.0, 1.0, 1.0);
 
     for (size_t p(0); p<exp[0].size(); ++p)

@@ -100,6 +100,7 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
 
             std::cerr << "\n\n\nSparCraft Fatal Error: \n\n\n      " << errorMessage << "\n\n";
         	printStackTrace(1);
+        	Logger::Instance().log("\n" + errorMessage + "\n");
             throw(SPARCRAFT_FATAL_ERROR);
         }
         
@@ -107,7 +108,7 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
         {
             if (type == BWAPI::UnitTypes::None || type == BWAPI::UnitTypes::Unknown)
             {
-                System::FatalError("Unknown unit type in experiment file");
+                System::FatalError("Unknown unit type in experiment file, not supported");
             }
 
             if (type == BWAPI::UnitTypes::Protoss_Corsair || 
@@ -118,7 +119,7 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
                 System::FatalError("Units with just air weapons currently not supported correctly: " + type.getName());
             }
 
-//            if (type.isBuilding() && (type != BWAPI::UnitTypes::Protoss_Photon_Cannon && type != BWAPI::UnitTypes::Zerg_Sunken_Colony && type != BWAPI::UnitTypes::Terran_Missile_Turret))
+//            if (type.isBuilding() && !(type == BWAPI::UnitTypes::Protoss_Photon_Cannon && type == BWAPI::UnitTypes::Zerg_Sunken_Colony && type == BWAPI::UnitTypes::Terran_Missile_Turret))
 //            {
 //                System::FatalError("Non-attacking buildings not currently supported: " + type.getName());
 //            }
@@ -127,6 +128,19 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
             {
                 System::FatalError("Spell casting units not currently supported: " + type.getName());
             }
+
+            // Don't support units loading other units yet
+            if (type == BWAPI::UnitTypes::Terran_Vulture_Spider_Mine ||
+            		type == BWAPI::UnitTypes::Protoss_Carrier ||
+            		type == BWAPI::UnitTypes::Protoss_Interceptor ||
+            		type == BWAPI::UnitTypes::Protoss_Reaver ||
+            		type == BWAPI::UnitTypes::Protoss_Scarab ||
+            		type == BWAPI::UnitTypes::Zerg_Broodling)
+            {
+
+            	System::FatalError("Units which have unit projectiles not supported: " + type.getName());
+            }
+
         }
 
         bool isSupportedUnitType(const BWAPI::UnitType & type)
@@ -144,12 +158,23 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
         		return false;
         	}
 
-//        	if (type.isBuilding() && (type != BWAPI::UnitTypes::Protoss_Photon_Cannon || type != BWAPI::UnitTypes::Zerg_Sunken_Colony || type != BWAPI::UnitTypes::Terran_Missile_Turret))
+//        	if (type.isBuilding() && !(type == BWAPI::UnitTypes::Protoss_Photon_Cannon || type == BWAPI::UnitTypes::Zerg_Sunken_Colony || type == BWAPI::UnitTypes::Terran_Missile_Turret))
 //        	{
 //        		return false;
 //        	}
 
         	if (type.isSpellcaster() && type!=BWAPI::UnitTypes::Terran_Medic)
+        	{
+        		return false;
+        	}
+
+        	// Don't support units loading other units yet
+        	if (type == BWAPI::UnitTypes::Terran_Vulture_Spider_Mine ||
+        			type == BWAPI::UnitTypes::Protoss_Carrier ||
+        			type == BWAPI::UnitTypes::Protoss_Interceptor ||
+        			type == BWAPI::UnitTypes::Protoss_Reaver ||
+        			type == BWAPI::UnitTypes::Protoss_Scarab ||
+        			type == BWAPI::UnitTypes::Zerg_Broodling)
         	{
         		return false;
         	}

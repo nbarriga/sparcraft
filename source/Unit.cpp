@@ -166,8 +166,14 @@ void Unit::takeAttack(const Unit & attacker)
     PlayerWeapon    weapon(attacker.getWeapon(*this));
     HealthType      damage(weapon.GetDamageBase());
 
+    // calculate the damage based on armor and damage types
     damage = std::max((int)((damage-getArmor()) * weapon.GetDamageMultiplier(getSize())), 2);
     
+    // special case where units attack multiple times
+    if (attacker.type() == BWAPI::UnitTypes::Protoss_Zealot || attacker.type() == BWAPI::UnitTypes::Terran_Firebat)
+    {
+        damage *= 2;
+    }
     //std::cout << (int)attacker.player() << " " << damage << "\n";
 
     updateCurrentHP(_currentHP - damage);
@@ -206,6 +212,12 @@ void Unit::attack(const UnitAction & move, const Unit & target, const TimeType &
         // add the initial attack animation duration
         updateMoveActionTime      (gameTime + attackInitFrameTime() + 2);
         updateAttackActionTime    (gameTime + attackCooldown());
+    }
+
+    // if the unit is not mobile, set its next move time to its next attack time
+    if (!isMobile())
+    {
+        updateMoveActionTime(_timeCanAttack);
     }
 
     setPreviousAction(move, gameTime);
@@ -597,4 +609,23 @@ void Unit::debugHash(const size_t & hashNum, const TimeType & gameTime) const
     hash ^= Hash::values[hashNum].getMoveHash(_playerID, nextMoveActionTime() - gameTime); std::cout << hash << "\n";
     hash ^= Hash::values[hashNum].getCurrentHPHash(_playerID, currentHP()); std::cout << hash << "\n";
     hash ^= Hash::values[hashNum].getUnitTypeHash(_playerID, typeID()); std::cout << hash << "\n";
+}
+
+const std::string Unit::debugString() const
+{
+    std::stringstream ss;
+
+    ss << "Unit Type:           " << type().getName()                               << "\n";
+    ss << "Unit ID:             " << (int)ID()                                      << "\n";
+    ss << "Player:              " << (int)player()                                  << "\n";
+    ss << "Range:               " << range()                                        << "\n";
+    ss << "Position:            " << "(" << _position.x() << "," << _position.y()   << ")\n";
+    ss << "Current HP:          " << currentHP()                                    << "\n";
+    ss << "Next Move Time:      " << nextMoveActionTime()                           << "\n";
+    ss << "Next Attack Time:    " << nextAttackActionTime()                         << "\n";
+    ss << "Previous Action:     " << previousAction().debugString()                 << "\n";
+    ss << "Previous Pos Time:   " << _prevCurrentPosTime                            << "\n";
+    ss << "Previous Pos:        " << "(" << _prevCurrentPos.x() << "," << _prevCurrentPos.y()   << ")\n";
+
+    return ss.str();
 }

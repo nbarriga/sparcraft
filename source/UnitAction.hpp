@@ -94,6 +94,13 @@ public:
 
 		return Position(Constants::Move_Dir[_moveIndex][0], Constants::Move_Dir[_moveIndex][1]);
 	}
+	const std::string debugString() const
+	{
+		std::stringstream ss;
+		ss << moveString() << ": (" << (int)unit() << "," << (int)player() << "," << (int)type() << "," << (int)index() << ")  " << "(" << pos().x() << "," << pos().y()   << ")";
+		return ss.str();
+	}
+
 };
 
 

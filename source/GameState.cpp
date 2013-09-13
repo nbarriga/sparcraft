@@ -141,10 +141,13 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
 
 		if (unit.previousActionTime() == _currentTime && _currentTime != 0)
 		{
-			//todo: fix this check! Fails for photon cannons
-//			std::cerr<<"Previous Move Took 0 Time: "<<unit.previousAction().moveString()<<
-//					" "<<unit.name()<<std::endl;
-//			System::FatalError("Previous Move Took 0 Time: " + unit.previousAction().moveString());
+			std::stringstream ss;
+			ss << "\n\nSparCraft Error: Move took 0 time\n";
+			ss << "Game Frame: " << getTime() << "\n";
+			ss << unit.debugString() << "\n\n";
+			Logger::Instance().log(ss.str());
+
+			System::FatalError("Previous Move Took 0 Time: " + unit.previousAction().moveString());
 		}
 
 		moves.addUnit();
@@ -214,6 +217,12 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
             // DEBUG: If chosen move distance is ever 0, something is wrong
             if (moveDistance == 0)
             {
+            	std::stringstream ss;
+            	ss << "\n\nSparCraft Error: Move Action Distance 0 (First Block)\n";
+            	ss << "Game Frame: " << getTime() << "\n";
+            	ss << unit.debugString() << "\n\n";
+            	Logger::Instance().log(ss.str());
+
                 System::FatalError("Move Action with distance 0 generated");
             }
 
@@ -225,7 +234,13 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
             
                 if (moveDistance == 0)
                 {
-                    printf("%lf %lf %lf\n", timeUntilAttack, defaultMoveDuration, chosenTime);
+                	std::stringstream ss;
+                	ss << "\n\nSparCraft Error: Move Action Distance 0 (Inner Block)\n";
+                	ss << "Game Frame: " << getTime() << "\n";
+                	ss << unit.debugString() << "\n\n";
+                	Logger::Instance().log(ss.str());
+
+                    printf("timeUntilAttack: %lf, defaultMoveDuration: %lf, chosenTime: %lf\n", timeUntilAttack, defaultMoveDuration, chosenTime);
                 }
 
                 // the final destination position of the unit
@@ -919,6 +934,7 @@ const bool GameState::playerDead(const IDType & player) const
 
 	for (size_t u(0); u<numUnits(player); ++u)
 	{
+		//check if player has at least one damage dealing unit
 		if (getUnit(player, u).damage() > 0)
 		{
 			return false;

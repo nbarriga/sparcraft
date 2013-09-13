@@ -31,7 +31,7 @@ class Unit
 	TimeType            _timeCanMove;			// time the unit can next move
 	TimeType            _timeCanAttack;			// time the unit can next attack
 
-	UnitAction          _previousAction;		// the previous move that the unit performed
+	UnitAction          _previousAction;		// the previous action that the unit performed
 	TimeType            _previousActionTime;	// the time the previous move was performed
 	Position            _previousPosition;
 
@@ -125,7 +125,8 @@ public:
 	const UnitAction &	    previousAction()            const;
 	const std::string       name()                      const;
 	void                    print()                     const;
-    
+	const std::string       debugString()               const;
+
 	// hash functions
 	const HashType          calculateHash(const size_t & hashNum, const TimeType & gameTime) const;
 	void                    debugHash(const size_t & hashNum, const TimeType & gameTime) const;

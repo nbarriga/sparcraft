@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
+#include "Logger.h"
 
 #define USING_VISUALIZATION_LIBRARIES
 
