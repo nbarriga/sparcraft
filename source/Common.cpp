@@ -100,7 +100,6 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
 
             std::cerr << "\n\n\nSparCraft Fatal Error: \n\n\n      " << errorMessage << "\n\n";
         	printStackTrace(1);
-        	Logger::Instance().log("\n" + errorMessage + "\n");
             throw(SPARCRAFT_FATAL_ERROR);
         }
         

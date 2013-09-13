@@ -27,7 +27,7 @@ namespace SparCraft
 		const size_t Num_Players				= 2;
 		
 		// maximum number of units a player can have
-		const size_t Max_Units					= 50;
+		const size_t Max_Units					= 100;
 
 		// max depth the search can ever handle
 		const size_t Max_Search_Depth			= 50;

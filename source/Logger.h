@@ -9,15 +9,14 @@ namespace SparCraft
 
 class Logger
 {
-        std::ofstream logStream;
-        std::string logFile;
-
+        size_t totalCharsLogged;
         Logger();
 
 public:
 
         static Logger & Instance();
-        void log(const std::string & msg);
-        void setLogFile(const std::string & filename);
+        void log(const std::string & logFile, std::string & msg);
+        void clearLogFile(const std::string & logFile);
+
 };
 }

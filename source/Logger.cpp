@@ -2,27 +2,27 @@
 
 using namespace SparCraft;
 
-// constructor
-Logger::Logger()
+Logger::Logger() : totalCharsLogged(0)
 {
-        logFile = "C:\\uab_log.txt";
-        logStream.open(logFile.c_str(), std::ofstream::app);
+
 }
 
-// get an instance of this
 Logger & Logger::Instance()
 {
         static Logger instance;
         return instance;
 }
 
-void Logger::setLogFile(const std::string & filename)
+void Logger::clearLogFile(const std::string & logFile)
 {
-        logFile = filename;
+
 }
 
-void Logger::log(const std::string & msg)
+void Logger::log(const std::string & logFile, std::string & msg)
 {
-        logStream << msg;
-    logStream.flush();
+	std::ofstream logStream;
+	logStream.open(logFile.c_str(), std::ofstream::app);
+	logStream << msg;
+	logStream.flush();
+	logStream.close();
 }
