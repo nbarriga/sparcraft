@@ -1326,13 +1326,13 @@ const ScoreType SparCraft::GameState::evalBuildingPlacement(
 		const IDType& attacker, const IDType& defender){
 
 	if(playerDead(attacker)){//attacker defeated, count how many we have left
-		return LTD2(defender)+300000;
+		return LTD(defender)+300000;
 	}else if(goalReached(attacker)){//enemy reached goal,
-		return LTD2(defender)-LTD2(attacker)+100000;
+		return /*LTD(defender)*/-LTD(attacker)+100000;
 	}else if(playerDead(defender)){//defender destroyed, count how many he has left
-		return LTD2(defender)-LTD2(attacker)+50000;
+		return LTD(defender)-LTD(attacker)+50000;
 	}else{//simulation time exhausted
-		return LTD2(defender)-LTD2(attacker)+200000;
+		return LTD(defender)-LTD(attacker)+200000;
 	}
 }
 
