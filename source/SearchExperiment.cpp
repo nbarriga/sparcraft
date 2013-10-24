@@ -761,7 +761,7 @@ void SearchExperiment::addLegalState(svv & unitTypes, ivv & numUnits,
 						!localMap.isWalkable(pos)||
 						(type.isBuilding()&&!localMap.canBuildHere(type,pos))));
 				if(n==0){
-					std::cout<<"LegalState retried 50 times to set initial location and failed\n";
+					System::FatalError("LegalState retried 50 times to set initial location and failed");
 				}
 				SparCraft::Unit unit(type,player,pos);
 				localMap.addUnit(unit);

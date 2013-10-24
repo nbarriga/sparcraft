@@ -51,7 +51,13 @@ public:
 	int & operator [] (const SparCraft::Position & pos)			{ return dist[getIndex(pos.y() / _tileSize, pos.x() / _tileSize)]; }
 	const int & operator [] (const SparCraft::Position & pos) const{ return dist[getIndex(pos.y() / _tileSize, pos.x() / _tileSize)]; }
 	void setMoveTo(const int index, const char val)			{ moveTo[index] = val; }
-	void setDistance(const int index, const int val)		{ dist[index] = val; }
+	void setDistance(const int index, const int val)
+	{
+		dist[index] = val;
+		if(val<0){
+			std::cerr<<"Warning, setting -1 distance on DistanceMap!";
+		}
+	}
 	void setStartPosition(const int sr, const int sc)		{ startRow = sr; startCol = sc; }
 
 	// reset the distance map

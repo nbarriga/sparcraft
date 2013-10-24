@@ -29,7 +29,7 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 		
 		const SparCraft::Unit & ourUnit				(state.getUnit(_playerID, u));
 
-		size_t mdist	= state.getMap().getDistanceToGoal(ourUnit.pos());
+//		size_t mdist	= state.getMap().getDistanceToGoal(ourUnit.pos());
 //		std::cout<<"Unit: "<<ourUnit.name()<<" dist to goal: "<<mdist<<
 //				" pos: "<<ourUnit.x()<<" "<<ourUnit.y()<<
 //				" range: "<<ourUnit.range()<<
@@ -97,6 +97,7 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 					if(closestWoundedOpt.is_initialized()&&
 							closestWoundedOpt.get().previousAction().type()!=UnitActionTypes::MOVE)
 					{
+						//this slows down things considerably
 						dist = state.getMap().getDistance(ourDest,closestWoundedOpt.get().pos());
 					}
 					else if(closestWoundedOpt.is_initialized()&&
