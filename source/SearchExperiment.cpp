@@ -759,7 +759,9 @@ void SearchExperiment::addLegalState(svv & unitTypes, ivv & numUnits,
 				}while(n>0&&
 						(pos.x()<0||pos.y()<0||
 						!localMap.isWalkable(pos)||
-						(type.isBuilding()&&!localMap.canBuildHere(type,pos))));
+						(type.isBuilding()&&!localMap.canBuildHere(type,pos))
+//						||(type.requiresPsi()&&!state.isPowered(pos,player))
+						));
 				if(n==0){
 					System::FatalError("LegalState retried 50 times to set initial location and failed");
 				}
