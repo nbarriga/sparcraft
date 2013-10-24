@@ -411,7 +411,7 @@ const IDType GameState::getEnemy(const IDType & player) const
 	return (player + 1) % 2;
 }
 
-const Unit & GameState::getClosestOurUnit(const IDType & player, const IDType & unitIndex)
+const Unit& GameState::getClosestOurUnit(const IDType & player, const IDType & unitIndex)
 {
 	const Unit & myUnit(getUnit(player,unitIndex));
 
@@ -422,13 +422,15 @@ const Unit & GameState::getClosestOurUnit(const IDType & player, const IDType & 
 
 	for (IDType u(0); u<_numUnits[player]; ++u)
 	{
-		if (u == unitIndex || getUnit(player, u).canHeal())
+		Unit & ourUnit(getUnit(player, u));
+
+		if (u == unitIndex || ourUnit.canHeal())//skip medics
 		{
 			continue;
 		}
 
 		//size_t distSq(myUnit.distSq(getUnit(enemyPlayer,u)));
-		size_t distSq(currentPos.getDistanceSq(getUnit(player, u).currentPosition(_currentTime)));
+		size_t distSq(currentPos.getDistanceSq(ourUnit.currentPosition(_currentTime)));
 
 		if (distSq < minDist)
 		{
@@ -437,36 +439,41 @@ const Unit & GameState::getClosestOurUnit(const IDType & player, const IDType & 
 		}
 	}
 
-	return getUnit(player, minUnitInd);
+	return  getUnit(player, minUnitInd);
 }
 
-const Unit & GameState::getClosestEnemyUnit(const IDType & player, const IDType & unitIndex)
+const Unit& GameState::getClosestEnemyUnit(const IDType & player, const IDType & unitIndex)
 {
 	const IDType enemyPlayer(getEnemy(player));
 	const Unit & myUnit(getUnit(player,unitIndex));
 
 	PositionType minDist(1000000);
 	IDType minUnitInd(0);
-    IDType minUnitID(255);
+	IDType minUnitID(255);
 
 	Position currentPos = myUnit.currentPosition(_currentTime);
 
 	for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
 	{
-        Unit & enemyUnit(getUnit(enemyPlayer, u));
-        PositionType distSq = myUnit.getDistanceSqToUnit(enemyUnit, _currentTime);
+		Unit & enemyUnit(getUnit(enemyPlayer, u));
+		PositionType distSq = myUnit.getDistanceSqToUnit(enemyUnit, _currentTime);
 
 		if ((distSq < minDist))// || ((distSq == minDist) && (enemyUnit.ID() < minUnitID)))
 		{
 			minDist = distSq;
 			minUnitInd = u;
-            minUnitID = enemyUnit.ID();
+			minUnitID = enemyUnit.ID();
 		}
-        else if ((distSq == minDist) && (enemyUnit.ID() < minUnitID))
-        {
-            minDist = distSq;
+		else if ((distSq == minDist) && (enemyUnit.ID() < minUnitID))
+		{
+			minDist = distSq;
 			minUnitInd = u;
-            minUnitID = enemyUnit.ID();
+			minUnitID = enemyUnit.ID();
+		}
+	}
+	return getUnit(enemyPlayer, minUnitInd);
+}
+
 const boost::optional<Unit&> GameState::getClosestOurUnitOpt(const IDType & player, const IDType & unitIndex)
 {
 	const Unit & myUnit(getUnit(player,unitIndex));
