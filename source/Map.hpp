@@ -310,15 +310,15 @@ public:
 
 	const bool isWalkable(const size_t & walkTileX, const size_t & walkTileY) const
 	{
-		return	walkTileX >= 0 && walkTileX < (PositionType)getWalkTileWidth() && 
-				walkTileY >= 0 && walkTileY < (PositionType)getWalkTileHeight() &&
+		return	walkTileX >= 0 && walkTileX < getWalkTileWidth() &&
+				walkTileY >= 0 && walkTileY < getWalkTileHeight() &&
 				getMapData(walkTileX, walkTileY);
 	}
 
     const bool isFlyable(const size_t & walkTileX, const size_t & walkTileY) const
 	{
-		return	walkTileX >= 0 && walkTileX < (PositionType)getWalkTileWidth() && 
-				walkTileY >= 0 && walkTileY < (PositionType)getWalkTileHeight();
+		return	walkTileX >= 0 && walkTileX < getWalkTileWidth() &&
+				walkTileY >= 0 && walkTileY < getWalkTileHeight();
 	}
 
 	const bool getMapData(const size_t & walkTileX, const size_t & walkTileY) const
@@ -351,7 +351,7 @@ public:
 
 	const bool canBuildHere(BWAPI::TilePosition pos)
 	{
-		return pos.x()>=0 && pos.y()>=0 && pos.x()<_buildTileWidth && pos.y()<_buildTileHeight &&
+		return pos.x()>=0 && pos.y()>=0 && pos.x()<(int)_buildTileWidth && pos.y()<(int)_buildTileHeight &&
 				!_unitDataBuildTile[pos.x()][pos.y()] &&
 				!_buildingDataBuildTile[pos.x()][pos.y()] &&
 				_mapData[pos.x()*4][pos.y()*4];

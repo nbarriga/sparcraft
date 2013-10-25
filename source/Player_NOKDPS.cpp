@@ -48,8 +48,8 @@ void Player_NOKDPS::getMoves(GameState & state, const MoveArray & moves, std::ve
 
                 if (move._moveIndex >= state.numUnits(enemy))
                 {
-                    int e = enemy;
-                    int pl = _playerID;
+                    //int e = enemy;
+                    //int pl = _playerID;
                     printf("wtf\n");
                 }
 			}

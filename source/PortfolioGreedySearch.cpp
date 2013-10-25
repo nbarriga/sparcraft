@@ -31,7 +31,7 @@ std::vector<UnitAction> PortfolioGreedySearch::search(const IDType & player, con
     setAllScripts(player, state, originalScriptData, seedScript);
     setAllScripts(enemyPlayer, state, originalScriptData, enemySeedScript);
 
-    double ms = t.getElapsedTimeInMilliSec();
+//    double ms = t.getElapsedTimeInMilliSec();
     //printf("\nFirst Part %lf ms\n", ms);
 
     // do the initial root portfolio search for our player
@@ -66,7 +66,7 @@ void PortfolioGreedySearch::doPortfolioSearch(const IDType & player, const GameS
     t.start();
 
     // the enemy of this player
-    const IDType enemyPlayer(state.getEnemy(player));
+//    const IDType enemyPlayer(state.getEnemy(player));
     
     for (size_t i(0); i<_iterations; ++i)
     {
@@ -145,7 +145,7 @@ IDType PortfolioGreedySearch::calculateInitialSeed(const IDType & player, const 
 
 StateEvalScore PortfolioGreedySearch::eval(const IDType & player, const GameState & state, UnitScriptData & playerScriptsChosen)
 {
-    const IDType enemyPlayer(state.getEnemy(player));
+//    const IDType enemyPlayer(state.getEnemy(player));
 
 	Game g(state, 100);
 

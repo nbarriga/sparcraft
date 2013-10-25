@@ -19,16 +19,16 @@ GLuint fontID = 0;
 Display::Display(const int mw, const int mh) 
 	: windowSizeX(1280)
 	, windowSizeY(720)
+    , zoomX(0)
+    , zoomY(0)
 	, mapWidth(mw)
 	, mapHeight(mh)
 	, bl(false)
 	, br(false)
-	, bu(false)
 	, bd(false)
-	, zoomX(0)
-	, zoomY(0)
+    , bu(false)
+    , started(false)
 	, drawResults(false)
-	, started(false)
 {
 	playerTypes[0] = 0;
 	playerTypes[1] = 0;
@@ -318,8 +318,9 @@ void Display::RenderMinimap()
 
 void Display::RenderTextOverlay()
 {
+	 /*
 	int size = 15;
-    /*
+
 	std::stringstream ss;
 	ss << "Game Frame: " << state.getTime();
 
@@ -418,7 +419,7 @@ void Display::DrawExperiment(int x, int y)
     int size = 11;
     int spacing = 3;
     int colwidth = 100;
-    int playerspacing = 350;
+//    int playerspacing = 350;
 
     std::stringstream ss;
     ss << "Game Frame: " << state.getTime();
@@ -464,8 +465,8 @@ void Display::RenderInformation()
 						const Position			pos(1000+170*p, 40+barHeight*u);
 						const BWAPI::UnitType	type(unit.type());
 				
-						const int				x0(pos.x());
-						const int				x1(pos.x() + 150);
+//						const int				x0(pos.x());
+//						const int				x1(pos.x() + 150);
 						const int				y0(pos.y());
 						const int				y1(pos.y() + 15);
 				

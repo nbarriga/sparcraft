@@ -85,8 +85,8 @@ AlphaBetaValue AlphaBetaSearch::IDAlphaBeta(GameState & initialState, const size
 			break;
 		}
 
-		long long unsigned nodes = _results.nodesExpanded;
-		double ms = _searchTimer.getElapsedTimeInMilliSec();
+//		long long unsigned nodes = _results.nodesExpanded;
+//		double ms = _searchTimer.getElapsedTimeInMilliSec();
 
 		//printTTResults();
 		//fprintf(stdout, "%s %8d %9d %9d %13.4lf %14llu %12d %12llu %15.2lf\n", "IDA", d, val.score().val(), (int)val.abMove().moveTuple(), ms, nodes, (int)_TT->numFound(), getResults().ttcuts, 1000*nodes/ms);
@@ -242,10 +242,10 @@ void AlphaBetaSearch::generateOrderedMoves(GameState & state, MoveArray & moves,
 		}
 	}*/
 
-    if (depth == 2)
-    {
-        int a = 6;
-    }
+//    if (depth == 2)
+//    {
+//        int a = 6;
+//    }
 
     // if we are using script move ordering, insert the script moves we want
     if (_params.moveOrderingMethod() == MoveOrderMethod::ScriptFirst)
@@ -257,10 +257,10 @@ void AlphaBetaSearch::generateOrderedMoves(GameState & state, MoveArray & moves,
 		    orderedMoves.add(moveVec);
 	    }
 
-        if (orderedMoves.size() < 2)
-        {
-            int a = 6;
-        }
+//        if (orderedMoves.size() < 2)
+//        {
+//            int a = 6;
+//        }
     }
 }
 
@@ -401,7 +401,7 @@ AlphaBetaValue AlphaBetaSearch::alphaBeta(GameState & state, size_t depth, const
 		}
 	}
 
-	bool bestMoveSet(false);
+//	bool bestMoveSet(false);
 
 	// move generation
 	MoveArray & moves = _allMoves[depth];
@@ -424,18 +424,18 @@ AlphaBetaValue AlphaBetaSearch::alphaBeta(GameState & state, size_t depth, const
 		// generate the child state
 		GameState child(state);
 
-		bool firstMove = true;
+//		bool firstMove = true;
 
 		// if this is the first player in a simultaneous move state
 		if (state.bothCanMove() && !prevSimMove && (depth != 1))
 		{
-			firstMove = true;
+//			firstMove = true;
 			// don't generate a child yet, just pass on the move we are investigating
 			val = alphaBeta(state, depth-1, playerToMove, &moveVec, alpha, beta);
 		}
 		else
 		{
-			firstMove = false;
+//			firstMove = false;
 
 			// if this is the 2nd move of a simultaneous move state
 			if (prevSimMove)
@@ -457,7 +457,7 @@ AlphaBetaValue AlphaBetaSearch::alphaBeta(GameState & state, size_t depth, const
 		{
 			alpha = val.score();
 			bestMove = AlphaBetaMove(moveVec, true);
-			bestMoveSet = true;
+//			bestMoveSet = true;
 
 			if (state.bothCanMove() && !prevSimMove)
 			{
@@ -470,7 +470,7 @@ AlphaBetaValue AlphaBetaSearch::alphaBeta(GameState & state, size_t depth, const
 		{
 			beta = val.score();
 			bestMove = AlphaBetaMove(moveVec, true);
-			bestMoveSet = true;
+//			bestMoveSet = true;
 
 			if (state.bothCanMove() && prevSimMove)
 			{

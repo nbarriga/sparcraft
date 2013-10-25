@@ -66,8 +66,8 @@ Unit::Unit(const BWAPI::UnitType unitType, const IDType & playerID, const Positi
     , _timeCanMove          (0)
     , _timeCanAttack        (0)
     , _previousActionTime   (0)
-    , _prevCurrentPosTime   (0)
     , _previousPosition     (pos)
+    , _prevCurrentPosTime   (0)
     , _prevCurrentPos       (pos)
 {
     System::checkSupportedUnitType(unitType);

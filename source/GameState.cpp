@@ -523,7 +523,7 @@ const boost::optional<Unit&> GameState::getClosestEnemyUnitOpt(const IDType & pl
     IDType minUnitID(255);
     bool found(false);
 
-	Position currentPos = myUnit.currentPosition(_currentTime);
+//	Position currentPos = myUnit.currentPosition(_currentTime);
 
 	for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
 	{
@@ -565,7 +565,7 @@ const boost::optional<Unit&> GameState::getClosestEnemyBuildingOpt(const IDType 
     IDType minUnitID(255);
     bool found(false);
 
-	Position currentPos = myUnit.currentPosition(_currentTime);
+//	Position currentPos = myUnit.currentPosition(_currentTime);
 
 	for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
 	{

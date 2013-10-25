@@ -53,8 +53,8 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 
 					if (move._moveIndex >= state.numUnits(enemy))
 					{
-						int e = enemy;
-						int pl = _playerID;
+//						int e = enemy;
+//						int pl = _playerID;
 						printf("wtf\n");
 					}
 				}else{

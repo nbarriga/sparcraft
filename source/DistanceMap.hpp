@@ -27,19 +27,25 @@ class DistanceMap
 public:
 
 	DistanceMap () 
-		: dist(std::vector<int>(BWAPI::Broodwar->mapWidth() * BWAPI::Broodwar->mapHeight(), -1))
-		, moveTo(std::vector<char>(BWAPI::Broodwar->mapWidth() * BWAPI::Broodwar->mapHeight(), 'X'))
-		, rows(BWAPI::Broodwar->mapHeight()), cols(BWAPI::Broodwar->mapWidth()), startRow(-1), startCol(-1),
-		_tileSize(32)
+		: rows(BWAPI::Broodwar->mapHeight()),
+		  cols(BWAPI::Broodwar->mapWidth()),
+		  startRow(-1),
+		  startCol(-1),
+		  _tileSize(32),
+		  dist(std::vector<int>(BWAPI::Broodwar->mapWidth() * BWAPI::Broodwar->mapHeight(), -1)),
+		  moveTo(std::vector<char>(BWAPI::Broodwar->mapWidth() * BWAPI::Broodwar->mapHeight(), 'X'))
 	{
 		//BWAPI::Broodwar->printf("New Distance Map With Dimensions (%d, %d)", rows, cols);
 	}
 
 	DistanceMap (const size_t & width, const size_t & height, const size_t tileSize)
-	: dist(std::vector<int>(width * height, -1))
-	, moveTo(std::vector<char>(width * height, 'X'))
-	, rows(height), cols(width), startRow(-1), startCol(-1),
-	_tileSize(tileSize)
+	: rows(height),
+	  cols(width),
+	  startRow(-1),
+	  startCol(-1),
+	  _tileSize(tileSize),
+	  dist(std::vector<int>(width * height, -1)),
+	  moveTo(std::vector<char>(width * height, 'X'))
 	{
 		//BWAPI::Broodwar->printf("New Distance Map With Dimensions (%d, %d)", rows, cols);
 	}

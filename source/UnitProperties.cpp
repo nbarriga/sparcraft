@@ -7,9 +7,9 @@ UnitProperties UnitProperties::props[256];
 
 UnitProperties::UnitProperties() : 
 	capacityUpgrade(BWAPI::UpgradeTypes::None),
+	extraArmorUpgrade(BWAPI::UpgradeTypes::None),
 	maxEnergyUpgrade(BWAPI::UpgradeTypes::None),
 	sightUpgrade(BWAPI::UpgradeTypes::None),
-	extraArmorUpgrade(BWAPI::UpgradeTypes::None),
 	speedUpgrade(BWAPI::UpgradeTypes::None)
 {
 	capacity[0]		= capacity[1]		= 0;

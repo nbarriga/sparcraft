@@ -4,10 +4,10 @@ using namespace SparCraft;
 
 Game::Game(const GameState & initialState, const size_t & limit)
     : _numPlayers(0)
-    , state(initialState)
     , _playerToMoveMethod(SparCraft::PlayerToMove::Alternate)
     , rounds(0)
     , moveLimit(limit)
+    , state(initialState)
 {
 #ifdef USING_VISUALIZATION_LIBRARIES
     disp = NULL;
@@ -16,10 +16,10 @@ Game::Game(const GameState & initialState, const size_t & limit)
 
 Game::Game(const GameState & initialState, PlayerPtr & p1, PlayerPtr & p2, const size_t & limit)
     : _numPlayers(0)
-    , state(initialState)
     , _playerToMoveMethod(SparCraft::PlayerToMove::Alternate)
     , rounds(0)
     , moveLimit(limit)
+    , state(initialState)
 {
     // add the players
     _players[Players::Player_One] = p1;

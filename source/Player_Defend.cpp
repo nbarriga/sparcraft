@@ -52,8 +52,8 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 
                 if (move._moveIndex >= state.numUnits(enemy))
                 {
-                    int e = enemy;
-                    int pl = _playerID;
+//                    int e = enemy;
+//                    int pl = _playerID;
                     printf("wtf\n");
                 }
 			}
@@ -107,7 +107,7 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 							dist = state.getMap().getDistance(ourDest,closestOurBuildingOpt.get().pos());
 							if(dist<1){//no path to nearest building?
 								//stay put
-								std::cerr<"eh?";
+								std::cerr<<"eh?";
 							}
 						}
 					}

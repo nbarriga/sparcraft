@@ -33,7 +33,7 @@ public:
 		gen.seed(seed);
 	}
 
-	int reset(int min, int max, int seed)
+	void reset(int min, int max, int seed)
 	{
 		dist = boost::random::uniform_int_distribution<>(min, max);
 		gen.seed(seed);
