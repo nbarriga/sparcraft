@@ -26,8 +26,13 @@ LibSparCraft:$(filter-out source/main.o,$(OBJECTS))
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
 	$(CC) -MM $(CPPFLAGS) $(INCLUDES) -MT $@ -o $*.d $<
 
+.PHONY: clean doc
+
 clean:
 	rm -f $(OBJECTS) $(OBJECTS:.o=.d) SparCraft
+
+doc:
+	doxygen Doxyfile
 
 -include $(GLFONTSOURCE:.cc=.d) $(SOURCES:.cpp=.d)
 
