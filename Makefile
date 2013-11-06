@@ -1,5 +1,5 @@
-#CC=g++ -g -rdynamic -Wall -Wno-switch
-CC=clang++ -g -O3 -Wall -Wextra -fsanitize=undefined -fno-sanitize=object-size -fsanitize=unsigned-integer-overflow -fsanitize=address
+CC=g++ -g -rdynamic -Wall -Wno-switch
+#CC=clang++ -g -O3 -Wall -Wextra -fsanitize=undefined -fno-sanitize=object-size -fsanitize=unsigned-integer-overflow -fsanitize=address
 #CC=g++ -O3
 SDL_LDFLAGS=`sdl-config --libs` 
 SDL_CFLAGS=`sdl-config --cflags` 
