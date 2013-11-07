@@ -11,7 +11,7 @@ namespace SparCraft
 	}
 }
 
-const HashType Hash::HashValues::positionHash(const IDType & player, const PositionType & x, const PositionType & y) const
+ HashType Hash::HashValues::positionHash(const IDType & player, const PositionType & x, const PositionType & y) const
 {
 	// return hash32shift(unitPositionHash[player] ^ ((x << 16) + y))
 	return hash32shift(hash32shift(unitPositionHash[player] ^ x) ^ y);
@@ -42,18 +42,18 @@ Hash::HashValues::HashValues(int seed)
 	}
 }
 
-const HashType Hash::HashValues::getAttackHash (const size_t & player, const size_t & value) const		
+ HashType Hash::HashValues::getAttackHash (const size_t & player, const size_t & value) const		
 { 
 	return hash32shift(timeCanAttackHash[player] ^ value); 
 }
 
 
-const HashType Hash::HashValues::getMoveHash		(const size_t & player, const size_t & value) const		{ return hash32shift(timeCanMoveHash[player] ^ value); }
-const HashType Hash::HashValues::getUnitTypeHash	(const size_t & player, const size_t & value) const		{ return hash32shift(unitTypeHash[player] ^ value); }
-const HashType Hash::HashValues::getCurrentHPHash	(const size_t & player, const size_t & value) const		{ return hash32shift(currentHPHash[player] ^ value); }
+ HashType Hash::HashValues::getMoveHash		(const size_t & player, const size_t & value) const		{ return hash32shift(timeCanMoveHash[player] ^ value); }
+ HashType Hash::HashValues::getUnitTypeHash	(const size_t & player, const size_t & value) const		{ return hash32shift(unitTypeHash[player] ^ value); }
+ HashType Hash::HashValues::getCurrentHPHash	(const size_t & player, const size_t & value) const		{ return hash32shift(currentHPHash[player] ^ value); }
 
 //Robert Jenkins' 32 bit integer hash function
-const size_t Hash::jenkinsHash( size_t a)
+ size_t Hash::jenkinsHash( size_t a)
 {
 	a = (a+0x7ed55d16) + (a<<12);
 	a = (a^0xc761c23c) ^ (a>>19);
@@ -81,12 +81,12 @@ int Hash::hash32shift(int key)
 	return key;
 }
 
-const int Hash::jenkinsHashCombine(const HashType & hash, const int val)
+ int Hash::jenkinsHashCombine(const HashType & hash, const int val)
 {
 	return hash32shift(hash ^ (HashType)val);
 }
 
-const size_t Hash::magicHash(const HashType & hash, const size_t & player, const size_t & index)
+ size_t Hash::magicHash(const HashType & hash, const size_t & player, const size_t & index)
 {
 	return hash32shift(hash ^ unitIndexHash[player][index]);
 }

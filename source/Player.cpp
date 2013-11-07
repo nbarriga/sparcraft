@@ -8,7 +8,7 @@ void Player::getMoves(GameState & state, const MoveArray & moves, std::vector<Un
 	// not implemented
 }
 
-const IDType Player::ID() 
+ IDType Player::ID() 
 { 
 	return _playerID; 
 }

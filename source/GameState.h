@@ -35,8 +35,8 @@ class GameState
     TimeType                                                        _sameHPFrames;
 
     // checks to see if the unit array is full before adding a unit to the state
-    const bool              checkFull(const IDType & player)                                        const;
-    const bool              checkUniqueUnitIDs()                                                    const;
+    bool              checkFull(const IDType & player)                                        const;
+    bool              checkUniqueUnitIDs()                                                    const;
 
     void                    performUnitAction(const UnitAction & theMove);
 
@@ -50,14 +50,14 @@ public:
     void                    finishedMoving();
     void					beforeMoving();
     void                    updateGameTime();
-    const bool              playerDead(const IDType & player)                                       const;
-    const bool              isTerminal()                                                            const;
+    bool              playerDead(const IDType & player)                                       const;
+    bool              isTerminal()                                                            const;
 
     // unit data functions
-    const size_t            numUnits(const IDType & player)                                         const;
-    const size_t            prevNumUnits(const IDType & player)                                     const;
-    const size_t            numNeutralUnits()                                                       const;
-    const size_t            closestEnemyUnitDistance(const Unit & unit)                             const;
+     size_t            numUnits(const IDType & player)                                         const;
+     size_t            prevNumUnits(const IDType & player)                                     const;
+     size_t            numNeutralUnits()                                                       const;
+     size_t            closestEnemyUnitDistance(const Unit & unit)                             const;
 
     // Unit functions
     void                    sortUnits();
@@ -89,20 +89,20 @@ public:
     
     // game time functions
     void                    setTime(const TimeType & time);
-    const TimeType          getTime()                                                               const;
+     TimeType          getTime()                                                               const;
 
     // evaluation functions
-    const StateEvalScore    eval(   const IDType & player, const IDType & evalMethod, 
+    StateEvalScore    eval(   const IDType & player, const IDType & evalMethod,
                                     const IDType p1Script = PlayerModels::NOKDPS,
                                     const IDType p2Script = PlayerModels::NOKDPS)                   const;
-    const ScoreType         evalLTD(const IDType & player)                                        const;
-    const ScoreType         evalLTD2(const IDType & player)                                       const;
-    const ScoreType         LTD(const IDType & player)                                            const;
-    const ScoreType         LTD2(const IDType & player)                                           const;
-    const ScoreType         evalBuildingPlacement(const IDType & attacker, const IDType & defender);
+     ScoreType         evalLTD(const IDType & player)                                        const;
+     ScoreType         evalLTD2(const IDType & player)                                       const;
+     ScoreType         LTD(const IDType & player)                                            const;
+     ScoreType         LTD2(const IDType & player)                                           const;
+     ScoreType         evalBuildingPlacement(const IDType & attacker, const IDType & defender);
     bool goalReached(const IDType& player);
-    const StateEvalScore    evalSim(const IDType & player, const IDType & p1, const IDType & p2)    const;
-    const IDType            getEnemy(const IDType & player)                                         const;
+     StateEvalScore    evalSim(const IDType & player, const IDType & p1, const IDType & p2)    const;
+     IDType            getEnemy(const IDType & player)                                         const;
 
     // unit hitpoint calculations, needed for LTD2 evaluation
     void                    calculateStartingHealth();
@@ -115,17 +115,17 @@ public:
     void                    generateMoves(MoveArray & moves, const IDType & playerIndex)            const;
     void                    makeMoves(const std::vector<UnitAction> & moves);
     const int &             getNumMovements(const IDType & player)                                  const;
-    const IDType            whoCanMove()                                                            const;
-    const bool              bothCanMove()                                                           const;
+     IDType            whoCanMove()                                                            const;
+    bool              bothCanMove()                                                           const;
 		  
     // map-related functions
     void                    setMap(const Map & map);
     Map &             		getMap();
-    const bool              isWalkable(const Position & pos)                                        const;
-    const bool              isFlyable(const Position & pos)                                         const;
+    bool              isWalkable(const Position & pos)                                        const;
+    bool              isFlyable(const Position & pos)                                         const;
 
     // hashing functions
-    const HashType          calculateHash(const size_t & hashNum)                                   const;
+     HashType          calculateHash(const size_t & hashNum)                                   const;
 
     // state i/o functions
     void                    print(int indent = 0) const;

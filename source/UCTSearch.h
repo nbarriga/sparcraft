@@ -60,16 +60,16 @@ public:
     void            generateChildren(UCTNode & node, GameState & state);
 	void            generateOrderedMoves(GameState & state, MoveArray & moves, const IDType & playerToMove);
     void            makeMove(UCTNode & node, GameState & state);
-	const bool      getNextMove(IDType playerToMove, MoveArray & moves, const size_t & moveNumber, std::vector<UnitAction> & actionVec);
+	bool      getNextMove(IDType playerToMove, MoveArray & moves, const size_t & moveNumber, std::vector<UnitAction> & actionVec);
 
     // Utility functions
-	const IDType    getPlayerToMove(UCTNode & node, const GameState & state) const;
-    const size_t    getChildNodeType(UCTNode & parent, const GameState & prevState) const;
-	const bool      searchTimeOut();
-	const bool      isRoot(UCTNode & node) const;
-	const bool      terminalState(GameState & state, const size_t & depth) const;
-    const bool      isFirstSimMove(UCTNode & node, GameState & state);
-    const bool      isSecondSimMove(UCTNode & node, GameState & state);
+	 IDType    getPlayerToMove(UCTNode & node, const GameState & state) const;
+     size_t    getChildNodeType(UCTNode & parent, const GameState & prevState) const;
+	bool      searchTimeOut();
+	bool      isRoot(UCTNode & node) const;
+	bool      terminalState(GameState & state, const size_t & depth) const;
+    bool      isFirstSimMove(UCTNode & node, GameState & state);
+    bool      isSecondSimMove(UCTNode & node, GameState & state);
     StateEvalScore  performPlayout(GameState & state);
     void            updateState(UCTNode & node, GameState & state, bool isLeaf);
     void            setMemoryPool(UCTMemoryPool * pool);

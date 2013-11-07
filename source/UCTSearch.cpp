@@ -76,12 +76,12 @@ void UCTSearch::doSearch(GameState & initialState, std::vector<UnitAction> & mov
     //printf("Hello\n");
 }
 
-const bool UCTSearch::searchTimeOut()
+bool UCTSearch::searchTimeOut()
 {
 	return (_params.timeLimit() && (_searchTimer.getElapsedTimeInMilliSec() >= _params.timeLimit()));
 }
 
-const bool UCTSearch::terminalState(GameState & state, const size_t & depth) const
+bool UCTSearch::terminalState(GameState & state, const size_t & depth) const
 {
 	return (depth <= 0 || state.isTerminal());
 }
@@ -114,7 +114,7 @@ void UCTSearch::generateOrderedMoves(GameState & state, MoveArray & moves, const
     }
 	
 }
-const size_t UCTSearch::getChildNodeType(UCTNode & parent, const GameState & prevState) const
+ size_t UCTSearch::getChildNodeType(UCTNode & parent, const GameState & prevState) const
 {
     if (!prevState.bothCanMove())
     {
@@ -143,7 +143,7 @@ const size_t UCTSearch::getChildNodeType(UCTNode & parent, const GameState & pre
     return SearchNodeType::Default;
 }
 
-const bool UCTSearch::getNextMove(IDType playerToMove, MoveArray & moves, const size_t & moveNumber, std::vector<UnitAction> & actionVec)
+bool UCTSearch::getNextMove(IDType playerToMove, MoveArray & moves, const size_t & moveNumber, std::vector<UnitAction> & actionVec)
 {
     if (moveNumber > _params.maxChildren())
     {
@@ -184,7 +184,7 @@ const bool UCTSearch::getNextMove(IDType playerToMove, MoveArray & moves, const 
 	}
 }
 
-const IDType UCTSearch::getPlayerToMove(UCTNode & node, const GameState & state) const
+ IDType UCTSearch::getPlayerToMove(UCTNode & node, const GameState & state) const
 {
 	const IDType whoCanMove(state.whoCanMove());
 
@@ -387,7 +387,7 @@ StateEvalScore UCTSearch::performPlayout(GameState & state)
     return copy.eval(_params.maxPlayer(), _params.evalMethod(), _params.simScript(Players::Player_One), _params.simScript(Players::Player_Two));
 }
 
-const bool UCTSearch::isRoot(UCTNode & node) const
+bool UCTSearch::isRoot(UCTNode & node) const
 {
     return &node == &_rootNode;
 }

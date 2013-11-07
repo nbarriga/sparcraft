@@ -42,12 +42,12 @@ public:
 
 	}
 
-	const int damage()			const { return _damage; }
-	const int maxHP()			const { return _maxHP; }
-	const int currentHP()		const { return _currentHP; }
-	const int range()			const { return _range; }
-	const int moveCooldown()	const { return _moveCooldown; }
-	const int weaponCooldown()	const { return _weaponCooldown; }
-	const int lastMove()		const { return _lastMove; }
-	const int lastAttack()		const { return _lastAttack; }
+	 int damage()			const { return _damage; }
+	 int maxHP()			const { return _maxHP; }
+	 int currentHP()		const { return _currentHP; }
+	 int range()			const { return _range; }
+	 int moveCooldown()	const { return _moveCooldown; }
+	 int weaponCooldown()	const { return _weaponCooldown; }
+	 int lastMove()		const { return _lastMove; }
+	 int lastAttack()		const { return _lastAttack; }
 };

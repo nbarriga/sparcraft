@@ -16,7 +16,7 @@ protected:
 
 public:
 
-    static const int size()
+    static  int size()
     {
         return T::Size;
     }
@@ -44,7 +44,7 @@ public:
         nameMap[s] = ID;
     }
 
-    static const IDType getID(const std::string & s)
+    static  IDType getID(const std::string & s)
     {
         const std::map<std::string, int>::const_iterator it(nameMap.find(s));
 

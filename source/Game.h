@@ -57,7 +57,7 @@ public:
 	GameState &     getState();
 	int             getRounds();
 	double          getTime();
-	const IDType    getPlayerToMove();
+	 IDType    getPlayerToMove();
 
 #ifdef USING_VISUALIZATION_LIBRARIES
     void setDisplay(Display * d);

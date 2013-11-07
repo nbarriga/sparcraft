@@ -20,7 +20,7 @@ public:
 
     }
 
-	const bool operator() (const int & u1, const int & u2) const
+	bool operator() (const int & u1, const int & u2) const
 	{
         return state.getUnitDirect(player, u1) < state.getUnitDirect(player, u2);
     }
@@ -94,7 +94,7 @@ void GameState::finishedMoving()
     }
 }
 
-const HashType GameState::calculateHash(const size_t & hashNum) const
+ HashType GameState::calculateHash(const size_t & hashNum) const
 {
 	HashType hash(0);
 
@@ -396,17 +396,17 @@ Unit & GameState::getUnitByID(const IDType & player, const IDType & unitID)
 	return getUnit(0,0);
 }
 
-const bool GameState::isWalkable(const Position & pos) const
+bool GameState::isWalkable(const Position & pos) const
 {
 	return _map.isWalkable(pos);
 }
 
-const bool GameState::isFlyable(const Position & pos) const
+bool GameState::isFlyable(const Position & pos) const
 {
 	return _map.isFlyable(pos);
 }
 
-const IDType GameState::getEnemy(const IDType & player) const
+ IDType GameState::getEnemy(const IDType & player) const
 {
 	return (player + 1) % 2;
 }
@@ -745,7 +745,7 @@ const boost::optional<const Unit&> SparCraft::GameState::getClosestOurPylonOpt(c
 	return getClosestOurPylonOpt(player,myUnit.currentPosition(_currentTime));
 }
 
-const bool GameState::checkFull(const IDType & player) const
+bool GameState::checkFull(const IDType & player) const
 {
     if (numUnits(player) >= Constants::Max_Units)
     {
@@ -895,7 +895,7 @@ const Unit & GameState::getUnit(const IDType & player, const UnitCountType & uni
     return _units[player][_unitIndex[player][unitIndex]];
 }
 
-const size_t GameState::closestEnemyUnitDistance(const Unit & unit) const
+ size_t GameState::closestEnemyUnitDistance(const Unit & unit) const
 {
 	IDType enemyPlayer(getEnemy(unit.player()));
 
@@ -914,7 +914,7 @@ const size_t GameState::closestEnemyUnitDistance(const Unit & unit) const
 	return closestDist;
 }
 
-const bool GameState::playerDead(const IDType & player) const
+bool GameState::playerDead(const IDType & player) const
 {
 	if (numUnits(player) <= 0)
 	{
@@ -933,7 +933,7 @@ const bool GameState::playerDead(const IDType & player) const
 	return true;
 }
 
-const IDType GameState::whoCanMove() const
+ IDType GameState::whoCanMove() const
 {
 	TimeType p1Time(getUnit(0,0).firstTimeFree());
 	TimeType p2Time(getUnit(1,0).firstTimeFree());
@@ -954,7 +954,7 @@ const IDType GameState::whoCanMove() const
 	}
 }
 
-const bool GameState::checkUniqueUnitIDs() const
+bool GameState::checkUniqueUnitIDs() const
 {
 	std::set<IDType> unitIDs;
 
@@ -993,7 +993,7 @@ void GameState::updateGameTime()
 	}
 }
 
-const StateEvalScore GameState::eval(const IDType & player, const IDType & evalMethod, const IDType p1Script, const IDType p2Script) const
+ StateEvalScore GameState::eval(const IDType & player, const IDType & evalMethod, const IDType p1Script, const IDType p2Script) const
 {
 	StateEvalScore score;
 	const IDType enemyPlayer(getEnemy(player));
@@ -1039,7 +1039,7 @@ const StateEvalScore GameState::eval(const IDType & player, const IDType & evalM
 }
 
 // evaluate the state for _playerToMove
-const ScoreType GameState::evalLTD(const IDType & player) const
+ ScoreType GameState::evalLTD(const IDType & player) const
 {
 	const IDType enemyPlayer(getEnemy(player));
 	
@@ -1047,14 +1047,14 @@ const ScoreType GameState::evalLTD(const IDType & player) const
 }
 
 // evaluate the state for _playerToMove
-const ScoreType GameState::evalLTD2(const IDType & player) const
+ ScoreType GameState::evalLTD2(const IDType & player) const
 {
 	const IDType enemyPlayer(getEnemy(player));
 
 	return LTD2(player) - LTD2(enemyPlayer);
 }
 
-const StateEvalScore GameState::evalSim(const IDType & player, const IDType & p1Script, const IDType & p2Script) const
+ StateEvalScore GameState::evalSim(const IDType & player, const IDType & p1Script, const IDType & p2Script) const
 {
 	const IDType p1Model = (p1Script == PlayerModels::Random) ? PlayerModels::NOKDPS : p1Script;
 	const IDType p2Model = (p2Script == PlayerModels::Random) ? PlayerModels::NOKDPS : p2Script;
@@ -1089,7 +1089,7 @@ void GameState::calculateStartingHealth()
 	}
 }
 
-const ScoreType	GameState::LTD2(const IDType & player) const
+ ScoreType	GameState::LTD2(const IDType & player) const
 {
 	if (numUnits(player) == 0)
 	{
@@ -1110,7 +1110,7 @@ const ScoreType	GameState::LTD2(const IDType & player) const
 	return ret;
 }
 
-const ScoreType GameState::LTD(const IDType & player) const
+ ScoreType GameState::LTD(const IDType & player) const
 {
 	if (numUnits(player) == 0)
 	{
@@ -1157,12 +1157,12 @@ void GameState::setMap(const Map & map)
     }
 }
 
-const size_t GameState::numUnits(const IDType & player) const
+ size_t GameState::numUnits(const IDType & player) const
 {
 	return _numUnits[player];
 }
 
-const size_t GameState::prevNumUnits(const IDType & player) const
+ size_t GameState::prevNumUnits(const IDType & player) const
 {
 	return _prevNumUnits[player];
 }
@@ -1172,7 +1172,7 @@ const Unit & GameState::getUnitDirect(const IDType & player, const IDType & unit
 	return _units[player][unit];
 }
 
-const bool GameState::bothCanMove() const
+bool GameState::bothCanMove() const
 {
 	return getUnit(0, 0).firstTimeFree() == getUnit(1, 0).firstTimeFree();
 }
@@ -1187,7 +1187,7 @@ const int & GameState::getNumMovements(const IDType & player) const
 	return _numMovements[player];
 }
 
-const TimeType GameState::getTime() const
+ TimeType GameState::getTime() const
 {
 	return _currentTime;
 }
@@ -1209,7 +1209,7 @@ void GameState::setTotalLTD(const float & p1, const float & p2)
 }
 
 // detect if there is a deadlock, such that no team can possibly win
-const bool GameState::isTerminal() const
+bool GameState::isTerminal() const
 {
     // if someone is dead, then nobody can move
     if (playerDead(Players::Player_One) || playerDead(Players::Player_Two))
@@ -1268,7 +1268,7 @@ Map & GameState::getMap()
 	return _map;
 }
 
-const size_t GameState::numNeutralUnits() const
+ size_t GameState::numNeutralUnits() const
 {
 	return _neutralUnits.size();
 }
@@ -1322,7 +1322,7 @@ bool SparCraft::GameState::goalReached(const IDType& player){
 	return false;
 }
 
-const ScoreType SparCraft::GameState::evalBuildingPlacement(
+ScoreType SparCraft::GameState::evalBuildingPlacement(
 		const IDType& attacker, const IDType& defender){
 
 	if(playerDead(attacker)){//attacker defeated, count how many we have left

@@ -119,7 +119,7 @@ void MoveArray::incrementMove(const size_t & unit)
     //_currentMovesVec[unit] = _moves[unit][_currentMovesIndex[unit]];
 }
 
-const bool MoveArray::hasMoreMoves() const
+bool MoveArray::hasMoreMoves() const
 {
     return _hasMoreMoves;
 }
@@ -143,7 +143,7 @@ void MoveArray::getNextMoveVec(std::vector<UnitAction> & moves)
     incrementMove(0);
 }
 
-const size_t MoveArray::maxUnits() const
+ size_t MoveArray::maxUnits() const
 {
 	return _moves.getRows();
 }
@@ -179,12 +179,12 @@ bool MoveArray::validateMoves()
 	return true;
 }
 
-const IDType MoveArray::getUnitID(const IDType & unit) const
+ IDType MoveArray::getUnitID(const IDType & unit) const
 {
 	return getMove(unit, 0).unit();
 }
 
-const IDType MoveArray::getPlayerID(const IDType & unit) const
+ IDType MoveArray::getPlayerID(const IDType & unit) const
 {
 	return getMove(unit, 0).player();
 }

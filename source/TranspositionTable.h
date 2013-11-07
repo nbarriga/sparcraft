@@ -28,9 +28,9 @@ public:
 	TTEntry(const HashType & hash2, const StateEvalScore & score, const size_t & depth, const int & type, 
 			const IDType & firstPlayer, const AlphaBetaMove & bestFirstMove, const AlphaBetaMove & bestSecondMove);
 
-	const bool hashMatches(const HashType & hash2) const;
+	bool hashMatches(const HashType & hash2) const;
 
-	const bool isValid() const;
+	bool isValid() const;
 
 	const HashType & getHash()									const;
 	const StateEvalScore & getScore()							const;
@@ -69,8 +69,8 @@ public:
 		
 	}
 
-	const bool found() const	{ return _found; }
-	const bool cut() const		{ return _cut; }
+	bool found() const	{ return _found; }
+	bool cut() const		{ return _cut; }
 	TTEntry * entry() const		{ return _entry; }
 };
 
@@ -85,7 +85,7 @@ class TranspositionTable
 	size_t			minIndex,
 					maxIndex;
 
-	const size_t getIndex(const HashType & hash1) const
+	 size_t getIndex(const HashType & hash1) const
 	{
 		return hash1 % size; 
 	}
@@ -122,9 +122,9 @@ public:
 	const size_t & numSaves()		const;
 	const size_t & numLookups()		const;
 
-	const size_t getUsage() const;
+	 size_t getUsage() const;
 
-	const size_t getSaveIndex(const size_t & index, const HashType & hash2, const size_t & depth) const;
+	 size_t getSaveIndex(const size_t & index, const HashType & hash2, const size_t & depth) const;
 
 	void print();
 };

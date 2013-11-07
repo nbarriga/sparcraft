@@ -174,12 +174,12 @@ TTLookupValue AlphaBetaSearch::TTlookup(const GameState & state, StateEvalScore 
 	return TTLookupValue(false, false, entry);
 }
 
-const bool AlphaBetaSearch::searchTimeOut()
+bool AlphaBetaSearch::searchTimeOut()
 {
 	return (_params.timeLimit() && (_results.nodesExpanded % 50 == 0) && (_searchTimer.getElapsedTimeInMilliSec() >= _params.timeLimit()));
 }
 
-const bool AlphaBetaSearch::terminalState(GameState & state, const size_t & depth) const
+bool AlphaBetaSearch::terminalState(GameState & state, const size_t & depth) const
 {
 	return (depth <= 0 || state.isTerminal());
 }
@@ -318,7 +318,7 @@ bool AlphaBetaSearch::getNextMoveVec(IDType playerToMove, MoveArray & moves, con
 	}
 }
 
-const IDType AlphaBetaSearch::getPlayerToMove(GameState & state, const size_t & depth, const IDType & lastPlayerToMove, const bool isFirstSimMove) const
+ IDType AlphaBetaSearch::getPlayerToMove(GameState & state, const size_t & depth, const IDType & lastPlayerToMove, const bool isFirstSimMove) const
 {
 	const IDType whoCanMove(state.whoCanMove());
 
@@ -359,7 +359,7 @@ const IDType AlphaBetaSearch::getPlayerToMove(GameState & state, const size_t & 
 	}
 }
 
-const bool AlphaBetaSearch::isTranspositionLookupState(GameState & state, const std::vector<UnitAction> * firstSimMove) const
+bool AlphaBetaSearch::isTranspositionLookupState(GameState & state, const std::vector<UnitAction> * firstSimMove) const
 {
 	return !state.bothCanMove() || (state.bothCanMove() && !firstSimMove);
 }
@@ -506,12 +506,12 @@ AlphaBetaSearchResults & AlphaBetaSearch::getResults()
 	return _results;
 }
 
-const IDType AlphaBetaSearch::getEnemy(const IDType & player) const
+ IDType AlphaBetaSearch::getEnemy(const IDType & player) const
 {
 	return (player + 1) % 2;
 }
 
-const bool AlphaBetaSearch::isRoot(const size_t & depth) const
+bool AlphaBetaSearch::isRoot(const size_t & depth) const
 {
 	return depth == _currentRootDepth;
 }

@@ -50,13 +50,13 @@ public:
         _children.reserve(maxChildren);
     }
 
-    const size_t    numVisits()                 const           { return _numVisits; }
-    const double    numWins()                   const           { return _numWins; }
-    const size_t    numChildren()               const           { return _children.size(); }
-    const double    getUCTVal()                 const           { return _uctVal; }
-    const bool      hasChildren()               const           { return numChildren() > 0; }
-    const size_t    getNodeType()               const           { return _nodeType; }
-    const IDType    getPlayer()                 const           { return _player; }
+     size_t    numVisits()                 const           { return _numVisits; }
+     double    numWins()                   const           { return _numWins; }
+     size_t    numChildren()               const           { return _children.size(); }
+     double    getUCTVal()                 const           { return _uctVal; }
+    bool      hasChildren()               const           { return numChildren() > 0; }
+     size_t    getNodeType()               const           { return _nodeType; }
+     IDType    getPlayer()                 const           { return _player; }
 
     UCTNode *       getParent()                 const           { return _parent; }
     UCTNode &       getChild(const size_t & c)                  { return _children[c]; }

@@ -66,7 +66,7 @@ const PlayerPtr & UnitScriptData::getPlayerPtr(const IDType & player, const size
     return _playerPtrVec[player][index];
 }
 
-const size_t UnitScriptData::getNumScripts(const IDType & player) const
+ size_t UnitScriptData::getNumScripts(const IDType & player) const
 {
     return _scriptSet[player].size();
 }

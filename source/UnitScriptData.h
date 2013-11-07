@@ -40,6 +40,6 @@ public:
     const IDType &      getUnitScript(const Unit & unit) const;
     const IDType &      getScript(const IDType & player, const size_t & index);
     const PlayerPtr &   getPlayerPtr(const IDType & player, const size_t & index);
-    const size_t        getNumScripts(const IDType & player) const;
+     size_t        getNumScripts(const IDType & player) const;
 };
 }

@@ -51,7 +51,7 @@ public:
 		
 	}
 
-	const bool operator == (const UnitAction & rhs)
+	bool operator == (const UnitAction & rhs)
 	{
 		return _unit == rhs._unit && _player == rhs._player && _moveType == rhs._moveType && _moveIndex == rhs._moveIndex && _p == rhs._p;
 	}
@@ -88,7 +88,7 @@ public:
 		return "NONE";
 	}
 
-	const Position getDir() const
+	 Position getDir() const
 	{
 		assert(_moveType == UnitActionTypes::MOVE);
 
@@ -122,7 +122,7 @@ public:
 	{
 	}
 
-	const bool isValid() const { return _isValid; }
+	bool isValid() const { return _isValid; }
 	const std::vector<UnitAction> & moveVec() const { return _move; }
 };
 

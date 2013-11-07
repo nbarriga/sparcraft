@@ -67,15 +67,15 @@ public:
 	AlphaBetaSearchResults & getResults();
     	
 	void generateOrderedMoves(GameState & state, MoveArray & moves, const TTLookupValue & TTval, const IDType & playerToMove, const size_t & depth);
-	const IDType getEnemy(const IDType & player) const;
-	const IDType getPlayerToMove(GameState & state, const size_t & depth, const IDType & lastPlayerToMove, const bool isFirstSimMove) const;
+	 IDType getEnemy(const IDType & player) const;
+	 IDType getPlayerToMove(GameState & state, const size_t & depth, const IDType & lastPlayerToMove, const bool isFirstSimMove) const;
 	bool getNextMoveVec(IDType playerToMove, MoveArray & moves, const size_t & moveNumber, const TTLookupValue & TTval, const size_t & depth, std::vector<UnitAction> & moveVec) const;
-	const size_t getNumMoves(MoveArray & moves, const TTLookupValue & TTval, const IDType & playerToMove, const size_t & depth) const;
+	 size_t getNumMoves(MoveArray & moves, const TTLookupValue & TTval, const IDType & playerToMove, const size_t & depth) const;
 	const AlphaBetaMove & getAlphaBetaMove(const TTLookupValue & TTval, const IDType & playerToMove) const;
-	const bool searchTimeOut();
-	const bool isRoot(const size_t & depth) const;
-	const bool terminalState(GameState & state, const size_t & depth) const;
-	const bool isTranspositionLookupState(GameState & state, const std::vector<UnitAction> * firstSimMove) const;
+	bool searchTimeOut();
+	bool isRoot(const size_t & depth) const;
+	bool terminalState(GameState & state, const size_t & depth) const;
+	bool isTranspositionLookupState(GameState & state, const std::vector<UnitAction> * firstSimMove) const;
 
 	void printTTResults() const;
 };

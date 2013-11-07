@@ -44,7 +44,7 @@ public:
 		return get(index);
 	}
 
-	const bool contains(const T & e) const
+	bool contains(const T & e) const
 	{
 		for (size_t i(0); i<capacity(); ++i)
 		{
@@ -57,12 +57,12 @@ public:
 		return false;
 	}
 
-	const size_t capacity() const
+	 size_t capacity() const
 	{
 		return _capacity;
 	}
 
-	const bool containsSize(const T & e) const
+	bool containsSize(const T & e) const
 	{
 		for (size_t i(0); i<_size; ++i)
 		{
@@ -156,7 +156,7 @@ public:
 		
 	}
 
-	const size_t getRows() const
+	 size_t getRows() const
 	{
 		return _arr.capacity();
 	}

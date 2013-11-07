@@ -225,7 +225,7 @@ GameState & Game::getState()
 }
 
 // determine the player to move
-const IDType Game::getPlayerToMove()
+ IDType Game::getPlayerToMove()
 {
     const IDType whoCanMove(state.whoCanMove());
 

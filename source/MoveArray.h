@@ -39,22 +39,22 @@ public:
 
     void incrementMove(const size_t & unit);
 
-    const bool hasMoreMoves() const;
+    bool hasMoreMoves() const;
 
     void resetMoveIterator();
 
     void getNextMoveVec(std::vector<UnitAction> & moves);
 
-	const size_t maxUnits() const;
+	 size_t maxUnits() const;
 
 	// adds a Move to the unit specified
 	void add(const UnitAction & move);
 	
 	bool validateMoves();
 
-	const IDType getUnitID(const IDType & unit) const;
+	 IDType getUnitID(const IDType & unit) const;
 
-	const IDType getPlayerID(const IDType & unit) const;
+	 IDType getPlayerID(const IDType & unit) const;
 
 	void addUnit();
 

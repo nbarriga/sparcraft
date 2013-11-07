@@ -30,7 +30,7 @@ class Map
 	bool					_hasGoal;				//true if a goal has been set
 	std::map<SparCraft::Position, DistanceMap> _distanceMaps;//distances from every walk tile to a given position
 
-	const Position getWalkPosition(const Position & pixelPosition) const
+	 Position getWalkPosition(const Position & pixelPosition) const
 	{
 		return Position(pixelPosition.x() / 8, pixelPosition.y() / 8);
 	}
@@ -244,14 +244,14 @@ public:
 		return _hasGoal;
 	}
 
-	const int getDistanceToGoal(const SparCraft::Position & pixelPosition){
+	 int getDistanceToGoal(const SparCraft::Position & pixelPosition){
 		if(!hasGoal()){
 			SparCraft::System::FatalError("Goal not set");
 		}
 		return getDistance(pixelPosition,_goal);
 	}
 
-	const int getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition){
+	 int getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition){
 		//todo: A*
 		std::map<SparCraft::Position, DistanceMap>::const_iterator it=_distanceMaps.find(toPosition);
 		if(it!=_distanceMaps.end()){
@@ -273,7 +273,7 @@ public:
 		}
 	}
 
-	const bool doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const{
+	bool doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const{
 		//todo: check against other units
 		//todo: check the way, not just the end position
 
@@ -294,39 +294,39 @@ public:
 		return false;
 	}
 
-	const bool isWalkable(const SparCraft::Position & pixelPosition) const
+	bool isWalkable(const SparCraft::Position & pixelPosition) const
 	{
 		const Position & wp(getWalkPosition(pixelPosition));
 
 		return	isWalkable(wp.x(), wp.y());
 	}
     
-    const bool isFlyable(const SparCraft::Position & pixelPosition) const
+    bool isFlyable(const SparCraft::Position & pixelPosition) const
 	{
 		const Position & wp(getWalkPosition(pixelPosition));
 
 		return isFlyable(wp.x(), wp.y());
 	}
 
-	const bool isWalkable(const size_t & walkTileX, const size_t & walkTileY) const
+	bool isWalkable(const size_t & walkTileX, const size_t & walkTileY) const
 	{
 		return	walkTileX >= 0 && walkTileX < getWalkTileWidth() &&
 				walkTileY >= 0 && walkTileY < getWalkTileHeight() &&
 				getMapData(walkTileX, walkTileY);
 	}
 
-    const bool isFlyable(const size_t & walkTileX, const size_t & walkTileY) const
+    bool isFlyable(const size_t & walkTileX, const size_t & walkTileY) const
 	{
 		return	walkTileX >= 0 && walkTileX < getWalkTileWidth() &&
 				walkTileY >= 0 && walkTileY < getWalkTileHeight();
 	}
 
-	const bool getMapData(const size_t & walkTileX, const size_t & walkTileY) const
+	bool getMapData(const size_t & walkTileX, const size_t & walkTileY) const
 	{
 		return _mapData[walkTileX][walkTileY];
 	}
 
-	const bool getUnitData(const size_t & buildTileX, const size_t & buildTileY) const
+	bool getUnitData(const size_t & buildTileX, const size_t & buildTileY) const
 	{
 		return _unitDataBuildTile[buildTileX][buildTileY];
 	}
@@ -349,7 +349,7 @@ public:
 		}
 	}
 
-	const bool canBuildHere(BWAPI::TilePosition pos)
+	bool canBuildHere(BWAPI::TilePosition pos)
 	{
 		return pos.x()>=0 && pos.y()>=0 && pos.x()<(int)_buildTileWidth && pos.y()<(int)_buildTileHeight &&
 				!_unitDataBuildTile[pos.x()][pos.y()] &&
@@ -357,7 +357,7 @@ public:
 				_mapData[pos.x()*4][pos.y()*4];
 	}
 
-	const bool canBuildHere(const BWAPI::UnitType & type, const SparCraft::Position & pos)
+	bool canBuildHere(const BWAPI::UnitType & type, const SparCraft::Position & pos)
 	{
 		if(!type.isBuilding()){
 			System::FatalError("Map::canBuildHere(UnitType,Position) is only meant for building types.");

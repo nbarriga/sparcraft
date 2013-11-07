@@ -35,7 +35,7 @@ public:
 	{
 	}
 
-	const bool operator < (const StateEvalScore & rhs) const
+	bool operator < (const StateEvalScore & rhs) const
 	{
 		if (_val < rhs._val)
 		{
@@ -51,7 +51,7 @@ public:
 		}
 	}
 
-	const bool operator > (const StateEvalScore & rhs) const
+	bool operator > (const StateEvalScore & rhs) const
 	{
 		if (_val > rhs._val)
 		{
@@ -67,7 +67,7 @@ public:
 		}
 	}
 
-	const bool operator <= (const StateEvalScore & rhs) const
+	bool operator <= (const StateEvalScore & rhs) const
 	{
 		if (_val > rhs._val)
 		{
@@ -83,7 +83,7 @@ public:
 		}
 	}
 
-	const bool operator >= (const StateEvalScore & rhs) const
+	bool operator >= (const StateEvalScore & rhs) const
 	{
 		if (_val > rhs._val)
 		{
@@ -99,7 +99,7 @@ public:
 		}
 	}
 
-	const bool operator == (const StateEvalScore & rhs) const
+	bool operator == (const StateEvalScore & rhs) const
 	{
 		return (_val == rhs._val) && (_numMoves == rhs._numMoves);
 	}
