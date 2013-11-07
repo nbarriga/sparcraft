@@ -2,12 +2,6 @@
 
 using namespace SparCraft;
 
-
-void Player::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
-{
-	// not implemented
-}
-
  IDType Player::ID() 
 { 
 	return _playerID; 
