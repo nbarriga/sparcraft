@@ -53,7 +53,7 @@ protected:
 	RandomInt					rand;
 
     void setupResults();
-    void addPlayer(const std::string & line);
+    virtual void addPlayer(const std::string & line);
     void addState(const std::string & line);
     void padString(std::string & str, const size_t & length);
     void setCurrentDateTime();
@@ -92,6 +92,10 @@ protected:
     std::string currentDateTime();
     void printStateUnits(std::ofstream & results, GameState & state);
     void addGameState(const GameState & state);
+
+    //Use this combination of constructor + init function for derived functions
+    SearchExperiment();
+    void init(const std::string & configFile);
 
 public:
 

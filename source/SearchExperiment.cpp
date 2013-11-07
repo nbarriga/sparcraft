@@ -16,6 +16,23 @@ SearchExperiment::SearchExperiment(const std::string & configFile)
     setupResults();
 }
 
+SearchExperiment::SearchExperiment()
+    : map(NULL)
+    , showDisplay(false)
+    , appendTimeStamp(true)
+    , rand(0, std::numeric_limits<int>::max(), 0)
+{
+    setCurrentDateTime();
+}
+
+void SearchExperiment::init(const std::string & configFile)
+{
+    configFileSmall = getBaseFilename(configFile);
+    parseConfigFile(configFile);
+    writeConfig(configFile);
+    setupResults();
+}
+
 SearchExperiment::~SearchExperiment()
 {
     if (map)
