@@ -25,7 +25,7 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 		size_t actionMoveIndex					(0);
 		double actionHighestDPS					(0);
 		size_t closestMoveIndex					(0);
-		unsigned long long closestMoveDist		(std::numeric_limits<unsigned long long>::max());
+		int closestMoveDist		(std::numeric_limits<int>::max());
 		
 		const SparCraft::Unit & ourUnit				(state.getUnit(_playerID, u));
 
@@ -91,7 +91,7 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 			else if (move.type() == UnitActionTypes::MOVE)
 			{
 				Position ourDest=move.pos();
-				int dist=INT_MAX;
+				int dist(std::numeric_limits<int>::max());
 				if(ourUnit.canHeal()){//medic
 					const boost::optional<Unit&> & closestWoundedOpt	=state.getClosestOurWoundedUnitOpt(_playerID, u);
 					if(closestWoundedOpt.is_initialized()&&

@@ -1,5 +1,5 @@
-CC=g++ -g -rdynamic -Wall -Wno-switch
-#CC=clang++ -g -O3 -Wall -Wextra -fsanitize=undefined -fno-sanitize=object-size -fsanitize=unsigned-integer-overflow -fsanitize=address
+CC=g++ -g -rdynamic -Wall -Wextra -Wno-switch -Wno-unused-parameter
+#CC=clang++ -g -Wall -Wextra -Wno-unused-parameter -Wno-unused-private-field -Wno-switch -fsanitize=undefined -fno-sanitize=object-size -fsanitize=unsigned-integer-overflow -fsanitize=address
 #CC=g++ -O3
 SDL_LDFLAGS=`sdl-config --libs` 
 SDL_CFLAGS=`sdl-config --cflags` 
@@ -31,7 +31,7 @@ LibSparCraft:$(filter-out source/main.o,$(OBJECTS))
 .PHONY: clean doc
 
 clean:
-	rm -f $(OBJECTS) $(OBJECTS:.o=.d) SparCraft
+	rm -f $(OBJECTS) $(OBJECTS:.o=.d) SparCraft libSparCraft.a
 
 doc:
 	doxygen Doxyfile

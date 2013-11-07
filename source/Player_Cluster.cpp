@@ -10,7 +10,7 @@ Player_Cluster::Player_Cluster (const IDType & playerID)
 void Player_Cluster::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
     moveVec.clear();
-	IDType enemy(state.getEnemy(_playerID));
+//	IDType enemy(state.getEnemy(_playerID));
 
     // compute the centroid of our unit cluster
     Position avgPos(0,0);
@@ -24,7 +24,7 @@ void Player_Cluster::getMoves(GameState & state, const MoveArray & moves, std::v
 	for (IDType u(0); u<moves.numUnits(); ++u)
 	{
 		bool foundMoveAction					(false);
-		double actionHighestDPS					(0);
+//		double actionHighestDPS					(0);
 		size_t closestMoveIndex					(0);
 		unsigned long long closestMoveDist		(std::numeric_limits<unsigned long long>::max());
 		

@@ -463,7 +463,7 @@ void Display::RenderInformation()
 						const Unit &			unit(state.getUnitDirect(p, u));
 
 						const Position			pos(1000+170*p, 40+barHeight*u);
-						const BWAPI::UnitType	type(unit.type());
+//						const BWAPI::UnitType	type(unit.type());
 				
 //						const int				x0(pos.x());
 //						const int				x1(pos.x() + 150);

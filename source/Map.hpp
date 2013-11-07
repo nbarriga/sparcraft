@@ -310,15 +310,15 @@ public:
 
 	bool isWalkable(const size_t & walkTileX, const size_t & walkTileY) const
 	{
-		return	walkTileX >= 0 && walkTileX < getWalkTileWidth() &&
-				walkTileY >= 0 && walkTileY < getWalkTileHeight() &&
+		return	/*walkTileX >= 0 &&*/ walkTileX < getWalkTileWidth() &&
+				/*walkTileY >= 0 &&*/ walkTileY < getWalkTileHeight() &&
 				getMapData(walkTileX, walkTileY);
 	}
 
     bool isFlyable(const size_t & walkTileX, const size_t & walkTileY) const
 	{
-		return	walkTileX >= 0 && walkTileX < getWalkTileWidth() &&
-				walkTileY >= 0 && walkTileY < getWalkTileHeight();
+		return	/*walkTileX >= 0 &&*/ walkTileX < getWalkTileWidth() &&
+				/*walkTileY >= 0 &&*/ walkTileY < getWalkTileHeight();
 	}
 
 	bool getMapData(const size_t & walkTileX, const size_t & walkTileY) const

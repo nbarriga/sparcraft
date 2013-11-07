@@ -85,7 +85,7 @@ void MoveArray::printCurrentMoveIndex()
 {
     for (size_t u(0); u<_numUnits; ++u)
     {
-        printf("%d ", _currentMovesIndex[u]);
+        printf("%ld ", _currentMovesIndex[u]);
     }
 
     printf("\n");
