@@ -1342,3 +1342,28 @@ void GameState::read(const std::string & filename)
     fin.read((char *)this, sizeof(*this));
     fin.close();
 }
+
+const std::vector<boost::shared_ptr<const Unit> > SparCraft::GameState::getUnits(
+        const IDType& player) const {
+    std::vector<boost::shared_ptr<const Unit> > units;
+
+    for (IDType u(0); u<_numUnits[player]; ++u)
+    {
+        units.push_back(boost::shared_ptr<const Unit>(& _units[player][_unitIndex[player][u]]));
+    }
+    return units;
+}
+
+const std::vector<boost::shared_ptr<const Unit> > SparCraft::GameState::getAliveUnits(
+        const IDType& player) const {
+    std::vector<boost::shared_ptr<const Unit> > units;
+
+    for (IDType u(0); u<_numUnits[player]; ++u)
+    {
+        const Unit &unit=_units[player][_unitIndex[player][u]];
+        if(unit.isAlive()){
+            units.push_back(boost::shared_ptr<const Unit>(& unit));
+        }
+    }
+    return units;
+}

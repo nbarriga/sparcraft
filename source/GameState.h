@@ -84,6 +84,9 @@ public:
     const boost::optional<const Unit&> getClosestOurPylonOpt(const IDType & player, const IDType & unitIndex) const;
     const boost::optional<const Unit&> getClosestOurPylonOpt(const IDType & player, const SparCraft::Position &pos) const;
 
+    const std::vector<boost::shared_ptr<const Unit> > getUnits(const IDType & player) const;
+    const std::vector<boost::shared_ptr<const Unit> > getAliveUnits(const IDType & player) const;
+
     const Unit &            getUnitDirect(const IDType & player, const IDType & unit)               const;
     const Unit &            getNeutralUnit(const size_t & u)                                        const;
     
