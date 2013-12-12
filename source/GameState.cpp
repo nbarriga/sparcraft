@@ -411,7 +411,7 @@ bool GameState::isFlyable(const Position & pos) const
 	return (player + 1) % 2;
 }
 
-const Unit& GameState::getClosestOurUnit(const IDType & player, const IDType & unitIndex)
+const Unit& GameState::getClosestOurUnit(const IDType & player, const IDType & unitIndex)const
 {
 	const Unit & myUnit(getUnit(player,unitIndex));
 
@@ -422,7 +422,7 @@ const Unit& GameState::getClosestOurUnit(const IDType & player, const IDType & u
 
 	for (IDType u(0); u<_numUnits[player]; ++u)
 	{
-		Unit & ourUnit(getUnit(player, u));
+		const Unit & ourUnit(getUnit(player, u));
 
 		if (u == unitIndex || ourUnit.canHeal())//skip medics
 		{
@@ -442,7 +442,7 @@ const Unit& GameState::getClosestOurUnit(const IDType & player, const IDType & u
 	return  getUnit(player, minUnitInd);
 }
 
-const Unit& GameState::getClosestEnemyUnit(const IDType & player, const IDType & unitIndex)
+const Unit& GameState::getClosestEnemyUnit(const IDType & player, const IDType & unitIndex)const
 {
 	const IDType enemyPlayer(getEnemy(player));
 	const Unit & myUnit(getUnit(player,unitIndex));
@@ -455,7 +455,7 @@ const Unit& GameState::getClosestEnemyUnit(const IDType & player, const IDType &
 
 	for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
 	{
-		Unit & enemyUnit(getUnit(enemyPlayer, u));
+		const Unit & enemyUnit(getUnit(enemyPlayer, u));
 		PositionType distSq = myUnit.getDistanceSqToUnit(enemyUnit, _currentTime);
 
 		if ((distSq < minDist))// || ((distSq == minDist) && (enemyUnit.ID() < minUnitID)))
@@ -474,7 +474,8 @@ const Unit& GameState::getClosestEnemyUnit(const IDType & player, const IDType &
 	return getUnit(enemyPlayer, minUnitInd);
 }
 
-const boost::optional<Unit&> GameState::getClosestOurUnitOpt(const IDType & player, const IDType & unitIndex)
+const boost::optional<const Unit&> GameState::getClosestOurUnitOpt(
+		const IDType & player, const IDType & unitIndex)const
 {
 	const Unit & myUnit(getUnit(player,unitIndex));
 
@@ -486,7 +487,7 @@ const boost::optional<Unit&> GameState::getClosestOurUnitOpt(const IDType & play
 
 	for (IDType u(0); u<_numUnits[player]; ++u)
 	{
-		Unit & ourUnit(getUnit(player, u));
+		const Unit & ourUnit(getUnit(player, u));
 
 		if(ourUnit.isAlive()){
 			if (u == unitIndex || ourUnit.canHeal())//skip medics
@@ -507,13 +508,13 @@ const boost::optional<Unit&> GameState::getClosestOurUnitOpt(const IDType & play
 	}
 
 	if(found){
-		return boost::optional<Unit&>(getUnit(player, minUnitInd));
+		return boost::optional<const Unit&>(getUnit(player, minUnitInd));
 	}else{
-		return boost::optional<Unit&>(boost::none);
+		return boost::optional<const Unit&>(boost::none);
 	}
 }
 
-const boost::optional<Unit&> GameState::getClosestEnemyUnitOpt(const IDType & player, const IDType & unitIndex)
+const boost::optional<const Unit&> GameState::getClosestEnemyUnitOpt(const IDType & player, const IDType & unitIndex) const
 {
 	const IDType enemyPlayer(getEnemy(player));
 	const Unit & myUnit(getUnit(player,unitIndex));
@@ -527,7 +528,7 @@ const boost::optional<Unit&> GameState::getClosestEnemyUnitOpt(const IDType & pl
 
 	for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
 	{
-		Unit & enemyUnit(getUnit(enemyPlayer, u));
+		const Unit & enemyUnit(getUnit(enemyPlayer, u));
 		if(enemyUnit.isAlive()){
 			PositionType distSq = myUnit.getDistanceSqToUnit(enemyUnit, _currentTime);
 
@@ -549,13 +550,14 @@ const boost::optional<Unit&> GameState::getClosestEnemyUnitOpt(const IDType & pl
 	}
 
 	if(found){
-		return boost::optional<Unit&>(getUnit(enemyPlayer, minUnitInd));
+		return boost::optional<const Unit&>(getUnit(enemyPlayer, minUnitInd));
 	}else{
-		return boost::optional<Unit&>(boost::none);
+		return boost::optional<const Unit&>(boost::none);
 	}
 }
 
-const boost::optional<Unit&> GameState::getClosestEnemyBuildingOpt(const IDType & player, const IDType & unitIndex)
+const boost::optional<const Unit&> GameState::getClosestEnemyBuildingOpt(
+		const IDType & player, const IDType & unitIndex) const
 {
 	const IDType enemyPlayer(getEnemy(player));
 	const Unit & myUnit(getUnit(player,unitIndex));
@@ -569,7 +571,7 @@ const boost::optional<Unit&> GameState::getClosestEnemyBuildingOpt(const IDType 
 
 	for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
 	{
-		Unit & enemyUnit(getUnit(enemyPlayer, u));
+		const Unit & enemyUnit(getUnit(enemyPlayer, u));
 		if(enemyUnit.type().isBuilding()&& enemyUnit.isAlive()){
 			PositionType distSq = myUnit.getDistanceSqToUnit(enemyUnit, _currentTime);
 
@@ -591,14 +593,14 @@ const boost::optional<Unit&> GameState::getClosestEnemyBuildingOpt(const IDType 
 	}
 
 	if(found){
-		return boost::optional<Unit&>(getUnit(enemyPlayer, minUnitInd));
+		return boost::optional<const Unit&>(getUnit(enemyPlayer, minUnitInd));
 	}else{
-		return boost::optional<Unit&>(boost::none);
+		return boost::optional<const Unit&>(boost::none);
 	}
 }
 
-const boost::optional<Unit&> SparCraft::GameState::getClosestOurBuildingOpt(const IDType& player,
-		const IDType& unitIndex)
+const boost::optional<const Unit&> GameState::getClosestOurBuildingOpt(const IDType& player,
+		const IDType& unitIndex)const
 {
 	const Unit & myUnit(getUnit(player,unitIndex));
 
@@ -611,7 +613,7 @@ const boost::optional<Unit&> SparCraft::GameState::getClosestOurBuildingOpt(cons
 	for (IDType u(0); u<_numUnits[player]; ++u)
 	{
 
-		Unit & ourUnit(getUnit(player, u));
+		const Unit & ourUnit(getUnit(player, u));
 
 		if(ourUnit.type().isBuilding()&& ourUnit.isAlive()){
 			//size_t distSq(myUnit.distSq(getUnit(enemyPlayer,u)));
@@ -627,14 +629,14 @@ const boost::optional<Unit&> SparCraft::GameState::getClosestOurBuildingOpt(cons
 	}
 
 	if(found){
-		return boost::optional<Unit&>(getUnit(player, minUnitInd));
+		return boost::optional<const Unit&>(getUnit(player, minUnitInd));
 	}else{
-		return boost::optional<Unit&>(boost::none);
+		return boost::optional<const Unit&>(boost::none);
 	}
 }
 
-const boost::optional<Unit&> SparCraft::GameState::getClosestOurDamagedBuildingOpt(
-		const IDType& player, const IDType& unitIndex)
+const boost::optional<const Unit&> SparCraft::GameState::getClosestOurDamagedBuildingOpt(
+		const IDType& player, const IDType& unitIndex)const
 {
 	const Unit & myUnit(getUnit(player,unitIndex));
 
@@ -647,7 +649,7 @@ const boost::optional<Unit&> SparCraft::GameState::getClosestOurDamagedBuildingO
 	for (IDType u(0); u<_numUnits[player]; ++u)
 	{
 
-		Unit & ourUnit(getUnit(player, u));
+		const Unit & ourUnit(getUnit(player, u));
 
 		if(ourUnit.type().isBuilding()&&ourUnit.currentHP()<ourUnit.maxHP()&& ourUnit.isAlive()){
 			//size_t distSq(myUnit.distSq(getUnit(enemyPlayer,u)));
@@ -663,14 +665,14 @@ const boost::optional<Unit&> SparCraft::GameState::getClosestOurDamagedBuildingO
 	}
 
 	if(found){
-		return boost::optional<Unit&>(getUnit(player, minUnitInd));
+		return boost::optional<const Unit&>(getUnit(player, minUnitInd));
 	}else{
-		return boost::optional<Unit&>(boost::none);
+		return boost::optional<const Unit&>(boost::none);
 	}
 }
 
-const boost::optional<Unit&> SparCraft::GameState::getClosestOurWoundedUnitOpt(const IDType& player,
-		const IDType& unitIndex)
+const boost::optional<const Unit&> SparCraft::GameState::getClosestOurWoundedUnitOpt(const IDType& player,
+		const IDType& unitIndex) const
 {
 	const Unit & myUnit(getUnit(player,unitIndex));
 
@@ -682,7 +684,7 @@ const boost::optional<Unit&> SparCraft::GameState::getClosestOurWoundedUnitOpt(c
 
 	for (IDType u(0); u<_numUnits[player]; ++u)
 	{
-		Unit & ourUnit(getUnit(player, u));
+		const Unit & ourUnit(getUnit(player, u));
 
 		if (u == unitIndex || ourUnit.canHeal())
 		{
@@ -701,9 +703,9 @@ const boost::optional<Unit&> SparCraft::GameState::getClosestOurWoundedUnitOpt(c
 		}
 	}
 	if(found){
-		return boost::optional<Unit&>(getUnit(player, minUnitInd));
+		return boost::optional<const Unit&>(getUnit(player, minUnitInd));
 	}else{
-		return boost::optional<Unit&>(boost::none);
+		return boost::optional<const Unit&>(boost::none);
 	}
 }
 
@@ -1263,7 +1265,7 @@ void GameState::setTotalLTD2(const float & p1, const float & p2)
 	_totalSumSQRT[Players::Player_Two] = p2;
 }
 
-Map & GameState::getMap()
+const Map & GameState::getMap() const
 {
 	return _map;
 }
@@ -1310,7 +1312,7 @@ void GameState::write(const std::string & filename) const
     fout.close();
 }
 
-bool SparCraft::GameState::goalReached(const IDType& player){
+bool GameState::goalReached(const IDType& player) const{
 	if(_map.hasGoal()){
 		for (IDType u(0); u<numUnits(player); ++u){
 			const Unit & unit(getUnit(player, u));
@@ -1322,8 +1324,8 @@ bool SparCraft::GameState::goalReached(const IDType& player){
 	return false;
 }
 
-ScoreType SparCraft::GameState::evalBuildingPlacement(
-		const IDType& attacker, const IDType& defender){
+ScoreType GameState::evalBuildingPlacement(
+		const IDType& attacker, const IDType& defender) const{
 
 	if(playerDead(attacker)){//attacker defeated, count how many we have left
 		return LTD(defender)+300000;

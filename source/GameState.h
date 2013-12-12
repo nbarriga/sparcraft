@@ -4,7 +4,7 @@
 #include <algorithm>
 #include "MoveArray.h"
 #include "Hash.h"
-#include "Map.hpp"
+#include "Map.h"
 #include "Unit.h"
 #include "GraphViz.hpp"
 #include "Array.hpp"
@@ -71,16 +71,16 @@ public:
     const Unit &            getUnitByID(const IDType & player, const IDType & unitID)               const;
           Unit &            getUnitByID(const IDType & player, const IDType & unitID);
 
-    const Unit& getClosestEnemyUnit(const IDType & player, const IDType & unitIndex);
-    const Unit& getClosestOurUnit(const IDType & player, const IDType & unitIndex);
+    const Unit& getClosestEnemyUnit(const IDType & player, const IDType & unitIndex) const;
+    const Unit& getClosestOurUnit(const IDType & player, const IDType & unitIndex) const;
 
     bool isPowered(const SparCraft::Position &pos, const IDType & player) const;
-    const boost::optional<Unit&> getClosestEnemyUnitOpt(const IDType & player, const IDType & unitIndex);
-    const boost::optional<Unit&> getClosestEnemyBuildingOpt(const IDType & player, const IDType & unitIndex);
-    const boost::optional<Unit&> getClosestOurUnitOpt(const IDType & player, const IDType & unitIndex);
-    const boost::optional<Unit&> getClosestOurBuildingOpt(const IDType & player, const IDType & unitIndex);
-    const boost::optional<Unit&> getClosestOurDamagedBuildingOpt(const IDType & player, const IDType & unitIndex);
-    const boost::optional<Unit&> getClosestOurWoundedUnitOpt(const IDType & player, const IDType & unitIndex);
+    const boost::optional<const Unit&> getClosestEnemyUnitOpt(const IDType & player, const IDType & unitIndex) const;
+    const boost::optional<const Unit&> getClosestEnemyBuildingOpt(const IDType & player, const IDType & unitIndex) const;
+    const boost::optional<const Unit&> getClosestOurUnitOpt(const IDType & player, const IDType & unitIndex) const;
+    const boost::optional<const Unit&> getClosestOurBuildingOpt(const IDType & player, const IDType & unitIndex) const;
+    const boost::optional<const Unit&> getClosestOurDamagedBuildingOpt(const IDType & player, const IDType & unitIndex) const;
+    const boost::optional<const Unit&> getClosestOurWoundedUnitOpt(const IDType & player, const IDType & unitIndex) const;
     const boost::optional<const Unit&> getClosestOurPylonOpt(const IDType & player, const IDType & unitIndex) const;
     const boost::optional<const Unit&> getClosestOurPylonOpt(const IDType & player, const SparCraft::Position &pos) const;
 
@@ -102,8 +102,8 @@ public:
      ScoreType         evalLTD2(const IDType & player)                                       const;
      ScoreType         LTD(const IDType & player)                                            const;
      ScoreType         LTD2(const IDType & player)                                           const;
-     ScoreType         evalBuildingPlacement(const IDType & attacker, const IDType & defender);
-    bool goalReached(const IDType& player);
+     ScoreType         evalBuildingPlacement(const IDType & attacker, const IDType & defender) const;
+    bool goalReached(const IDType& player) const;
      StateEvalScore    evalSim(const IDType & player, const IDType & p1, const IDType & p2)    const;
      IDType            getEnemy(const IDType & player)                                         const;
 
@@ -123,7 +123,7 @@ public:
 		  
     // map-related functions
     void                    setMap(const Map & map);
-    Map &             		getMap();
+    const Map &             		getMap() const;
     bool              isWalkable(const Position & pos)                                        const;
     bool              isFlyable(const Position & pos)                                         const;
 

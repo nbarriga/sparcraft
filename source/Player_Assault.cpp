@@ -80,7 +80,7 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 			else if (move.type() == UnitActionTypes::RELOAD)
 			{
 //				std::cout<<"Reload"<<std::endl;
-				const boost::optional<Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
+				const boost::optional<const Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
 				if (closestUnitOpt.is_initialized()&&
 						ourUnit.canAttackTarget(closestUnitOpt.get(), state.getTime()))
 				{
@@ -93,7 +93,7 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 				Position ourDest=move.pos();
 				int dist(std::numeric_limits<int>::max());
 				if(ourUnit.canHeal()){//medic
-					const boost::optional<Unit&> & closestWoundedOpt	=state.getClosestOurWoundedUnitOpt(_playerID, u);
+					const boost::optional<const Unit&> & closestWoundedOpt	=state.getClosestOurWoundedUnitOpt(_playerID, u);
 					if(closestWoundedOpt.is_initialized()&&
 							closestWoundedOpt.get().previousAction().type()!=UnitActionTypes::MOVE)
 					{
@@ -110,14 +110,14 @@ void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::v
 						dist = state.getMap().getDistanceToGoal(ourDest);//walk towards goal?
 					}
 				}else{//not a medic
-					const boost::optional<Unit&> & closestBuildingOpt	=state.getClosestEnemyBuildingOpt(_playerID, u);
+					const boost::optional<const Unit&> & closestBuildingOpt	=state.getClosestEnemyBuildingOpt(_playerID, u);
 					if(closestBuildingOpt.is_initialized()){
 						int distBuilding = state.getMap().getDistance(ourDest,closestBuildingOpt.get().pos());
 						int distGoal = state.getMap().getDistanceToGoal(ourDest);
 						dist = ((distBuilding>0 && distBuilding<distGoal) ||
 								closestBuildingOpt.get().canAttackTarget(ourUnit, state.getTime()))?distBuilding:distGoal;
 					}else{//no enemy buildings alive
-						const boost::optional<Unit&> & closestEnemyOpt	=state.getClosestEnemyUnitOpt(_playerID, u);
+						const boost::optional<const Unit&> & closestEnemyOpt	=state.getClosestEnemyUnitOpt(_playerID, u);
 						if(closestEnemyOpt.is_initialized()&&
 								closestEnemyOpt.get().canAttackTarget(ourUnit, state.getTime())){//move towards unit that can hurt us
 							if(state.getMap().canWalkStraight(ourDest,closestEnemyOpt.get().pos(), ourUnit.range())){

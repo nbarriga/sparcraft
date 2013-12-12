@@ -71,7 +71,7 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 			}
 			else if (move.type() == UnitActionTypes::RELOAD)
 			{
-				const boost::optional<Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
+				const boost::optional<const Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
 				if (closestUnitOpt.is_initialized()&&
 						ourUnit.canAttackTarget(closestUnitOpt.get(), state.getTime()))
 				{
@@ -83,7 +83,7 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 			{
 				Position ourDest=move.pos();
 				size_t dist=INT_MAX;
-				const boost::optional<Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
+				const boost::optional<const Unit&> & closestUnitOpt = state.getClosestEnemyUnitOpt(_playerID, u);
 
 				if (closestUnitOpt.is_initialized()&&
 						closestUnitOpt.get().previousAction().type()!=UnitActionTypes::MOVE)
@@ -98,11 +98,11 @@ void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::ve
 				}
 				else
 				{
-					const boost::optional<Unit&> & closestDamagedBuildingOpt=state.getClosestOurDamagedBuildingOpt(_playerID, u);
+					const boost::optional<const Unit&> & closestDamagedBuildingOpt=state.getClosestOurDamagedBuildingOpt(_playerID, u);
 					if(closestDamagedBuildingOpt.is_initialized()){
 						dist = state.getMap().getDistance(ourDest,closestDamagedBuildingOpt.get().pos());
 					}else{
-						const boost::optional<Unit&> & closestOurBuildingOpt	= state.getClosestOurBuildingOpt(_playerID, u);
+						const boost::optional<const Unit&> & closestOurBuildingOpt	= state.getClosestOurBuildingOpt(_playerID, u);
 						if(closestOurBuildingOpt.is_initialized()){
 							dist = state.getMap().getDistance(ourDest,closestOurBuildingOpt.get().pos());
 							if(dist<1){//no path to nearest building?
