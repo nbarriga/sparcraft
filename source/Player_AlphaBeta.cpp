@@ -41,7 +41,7 @@ void Player_AlphaBeta::setTranspositionTable(TTPtr table)
 	TT = table;
 }
 
-void Player_AlphaBeta::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
+void Player_AlphaBeta::getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
     moveVec.clear();
 	alphaBeta->doSearch(state);

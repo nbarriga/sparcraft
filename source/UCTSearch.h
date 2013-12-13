@@ -54,7 +54,7 @@ public:
     StateEvalScore  traverse(UCTNode & node, GameState & currentState);
 	void            uct(GameState & state, size_t depth, const IDType lastPlayerToMove, std::vector<UnitAction> * firstSimMove);
 
-	void            doSearch(GameState & initialState, std::vector<UnitAction> & move);
+	void            doSearch(const GameState & initialState, std::vector<UnitAction> & move);
     
     // Move and Child generation functions
     void            generateChildren(UCTNode & node, GameState & state);

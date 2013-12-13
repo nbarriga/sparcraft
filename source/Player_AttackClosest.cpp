@@ -7,7 +7,7 @@ Player_AttackClosest::Player_AttackClosest (const IDType & playerID)
 	_playerID = playerID;
 }
 
-void Player_AttackClosest::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
+void Player_AttackClosest::getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
     moveVec.clear();
 	for (IDType u(0); u<moves.numUnits(); ++u)

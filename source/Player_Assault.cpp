@@ -7,7 +7,7 @@ Player_Assault::Player_Assault (const IDType & playerID){
 
 }
 
-void Player_Assault::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
+void Player_Assault::getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
     moveVec.clear();
 	IDType enemy(state.getEnemy(_playerID));

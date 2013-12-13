@@ -7,7 +7,7 @@ Player_AttackWeakest::Player_AttackWeakest (const IDType & playerID)
 	_playerID = playerID;
 }
 
-void Player_AttackWeakest::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
+void Player_AttackWeakest::getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
     moveVec.clear();
 	for (IDType u(0); u<moves.numUnits(); ++u)

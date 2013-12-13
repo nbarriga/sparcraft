@@ -18,7 +18,7 @@ class Player_Assault : public Player
 {
 public:
 	Player_Assault (const IDType & playerID);
-	void getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec);
+	void getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec);
 	IDType getType() { return PlayerModels::Assault; }
 };
 }

@@ -23,7 +23,7 @@ AlphaBetaSearch::AlphaBetaSearch(const AlphaBetaSearchParameters & params, TTPtr
     }
 }
 
-void AlphaBetaSearch::doSearch(GameState & initialState)
+void AlphaBetaSearch::doSearch(const GameState & initialState)
 {
 	_searchTimer.start();
 
@@ -44,7 +44,7 @@ void AlphaBetaSearch::doSearch(GameState & initialState)
 	_results.timeElapsed = _searchTimer.getElapsedTimeInMilliSec();
 }
 
-AlphaBetaValue AlphaBetaSearch::IDAlphaBeta(GameState & initialState, const size_t & maxDepth)
+AlphaBetaValue AlphaBetaSearch::IDAlphaBeta(const GameState & initialState, const size_t & maxDepth)
 {
 	AlphaBetaValue val;
 	_results.nodesExpanded = 0;
@@ -96,7 +96,7 @@ AlphaBetaValue AlphaBetaSearch::IDAlphaBeta(GameState & initialState, const size
 }
 
 // Transposition Table save 
-void AlphaBetaSearch::TTsave(	GameState & state, const StateEvalScore & value, const StateEvalScore & alpha, const StateEvalScore & beta, const size_t & depth, 
+void AlphaBetaSearch::TTsave(const 	GameState & state, const StateEvalScore & value, const StateEvalScore & alpha, const StateEvalScore & beta, const size_t & depth,
 						const IDType & firstPlayer, const AlphaBetaMove & bestFirstMove, const AlphaBetaMove & bestSecondMove) 
 {
 	// IF THE DEPTH OF THE ENTRY IS BIGGER THAN CURRENT DEPTH, DO NOTHING
@@ -179,7 +179,7 @@ bool AlphaBetaSearch::searchTimeOut()
 	return (_params.timeLimit() && (_results.nodesExpanded % 50 == 0) && (_searchTimer.getElapsedTimeInMilliSec() >= _params.timeLimit()));
 }
 
-bool AlphaBetaSearch::terminalState(GameState & state, const size_t & depth) const
+bool AlphaBetaSearch::terminalState(const GameState & state, const size_t & depth) const
 {
 	return (depth <= 0 || state.isTerminal());
 }
@@ -200,7 +200,7 @@ const AlphaBetaMove & AlphaBetaSearch::getAlphaBetaMove(const TTLookupValue & TT
 	}
 }
 
-void AlphaBetaSearch::generateOrderedMoves(GameState & state, MoveArray & moves, const TTLookupValue & TTval, const IDType & playerToMove, const size_t & depth)
+void AlphaBetaSearch::generateOrderedMoves(const GameState & state, MoveArray & moves, const TTLookupValue & TTval, const IDType & playerToMove, const size_t & depth)
 {
 	// get the array where we will store the moves and clear it
 	Array<std::vector<UnitAction>, Constants::Max_Ordered_Moves> & orderedMoves(_orderedMoves[depth]);
@@ -318,7 +318,7 @@ bool AlphaBetaSearch::getNextMoveVec(IDType playerToMove, MoveArray & moves, con
 	}
 }
 
- IDType AlphaBetaSearch::getPlayerToMove(GameState & state, const size_t & depth, const IDType & lastPlayerToMove, const bool isFirstSimMove) const
+ IDType AlphaBetaSearch::getPlayerToMove(const GameState & state, const size_t & depth, const IDType & lastPlayerToMove, const bool isFirstSimMove) const
 {
 	const IDType whoCanMove(state.whoCanMove());
 
@@ -359,12 +359,12 @@ bool AlphaBetaSearch::getNextMoveVec(IDType playerToMove, MoveArray & moves, con
 	}
 }
 
-bool AlphaBetaSearch::isTranspositionLookupState(GameState & state, const std::vector<UnitAction> * firstSimMove) const
+bool AlphaBetaSearch::isTranspositionLookupState(const GameState & state, const std::vector<UnitAction> * firstSimMove) const
 {
 	return !state.bothCanMove() || (state.bothCanMove() && !firstSimMove);
 }
 
-AlphaBetaValue AlphaBetaSearch::alphaBeta(GameState & state, size_t depth, const IDType lastPlayerToMove, std::vector<UnitAction> * prevSimMove, StateEvalScore alpha, StateEvalScore beta)
+AlphaBetaValue AlphaBetaSearch::alphaBeta(const GameState & state, size_t depth, const IDType lastPlayerToMove, std::vector<UnitAction> * prevSimMove, StateEvalScore alpha, StateEvalScore beta)
 {
 	// update statistics
 	_results.nodesExpanded++;

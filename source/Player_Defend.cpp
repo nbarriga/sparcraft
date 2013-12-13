@@ -6,7 +6,7 @@ Player_Defend::Player_Defend (const IDType & playerID){
 	_playerID=playerID;
 }
 
-void Player_Defend::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
+void Player_Defend::getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
 	moveVec.clear();
 	IDType enemy(state.getEnemy(_playerID));

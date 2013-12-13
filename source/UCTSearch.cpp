@@ -27,7 +27,7 @@ void UCTSearch::setMemoryPool(UCTMemoryPool * pool)
     _memoryPool = pool;
 }
 
-void UCTSearch::doSearch(GameState & initialState, std::vector<UnitAction> & move)
+void UCTSearch::doSearch(const GameState & initialState, std::vector<UnitAction> & move)
 {
     Timer t;
     t.start();

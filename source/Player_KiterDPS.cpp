@@ -7,7 +7,7 @@ Player_KiterDPS::Player_KiterDPS (const IDType & playerID)
 	_playerID = playerID;
 }
 
-void Player_KiterDPS::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
+void Player_KiterDPS::getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
     moveVec.clear();
 	for (IDType u(0); u<moves.numUnits(); ++u)

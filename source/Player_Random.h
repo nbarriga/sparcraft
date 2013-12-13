@@ -19,7 +19,7 @@ class Player_Random : public Player
 	RandomInt rand;
 public:
 	Player_Random (const IDType & playerID);
-	void getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec);
+	void getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec);
 	IDType getType() { return PlayerModels::Random; }
 };
 }

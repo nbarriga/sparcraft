@@ -17,7 +17,7 @@ class Player
 protected:
     IDType _playerID;
 public:
-    virtual void		getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)=0;
+    virtual void		getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)=0;
     IDType              ID();
     void                setID(const IDType & playerid);
     virtual IDType      getType() { return PlayerModels::None; }

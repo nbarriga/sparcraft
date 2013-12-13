@@ -7,7 +7,7 @@ Player_Kiter_NOKDPS::Player_Kiter_NOKDPS (const IDType & playerID)
 	_playerID = playerID;
 }
 
-void Player_Kiter_NOKDPS::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
+void Player_Kiter_NOKDPS::getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
     moveVec.clear();
 	IDType enemy(state.getEnemy(_playerID));

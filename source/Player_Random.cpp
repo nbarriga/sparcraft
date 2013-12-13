@@ -13,7 +13,7 @@ Player_Random::Player_Random (const IDType & playerID)
 	}
 }
 
-void Player_Random::getMoves(GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
+void Player_Random::getMoves(const GameState & state, const MoveArray & moves, std::vector<UnitAction> & moveVec)
 {
 	for (size_t u(0); u<moves.numUnits(); u++)
 	{
