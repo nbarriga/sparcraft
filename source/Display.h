@@ -99,7 +99,7 @@ class Display
 
 	SDL_Surface *               screen;
 
-	GameState                   state;
+
 
 	IDType                      playerTypes[2];
 
@@ -141,15 +141,16 @@ class Display
 
 	void RenderTerrain(int wx0, int wy0, int wx1, int wy1);
 	void RenderUnits();
-	void RenderUnit(const SparCraft::Unit & unit);
+
 
 	float3 GetWalkTileColor(int x, int y) const;
-
-
+protected:
+	virtual void RenderUnit(const SparCraft::Unit & unit);
+	GameState                   state;
 public:
 
 	Display(const int mw, const int mh);
-	~Display();
+	virtual ~Display();
 
 	void OnStart();
 	void OnFrame();
