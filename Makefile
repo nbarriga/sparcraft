@@ -21,12 +21,12 @@ LibSparCraft:$(filter-out source/main.o,$(OBJECTS))
 	ar rcs libSparCraft.a $(filter-out source/main.o,$(OBJECTS))
 
 .cpp.o:
-	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
 	$(CC) -MM $(CPPFLAGS) $(INCLUDES) -MT $@ -o $*.d $<
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ 
 
 .cc.o:
-	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
 	$(CC) -MM $(CPPFLAGS) $(INCLUDES) -MT $@ -o $*.d $<
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
 
 .PHONY: clean doc
 
