@@ -1345,27 +1345,52 @@ void GameState::read(const std::string & filename)
     fin.close();
 }
 
-const std::vector<boost::shared_ptr<const Unit> > SparCraft::GameState::getUnits(
+std::vector<IDType> SparCraft::GameState::getUnitIDs(
         const IDType& player) const {
-    std::vector<boost::shared_ptr<const Unit> > units;
+    std::vector<IDType> units;
 
     for (IDType u(0); u<_numUnits[player]; ++u)
     {
-        units.push_back(boost::shared_ptr<const Unit>(& _units[player][_unitIndex[player][u]]));
+        units.push_back(_units[player][_unitIndex[player][u]].ID());
     }
     return units;
 }
 
-const std::vector<boost::shared_ptr<const Unit> > SparCraft::GameState::getAliveUnits(
+std::vector<IDType> SparCraft::GameState::getAliveUnitIDs(
         const IDType& player) const {
-    std::vector<boost::shared_ptr<const Unit> > units;
+    std::vector<IDType> units;
 
     for (IDType u(0); u<_numUnits[player]; ++u)
     {
         const Unit &unit=_units[player][_unitIndex[player][u]];
         if(unit.isAlive()){
-            units.push_back(boost::shared_ptr<const Unit>(& unit));
+            units.push_back(unit.ID());
         }
     }
     return units;
 }
+//std::vector<UnitCountType> SparCraft::GameState::getUnitIndexes(
+//        const IDType& player) const {
+//    std::vector<IDType> units;
+//
+//    for (IDType u(0); u<_numUnits[player]; ++u)
+//    {
+//        units.push_back(_unitIndex[player][u]);
+//    }
+//    return units;
+//}
+//
+//std::vector<UnitCountType> SparCraft::GameState::getAliveUnitIndexes(
+//        const IDType& player) const {
+//    std::vector<IDType> units;
+//
+//    for (IDType u(0); u<_numUnits[player]; ++u)
+//    {
+//    	int index=_unitIndex[player][u];
+//        const Unit &unit=_units[player][index];
+//        if(unit.isAlive()){
+//            units.push_back(index);
+//        }
+//    }
+//    return units;
+//}
