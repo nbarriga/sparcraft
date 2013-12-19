@@ -3,8 +3,8 @@
 #include "Common.h"
 
 // type definitions for storing data
-typedef		unsigned char		IDType;
-typedef		unsigned char		UnitCountType;
+typedef		unsigned short		IDType;
+typedef		unsigned short		UnitCountType;
 typedef		unsigned char		ChildCountType;
 typedef 	int					PositionType;
 typedef 	int					TimeType;
