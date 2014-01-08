@@ -471,15 +471,16 @@ void Display::RenderInformation()
 						const int				y1(pos.y() + 15);
 				
 						// draw the unit HP box
-						double	percHP = (double)unit.currentHP() / (double)unit.maxHP();
 						int		w = 150;
 						int		h = barHeight;
-						int		cw = (int)(w * percHP);
 						int		xx = pos.x() - w/2;
 						int		yy = pos.y() - h - (y1-y0)/2;
 
 						if (unit.isAlive())
 						{
+							double	percHP = (double)unit.currentHP() / (double)unit.maxHP();
+							int		cw = (int)(w * percHP);
+
 							glColor4f(factionColors[p].x, factionColors[p].y, factionColors[p].z, 0.75);
 							glBegin(GL_QUADS);
 								glVertex2i(xx,yy);
