@@ -100,7 +100,7 @@ protected:
 public:
 
     SearchExperiment(const std::string & configFile);
-    ~SearchExperiment();
+    virtual ~SearchExperiment();
 
     void runExperiment();
 	void writeResultsSummary();
