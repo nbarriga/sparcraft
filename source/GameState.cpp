@@ -817,7 +817,7 @@ void GameState::addUnit(const BWAPI::UnitType type, const IDType playerID, const
     {
         System::FatalError("GameState has non-unique Unit ID values");
     }
-	_map.addUnit(getUnit(playerID, _numUnits[playerID]-1));
+	_map.addUnit(getUnit(playerID, _numUnits[playerID]-1));//todo:this is wrong if units are sorted before
 }
 
 // Add a given unit to the state
@@ -829,6 +829,7 @@ void GameState::addUnitWithID(const Unit & u)
 
     // Simply add the unit to the array
 	getUnit(u.player(), _numUnits[u.player()]) = u;
+    _map.addUnit(u);
 
     // Increment the number of units this player has
 	_numUnits[u.player()]++;
@@ -842,7 +843,6 @@ void GameState::addUnitWithID(const Unit & u)
     {
         System::FatalError("GameState has non-unique Unit ID values");
     }
-	_map.addUnit(getUnit(u.player(), _numUnits[u.player()-1]));
 }
 
 void GameState::sortUnits()
