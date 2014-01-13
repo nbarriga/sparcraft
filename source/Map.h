@@ -84,6 +84,7 @@ public:
 	void addUnit(const SparCraft::Unit & unit);
 
 	void removeUnit(const SparCraft::Unit & unit);
+	void clearAllUnits();
 
 	unsigned int * getRGBATexture() const;
 	void write(const std::string & filename) const;

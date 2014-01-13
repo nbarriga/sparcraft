@@ -480,6 +480,14 @@ void Map::removeUnit(const SparCraft::Unit & unit)
 	}
 }
 
+void Map::clearAllUnits(){
+    _unitDataBuildTile =         bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
+    _buildingDataBuildTile =     bvv(_buildTileWidth, std::vector<bool>(_buildTileHeight, false));
+    _unitDataWalkTile =         bvv(_walkTileWidth, std::vector<bool>(_walkTileHeight, false));
+    _buildingDataWalkTile =     bvv(_walkTileWidth, std::vector<bool>(_walkTileHeight, false));
+    _distanceMaps.clear();
+}
+
 unsigned int * Map::getRGBATexture() const
 {
 	unsigned int * data = new unsigned int[getWalkTileWidth() * getWalkTileHeight()];
