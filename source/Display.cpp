@@ -935,7 +935,7 @@ const std::string Display::getTextureFileName(const BWAPI::UnitType type) const
 #endif
 	std::string filename = image.str();
 
-	for (size_t i(0); i<filename.size(); ++i)
+	for (size_t i(imageDir.size()); i<filename.size(); ++i)
 	{
 		if (filename[i] == ' ')
 		{
