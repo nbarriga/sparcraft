@@ -428,10 +428,19 @@ void Display::DrawExperiment(int x, int y)
     DrawText(x, y , size, ss.str());
     glColor3f(1.0, 1.0, 1.0);
 
+
+    static time_t first=std::time(NULL);
+    std::stringstream fps;
+    fps<<"FPS: "<<state.getTime()/(float)(std::time(NULL)-first);
+
+    glColor3f(1.0, 0.0, 0.0);
+    DrawText(x, y+(size+spacing) , size, fps.str());
+    glColor3f(1.0, 1.0, 1.0);
+
     for (size_t p(0); p<exp[0].size(); ++p)
     {
-        DrawText(x, y+((p+1)*(size+spacing)), size, exp[0][p]);
-        DrawText(x+colwidth, y+((p+1)*(size+spacing)), size, exp[1][p]);
+        DrawText(x, y+((p+2)*(size+spacing)), size, exp[0][p]);
+        DrawText(x+colwidth, y+((p+2)*(size+spacing)), size, exp[1][p]);
     }
 }
 
