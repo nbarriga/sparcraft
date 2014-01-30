@@ -13,10 +13,10 @@ namespace SparCraft
 
 
 /** Print a demangled stack backtrace of the caller function to FILE* out. */
-void printStackTrace(int skip, FILE *out, unsigned int max_frames)
+void printStackTrace(int skip, std::ostream &out, unsigned int max_frames)
 {
 #ifdef __linux__
-    fprintf(out, "stack trace:\n");
+    out << "stack trace:\n";
 
     // storage array for stack trace address data
     void* addrlist[max_frames+1];
@@ -25,7 +25,7 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
     int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
 
     if (addrlen == 0) {
-	fprintf(out, "  <empty, possibly corrupt>\n");
+	out << "  <empty, possibly corrupt>\n";
 	return;
     }
 
@@ -73,20 +73,18 @@ void printStackTrace(int skip, FILE *out, unsigned int max_frames)
 					    funcname, &funcnamesize, &status);
 	    if (status == 0) {
 		funcname = ret; // use possibly realloc()-ed string
-		fprintf(out, "  %s : %s+%s\n",
-			symbollist[i], funcname, begin_offset);
+		out<< "  "<<symbollist[i]<<" : "<<funcname<<"+"<<begin_offset<<std::endl;
 	    }
 	    else {
 		// demangling failed. Output function name as a C function with
 		// no arguments.
-		fprintf(out, "  %s : %s()+%s\n",
-			symbollist[i], begin_name, begin_offset);
+	        out<< "  "<<symbollist[i]<<" : "<<begin_name<<"()+"<<begin_offset<<std::endl;
 	    }
 	}
 	else
 	{
 	    // couldn't parse the line? print the whole line.
-	    fprintf(out, "  %s\n", symbollist[i]);
+	    out <<"  "<<symbollist[i]<<std::endl;
 	}
     }
 
