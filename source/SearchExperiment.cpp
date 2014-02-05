@@ -448,6 +448,16 @@ void SearchExperiment::parseStateDescriptionFile(const std::string & fileName)
         iss >> x;
         iss >> y;
 
+        BWAPI::UnitType type(getUnitType(unitType));
+        if(type.isBuilding()){
+            int xoffset=(x-(type.tileWidth()*TILE_SIZE/2))%TILE_SIZE;
+            int yoffset=(y-(type.tileHeight()*TILE_SIZE/2))%TILE_SIZE;
+            if(xoffset!=0 || yoffset!=0){
+                std::cerr<<"Building '"<<unitType<<"' in wrong position "<<Position(x, y).getString()<<
+                        ", closest legal is "<<Position(x-xoffset, y-yoffset).getString()<<
+                        ". Please fix your configuration file."<<std::endl;
+            }
+        }
         currentState.addUnit(getUnitType(unitType), (IDType)playerID, Position(x, y));
     }
 
