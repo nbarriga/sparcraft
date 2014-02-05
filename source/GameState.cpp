@@ -1369,6 +1369,34 @@ std::vector<IDType> SparCraft::GameState::getAliveUnitIDs(
     }
     return units;
 }
+
+std::vector<IDType> SparCraft::GameState::getBuildingIDs(
+        const IDType& player) const {
+    std::vector<IDType> units;
+
+    for (IDType u(0); u<_numUnits[player]; ++u)
+    {
+        const Unit &unit=_units[player][_unitIndex[player][u]];
+        if(unit.type().isBuilding()){
+            units.push_back(unit.ID());
+        }
+    }
+    return units;
+}
+
+std::vector<IDType> SparCraft::GameState::getAliveBuildingIDs(
+        const IDType& player) const {
+    std::vector<IDType> units;
+
+    for (IDType u(0); u<_numUnits[player]; ++u)
+    {
+        const Unit &unit=_units[player][_unitIndex[player][u]];
+        if(unit.isAlive()&&unit.type().isBuilding()){
+            units.push_back(unit.ID());
+        }
+    }
+    return units;
+}
 //std::vector<UnitCountType> SparCraft::GameState::getUnitIndexes(
 //        const IDType& player) const {
 //    std::vector<IDType> units;
