@@ -44,10 +44,11 @@ public:
 #endif
 
 	// game constructor
-	Game(const GameState & initialState, PlayerPtr & p1, PlayerPtr & p2, const size_t & limit);
-    Game(const GameState & initialState, const size_t & limit);
+	Game(const GameState & initialState, PlayerPtr p1, PlayerPtr p2, size_t limit);
+    Game(const GameState & initialState, size_t limit);
 
 	void            play();
+	void            play(TimeType gameTimeToPlay);
     void            playIndividualScripts(UnitScriptData & scriptsChosen);
 	void            storeHistory(const bool & store);
 	bool            gameOver();

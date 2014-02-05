@@ -2,7 +2,7 @@
 
 using namespace SparCraft;
 
-Game::Game(const GameState & initialState, const size_t & limit)
+Game::Game(const GameState & initialState, size_t limit)
     : _numPlayers(0)
     , _playerToMoveMethod(SparCraft::PlayerToMove::Alternate)
     , rounds(0)
@@ -14,7 +14,7 @@ Game::Game(const GameState & initialState, const size_t & limit)
 #endif
 }
 
-Game::Game(const GameState & initialState, PlayerPtr & p1, PlayerPtr & p2, const size_t & limit)
+Game::Game(const GameState & initialState, PlayerPtr p1, PlayerPtr p2, size_t limit)
     : _numPlayers(0)
     , _playerToMoveMethod(SparCraft::PlayerToMove::Alternate)
     , rounds(0)
@@ -138,6 +138,57 @@ void Game::play()
 
     gameTimeMS = t.getElapsedTimeInMilliSec();
 }
+void Game::play(TimeType gameTimeToPlay) {
+    scriptMoves[Players::Player_One] = std::vector<UnitAction>(state.numUnits(Players::Player_One));
+    scriptMoves[Players::Player_Two] = std::vector<UnitAction>(state.numUnits(Players::Player_Two));
+
+    t.start();
+
+    // play until there is no winner
+    while (!gameOver())
+    {
+        if (gameTimeToPlay > state.getTime())
+        {
+            break;
+        }
+
+        Timer frameTimer;
+        frameTimer.start();
+
+        scriptMoves[0].clear();
+        scriptMoves[1].clear();
+
+        // the player that will move next
+        const IDType playerToMove(getPlayerToMove());
+        PlayerPtr & toMove = _players[playerToMove];
+        PlayerPtr & enemy = _players[state.getEnemy(playerToMove)];
+
+        state.beforeMoving();
+
+        // generate the moves possible from this state
+        state.generateMoves(moves[toMove->ID()], toMove->ID());
+
+        // the tuple of moves he wishes to make
+        toMove->getMoves(state, moves[playerToMove], scriptMoves[playerToMove]);
+
+        // if both players can move, generate the other player's moves
+        if (state.bothCanMove())
+        {
+            state.generateMoves(moves[enemy->ID()], enemy->ID());
+            enemy->getMoves(state, moves[enemy->ID()], scriptMoves[enemy->ID()]);
+
+            state.makeMoves(scriptMoves[enemy->ID()]);
+        }
+
+        // make the moves
+        state.makeMoves(scriptMoves[toMove->ID()]);
+
+        state.finishedMoving();
+        rounds++;
+    }
+
+    gameTimeMS = t.getElapsedTimeInMilliSec();
+}
 
 // play the game until there is a winner
 void Game::playIndividualScripts(UnitScriptData & scriptData)
@@ -231,3 +282,5 @@ GameState & Game::getState()
 
     return (whoCanMove == Players::Player_Both) ? Players::Player_One : whoCanMove;
 }
+
+
