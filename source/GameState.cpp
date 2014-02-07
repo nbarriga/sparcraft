@@ -1397,6 +1397,21 @@ std::vector<IDType> SparCraft::GameState::getAliveBuildingIDs(
     }
     return units;
 }
+
+std::vector<IDType> SparCraft::GameState::getAliveUnitsInCircleIDs(
+        IDType player, const Position& pos, int radius) const {
+    std::vector<IDType> units;
+    int sqRadius=radius*radius;
+
+    for (IDType u(0); u<_numUnits[player]; ++u)
+    {
+        const Unit &unit=_units[player][_unitIndex[player][u]];
+        if(unit.isAlive()&&unit.getDistanceSqToPosition(pos,getTime())<sqRadius){
+            units.push_back(unit.ID());
+        }
+    }
+    return units;
+}
 //std::vector<UnitCountType> SparCraft::GameState::getUnitIndexes(
 //        const IDType& player) const {
 //    std::vector<IDType> units;

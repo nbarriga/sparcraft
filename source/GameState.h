@@ -88,8 +88,8 @@ public:
     std::vector<IDType> getBuildingIDs(const IDType & player) const;
     std::vector<IDType> getAliveUnitIDs(const IDType & player) const;
     std::vector<IDType> getAliveBuildingIDs(const IDType & player) const;
-//    std::vector<UnitCountType> getUnitIndexes(const IDType & player) const;
-//    std::vector<UnitCountType> getAliveUnitIndexes(const IDType & player) const;
+
+    std::vector<IDType> getAliveUnitsInCircleIDs(IDType player, const Position &pos, int radius) const;
 
 
     const Unit &            getUnitDirect(const IDType & player, const IDType & unit)               const;
