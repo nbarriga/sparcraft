@@ -1312,32 +1312,6 @@ void GameState::write(const std::string & filename) const
     fout.close();
 }
 
-bool GameState::goalReached(const IDType& player) const{
-	if(_map.hasGoal()){
-		for (IDType u(0); u<numUnits(player); ++u){
-			const Unit & unit(getUnit(player, u));
-			if(_map.getDistanceToGoal(unit.pos())<TILE_SIZE/2){
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-ScoreType GameState::evalBuildingPlacement(
-		const IDType& attacker, const IDType& defender) const{
-
-	if(playerDead(attacker)){//attacker defeated, count how many we have left
-		return LTD(defender)+300000;
-	}else if(goalReached(attacker)){//enemy reached goal,
-		return /*LTD(defender)*/-LTD(attacker)+100000;
-	}else if(playerDead(defender)){//defender destroyed, count how many he has left
-		return LTD(defender)-LTD(attacker)+50000;
-	}else{//simulation time exhausted
-		return LTD(defender)-LTD(attacker)+200000;
-	}
-}
-
 void GameState::read(const std::string & filename)
 {
     std::ifstream fin (filename.c_str(), std::ios::in | std::ios::binary);

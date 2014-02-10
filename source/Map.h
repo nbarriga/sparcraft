@@ -26,9 +26,6 @@ class Map
 	bvv						_unitDataWalkTile;	            // true if unit on walk tile [x][y]
 	bvv						_buildingDataWalkTile;          // true if building on walk tile [x][y]
 
-	SparCraft::Position 	_goal;
-	bool					_hasGoal;				//true if a goal has been set
-
 	mutable std::map<SparCraft::Position, DistanceMap> _distanceMaps;//distances from every walk tile to a given position
 
 
@@ -55,12 +52,6 @@ public:
 	std::pair<int,int> getClosestLegal(int xGoal, int yGoal) const;
 	bool doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const;
 
-
-	void setGoal(const SparCraft::Position & goal);
-	const SparCraft::Position & getGoal() const;
-	bool hasGoal() const;
-
-	int getDistanceToGoal(const SparCraft::Position & pixelPosition) const;
 	int getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition) const;
 
 

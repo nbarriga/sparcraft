@@ -232,11 +232,6 @@ void SearchExperiment::parseConfigFile(const std::string & filename)
             iss >> fileString;
             map = new Map;
             map->load(fileString);
-            int goalX, goalY;
-            iss>>goalX;
-            iss>>goalY;
-            SparCraft::Position goal(goalX,goalY);
-            map->setGoal(goal);
         }
         else if (strcmp(option.c_str(), "Display") == 0)
         {

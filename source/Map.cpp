@@ -24,7 +24,6 @@ void Map::resetVectors()
 	_unitDataWalkTile =         bvv(_walkTileWidth, std::vector<bool>(_walkTileHeight, false));
 	_buildingDataWalkTile =     bvv(_walkTileWidth, std::vector<bool>(_walkTileHeight, false));
 	_distanceMaps.clear();
-	_hasGoal = false;
 }
 
 void Map::invalidateDistances(){
@@ -122,7 +121,6 @@ Map::Map()
 , _walkTileHeight(0)
 , _buildTileWidth(0)
 , _buildTileHeight(0)
-, _hasGoal(false)
 {
 }
 
@@ -209,28 +207,6 @@ std::pair<int,int> Map::getClosestLegal(int xGoal, int yGoal) const{
 		distance++;
 	}while(distance<10);
 	return std::pair<int,int>(-1,-1);
-}
-
-
-void Map::setGoal(const SparCraft::Position & goal){
-	_goal=goal;
-	_hasGoal=true;
-	invalidateDistances();
-}
-
-const SparCraft::Position & Map::getGoal() const{
-	return _goal;
-}
-
-bool Map::hasGoal() const{
-	return _hasGoal;
-}
-
-int Map::getDistanceToGoal(const SparCraft::Position & pixelPosition) const{
-	if(!hasGoal()){
-		SparCraft::System::FatalError("Goal not set");
-	}
-	return getDistance(pixelPosition,_goal);
 }
 
 int Map::getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition) const{

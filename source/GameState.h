@@ -107,8 +107,6 @@ public:
      ScoreType         evalLTD2(const IDType & player)                                       const;
      ScoreType         LTD(const IDType & player)                                            const;
      ScoreType         LTD2(const IDType & player)                                           const;
-     ScoreType         evalBuildingPlacement(const IDType & attacker, const IDType & defender) const;
-    bool goalReached(const IDType& player) const;
      StateEvalScore    evalSim(const IDType & player, const IDType & p1, const IDType & p2)    const;
      IDType            getEnemy(const IDType & player)                                         const;
 
