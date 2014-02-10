@@ -12,8 +12,6 @@ Player * AllPlayers::getPlayer(const IDType & playerID, const IDType & type)
     else if		(type == PlayerModels::Kiter_NOKDPS)		{ return new Player_Kiter_NOKDPS(playerID); }
     else if		(type == PlayerModels::Cluster)		    	{ return new Player_Cluster(playerID); }
 	else if		(type == PlayerModels::NOKDPS)              { return new Player_NOKDPS(playerID); }
-	else if		(type == PlayerModels::Assault)             { return new Player_Assault(playerID); }
-	else if		(type == PlayerModels::Defend)             { return new Player_Defend(playerID); }
 	else if		(type == PlayerModels::Random)				{ return new Player_Random(playerID); }
 	else													{ return NULL; }
 }
@@ -28,8 +26,6 @@ PlayerPtr AllPlayers::getPlayerPtr(const IDType & playerID, const IDType & type)
     else if		(type == PlayerModels::Kiter_NOKDPS)		{ return PlayerPtr(new Player_Kiter_NOKDPS(playerID)); }
     else if		(type == PlayerModels::Cluster)		    	{ return PlayerPtr(new Player_Cluster(playerID)); }
 	else if		(type == PlayerModels::NOKDPS)              { return PlayerPtr(new Player_NOKDPS(playerID)); }
-	else if		(type == PlayerModels::Assault)              { return PlayerPtr(new Player_Assault(playerID)); }
-	else if		(type == PlayerModels::Defend)              { return PlayerPtr(new Player_Defend(playerID)); }
 	else if		(type == PlayerModels::Random)				{ return PlayerPtr(new Player_Random(playerID)); }
 	else													{ return PlayerPtr(new Player_NOKDPS(playerID)); }
 }
