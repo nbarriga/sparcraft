@@ -143,15 +143,10 @@ void Game::play(TimeType gameTimeToPlay) {
     scriptMoves[Players::Player_Two] = std::vector<UnitAction>(state.numUnits(Players::Player_Two));
 
     t.start();
-
+    TimeType startTime= state.getTime();
     // play until there is no winner
-    while (!gameOver())
+    while (!gameOver() && (state.getTime() - startTime < gameTimeToPlay ))
     {
-        if (gameTimeToPlay > state.getTime())
-        {
-            break;
-        }
-
         Timer frameTimer;
         frameTimer.start();
 
