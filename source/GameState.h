@@ -70,6 +70,8 @@ public:
           Unit &            getUnit(const IDType & player, const UnitCountType & unitIndex);
     const Unit &            getUnitByID(const IDType & player, const IDType & unitID)               const;
           Unit &            getUnitByID(const IDType & player, const IDType & unitID);
+    boost::optional<const Unit&> getUnitByIDOpt(const IDType & player, const IDType & unitID) const;
+    boost::optional<const Unit&> getUnitByIDOpt(const IDType & unitID) const;
 
     const Unit& getClosestEnemyUnit(const IDType & player, const IDType & unitIndex) const;
     const Unit& getClosestOurUnit(const IDType & player, const IDType & unitIndex) const;

@@ -396,6 +396,55 @@ Unit & GameState::getUnitByID(const IDType & player, const IDType & unitID)
 	return getUnit(0,0);
 }
 
+boost::optional<const Unit&> SparCraft::GameState::getUnitByIDOpt(
+        const IDType& player, const IDType& unitID) const {
+
+    bool found=false;
+    UnitCountType index;
+    for (IDType u(0); u<numUnits(player); ++u)
+    {
+        if (getUnit(player, u).ID() == unitID)
+        {
+            index=u;
+            found=true;
+            break;
+        }
+    }
+
+    if(found){
+        return boost::optional<const Unit&>(getUnit(player, index));
+    }else{
+        return boost::optional<const Unit&>(boost::none);
+    }
+}
+
+boost::optional<const Unit&> SparCraft::GameState::getUnitByIDOpt(
+        const IDType& unitID) const {
+
+    bool found=false;
+    UnitCountType index;
+    IDType player;
+    for (IDType p(0); p<Constants::Num_Players; ++p)
+    {
+        for (IDType u(0); u<numUnits(player); ++u)
+        {
+            if (getUnit(p, u).ID() == unitID)
+            {
+                player=p;
+                index=u;
+                found=true;
+                break;
+            }
+        }
+        if(found)break;
+    }
+
+    if(found){
+        return boost::optional<const Unit&>(getUnit(player, index));
+    }else{
+        return boost::optional<const Unit&>(boost::none);
+    }
+}
 bool GameState::isWalkable(const Position & pos) const
 {
 	return _map.isWalkable(pos);
