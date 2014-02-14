@@ -308,6 +308,8 @@ void Map::setUnitData(BWAPI::Game * game)
 
 bool Map::canBuildHere(BWAPI::TilePosition pos) const
 {
+    System::FatalError("Buggy function, if needed, reimplement");
+    //need to check buildings against unit walk tiles not unit build tiles
 	return pos.x()>=0 && pos.y()>=0 && pos.x()<(int)_buildTileWidth && pos.y()<(int)_buildTileHeight &&
 			!_unitDataBuildTile[pos.x()][pos.y()] &&
 			!_buildingDataBuildTile[pos.x()][pos.y()] &&
@@ -324,31 +326,35 @@ bool Map::canBuildHere(const BWAPI::UnitType & type, const SparCraft::Position &
 	int endX   = (pos.x() + type.dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
 	int startY = (pos.y() - type.dimensionUp()) / TILE_SIZE;
 	int endY   = (pos.y() + type.dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+
+	if(startX<0 || endX>=(int)_buildTileWidth || startY<0 || endY>=(int)_buildTileHeight){
+	    return false;
+	}
+
 	for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
 	{
-		for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
-		{
-			if(!canBuildHere(BWAPI::TilePosition(x,y))){
-				return false;
-			}
-		}
+	    for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
+	    {
+	        if(_buildingDataBuildTile[x][y]){
+	            return false;
+	        }
+	    }
+	}
+
+	startX = (pos.x() - type.dimensionLeft()) / 8;
+	endX   = (pos.x() + type.dimensionRight() + 8 - 1) / 8; // Division - round up
+	startY = (pos.y() - type.dimensionUp()) / 8;
+	endY   = (pos.y() + type.dimensionDown() + 8 - 1) / 8;
+	for (int x = startX; x < endX && x < (int)getWalkTileWidth(); ++x)
+	{
+	    for (int y = startY; y < endY && y < (int)getWalkTileHeight(); ++y)
+	    {
+	        if(_unitDataWalkTile[x][y] || !_mapData[x][y]){
+	            return false;
+	        }
+	    }
 	}
 	return true;
-
-	//		int tx = pos.x() / TILE_SIZE;
-	//		int ty = pos.y() / TILE_SIZE;
-	//		int sx = type.tileWidth();
-	//		int sy = type.tileHeight();
-	//		for(int x = tx; x < tx + sx && x < (int)getBuildTileWidth(); ++x)
-	//		{
-	//			for(int y = ty; y < ty + sy && y < (int)getBuildTileHeight(); ++y)
-	//			{
-	//				if(!canBuildHere(BWAPI::TilePosition(x,y))){
-	//					return false;
-	//				}
-	//			}
-	//		}
-	//		return true;
 }
 
 void Map::setBuildingData(BWAPI::Game * game)
@@ -374,23 +380,31 @@ void Map::addUnit(BWAPI::Unit * unit)
 
 void Map::addUnit(const SparCraft::Unit & unit)
 {
-
 	int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
 	int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
 	int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
 	int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+
+	if(_buildTileWidth==0||_buildTileHeight==0){
+	    //map has not been set yet, accept everything
+	    return;
+	}
+	if(startX<0 || endX>=(int)_buildTileWidth || startY<0 || endY>=(int)_buildTileHeight){
+	    std::stringstream ss;
+	    ss<<"Trying to place a "<<unit.type().getName()<<" outside the map at pos: X:"<<startX<<"-"<<endX<<" Y:"<<startY<<"-"<<endY;
+	    ss<<std::endl<<"Map size: "<<_buildTileWidth<<"X"<<_buildTileHeight;
+	    System::FatalError(ss.str());
+	}
+
 	for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
 	{
 		for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
 		{
 			if (unit.type().isBuilding()){
-				if(!canBuildHere(BWAPI::TilePosition(x,y))){
-					std::cerr<<"\nwrong place:"<<x<<" "<<y<<" "<<
-							_buildingDataBuildTile[x][y]<<" "<<
-							_unitDataBuildTile[x][y]<<" "<<
-							_mapData[x*4][y*4]<<std::endl;
+			    if(_buildingDataBuildTile[x][y]){
+					std::cerr<<"\nwrong place:"<<x<<" "<<y<<" build tile."<<std::endl;
 					System::FatalError("Trying to place a "+unit.type().getName()+
-							" in an already occupied tile");
+							" in an already occupied build tile");
 				}
 				_buildingDataBuildTile[x][y] = true;
 				invalidateDistances();
@@ -409,7 +423,12 @@ void Map::addUnit(const SparCraft::Unit & unit)
 		for (int y = startY; y < endY && y < (int)getWalkTileHeight(); ++y)
 		{
 			if (unit.type().isBuilding()){
-				//won't check if it's a valid location because we already did above.
+			    if(_unitDataWalkTile[x][y] || !_mapData[x][y]){
+			        std::cerr<<"\nwrong place:"<<x<<" "<<y<<" walk tile."<<std::endl;
+			        System::FatalError("Trying to place a "+unit.type().getName()+
+			                " in an already occupied walk tile");
+			    }
+				//won't check _buildingDataWalkTile because we already did
 				_buildingDataWalkTile[x][y] = true;
 				invalidateDistances();
 			}else{
