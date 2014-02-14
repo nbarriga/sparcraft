@@ -80,6 +80,10 @@ namespace SparCraft
         void checkSupportedUnitType(const BWAPI::UnitType & type);
         bool isSupportedUnitType(const BWAPI::UnitType & type);
     }
+
+    template <typename T> int sign(T val) {
+        return (T(0) < val) - (val < T(0));
+    };
 };
 
 #include "EnumData.h"

@@ -21,7 +21,7 @@ Unit::Unit()
 Unit::Unit(const BWAPI::UnitType unitType, const Position & pos, const IDType & unitID, const IDType & playerID, 
            const HealthType & hp, const HealthType & energy, const TimeType & tm, const TimeType & ta) 
     : _unitType             (unitType)
-    , _range                (PlayerWeapon(&PlayerProperties::Get(playerID), unitType.groundWeapon()).GetMaxRange() + Constants::Range_Addition)
+    , _range                (PlayerWeapon(&PlayerProperties::Get(playerID), unitType.groundWeapon()).GetMaxRange() + unitType.dimensionDown() + 3/* + Constants::Range_Addition*/)
     //, _range                (unitType.groundWeapon().maxRange() + Constants::Range_Addition)
     , _position             (pos)
     , _unitID               (unitID)
@@ -56,7 +56,7 @@ Unit::Unit(const BWAPI::UnitType unitType, const Position & pos, const IDType & 
 // constructor for units to construct basic units, sets some things automatically
 Unit::Unit(const BWAPI::UnitType unitType, const IDType & playerID, const Position & pos) 
     : _unitType             (unitType)
-    , _range                (PlayerWeapon(&PlayerProperties::Get(playerID), unitType.groundWeapon()).GetMaxRange() + Constants::Range_Addition)
+    , _range                (PlayerWeapon(&PlayerProperties::Get(playerID), unitType.groundWeapon()).GetMaxRange() + unitType.dimensionDown() + 3/* + Constants::Range_Addition*/)
     //, _range                (unitType.groundWeapon().maxRange() + Constants::Range_Addition)
     , _position             (pos)
     , _unitID               (0)
@@ -135,8 +135,32 @@ bool Unit::canAttackTarget(const Unit & unit, const TimeType & gameTime) const
     // range of this unit attacking
     PositionType r = range();
 
-    // return whether the target unit is in range
-    return (r * r) >= getDistanceSqToUnit(unit, gameTime);
+
+    PositionType lines[]={unit.y()-unit.type().dimensionUp(),
+            unit.y()+unit.type().dimensionDown(),
+            unit.x()-unit.type().dimensionLeft(),
+            unit.x()+unit.type().dimensionRight()};
+
+    PositionType dists[]={lines[0]-y(),lines[1]-y(),lines[2]-x(),lines[3]-x()};
+
+    if(sign(dists[0])==sign(dists[1])){
+        if(sign(dists[2])==sign(dists[3])){
+            //diagonal
+            return (r*r) >=std::min(abs(dists[0]),abs(dists[1]))*
+                    std::min(abs(dists[0]),abs(dists[1]))+
+                    std::min(abs(dists[2]),abs(dists[3]))*
+                    std::min(abs(dists[2]),abs(dists[3]));
+        }else{
+            //top or bottom
+            return r >= std::min(abs(dists[0]),abs(dists[1]));
+        }
+    }else if(sign(dists[2])==sign(dists[3])){
+        //left or right
+        return r >= std::min(abs(dists[2]),abs(dists[3]));
+    }else{
+        std::cerr<<"WARNING: Unit "<<ID()<<" is inside unit "<<unit.ID()<<std::endl;
+    }
+
 }
 
 bool Unit::canHealTarget(const Unit & unit, const TimeType & gameTime) const
