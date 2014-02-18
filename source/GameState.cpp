@@ -426,7 +426,7 @@ boost::optional<const Unit&> SparCraft::GameState::getUnitByIDOpt(
     IDType player;
     for (IDType p(0); p<Constants::Num_Players; ++p)
     {
-        for (IDType u(0); u<numUnits(player); ++u)
+        for (IDType u(0); u<numUnits(p); ++u)
         {
             if (getUnit(p, u).ID() == unitID)
             {
