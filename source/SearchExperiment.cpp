@@ -233,6 +233,13 @@ void SearchExperiment::parseConfigFile(const std::string & filename)
             map = new Map;
             map->load(fileString);
         }
+        else if (strcmp(option.c_str(), "Map") == 0)
+        {
+            int x,y;
+            iss>>x;
+            iss>>y;
+            map = new Map(x,y);
+        }
         else if (strcmp(option.c_str(), "Display") == 0)
         {
             std::string option;
