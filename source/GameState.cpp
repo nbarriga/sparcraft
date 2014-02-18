@@ -364,7 +364,9 @@ const Unit & GameState::getUnitByID(const IDType & unitID) const
 		}
 	}
 
-    System::FatalError("GameState Error: getUnitByID() Unit not found");
+	std::stringstream ss;
+	ss<<"GameState Error: getUnitByID() Unit: "<<unitID<<" not found";
+    System::FatalError(ss.str());
 	return getUnit(0,0);
 }
 
@@ -378,7 +380,9 @@ const Unit & GameState::getUnitByID(const IDType & player, const IDType & unitID
 		}
 	}
 
-	System::FatalError("GameState Error: getUnitByID() Unit not found");
+	std::stringstream ss;
+	ss<<"GameState Error: getUnitByID() Unit: "<<unitID<<" not found for player: "<<player;
+	System::FatalError(ss.str());
 	return getUnit(0,0);
 }
 
@@ -1435,6 +1439,7 @@ std::vector<IDType> SparCraft::GameState::getAliveUnitsInCircleIDs(
     }
     return units;
 }
+
 //std::vector<UnitCountType> SparCraft::GameState::getUnitIndexes(
 //        const IDType& player) const {
 //    std::vector<IDType> units;
