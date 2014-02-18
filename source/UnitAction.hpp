@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-#include "Position.hpp"
+#include "Position.h"
 
 namespace SparCraft
 {

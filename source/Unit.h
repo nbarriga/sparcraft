@@ -3,7 +3,7 @@
 #include "Common.h"
 
 #include "UnitAction.hpp"
-#include "Position.hpp"
+#include "Position.h"
 #include "Hash.h"
 #include "PlayerProperties.h"
 #include "UnitProperties.h"
