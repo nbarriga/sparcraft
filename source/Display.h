@@ -81,8 +81,6 @@ class Display
 	unsigned int                texFont;
 	int	                        windowSizeX;
 	int                         windowSizeY;
-	int                         zoomX;
-	int                         zoomY;
 	int                         cameraX;
 	int                         cameraY;
 	int                         mapWidth;
@@ -147,6 +145,8 @@ class Display
 protected:
 	virtual void RenderUnit(const SparCraft::Unit & unit);
 	GameState                   state;
+    int                         zoomX;
+    int                         zoomY;
 public:
 
 	Display(const int mw, const int mh);
