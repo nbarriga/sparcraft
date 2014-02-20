@@ -239,6 +239,10 @@ bool Map::doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & 
 	int startY = (pixelPosition.y() - type.dimensionUp()) / 8;
 	int endY   = (pixelPosition.y() + type.dimensionDown() + 8 - 1) / 8;
 
+    if(startX<0 || endX>=(int)_walkTileWidth || startY<0 || endY>=(int)_walkTileHeight){
+        return true;
+    }
+
 	for (int x = startX; x <= endX && x < (int)getWalkTileWidth(); ++x)
 	{
 		for (int y = startY; y <= endY && y < (int)getWalkTileHeight(); ++y)
