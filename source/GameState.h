@@ -91,6 +91,9 @@ public:
     std::vector<IDType> getAliveUnitIDs(const IDType & player) const;
     std::vector<IDType> getAliveBuildingIDs(const IDType & player) const;
 
+    bool hasMobileAttackUnits(IDType player) const;
+    bool hasDamageDealingUnits(IDType player) const;
+
     std::vector<IDType> getAliveUnitsInCircleIDs(IDType player, const Position &pos, int radius) const;
 
 

@@ -1440,6 +1440,29 @@ std::vector<IDType> SparCraft::GameState::getAliveUnitsInCircleIDs(
     return units;
 }
 
+bool GameState::hasMobileAttackUnits(IDType player) const {
+
+    for (IDType u(0); u<_numUnits[player]; ++u)
+    {
+        const Unit &unit=_units[player][_unitIndex[player][u]];
+        if(unit.isAlive()&&unit.isMobile()&&unit.damage()>0){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool GameState::hasDamageDealingUnits(IDType player) const {
+
+    for (IDType u(0); u<_numUnits[player]; ++u)
+    {
+        const Unit &unit=_units[player][_unitIndex[player][u]];
+        if(unit.isAlive()&&unit.damage()>0){
+            return true;
+        }
+    }
+    return false;
+}
 //std::vector<UnitCountType> SparCraft::GameState::getUnitIndexes(
 //        const IDType& player) const {
 //    std::vector<IDType> units;
