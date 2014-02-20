@@ -176,7 +176,7 @@ TTLookupValue AlphaBetaSearch::TTlookup(const GameState & state, StateEvalScore 
 
 bool AlphaBetaSearch::searchTimeOut()
 {
-	return (_params.timeLimit() && (_results.nodesExpanded % 50 == 0) && (_searchTimer.getElapsedTimeInMilliSec() >= _params.timeLimit()));
+	return (_params.timeLimit() && (_results.nodesExpanded % 5 == 0) && (_searchTimer.getElapsedTimeInMilliSec() >= _params.timeLimit()));
 }
 
 bool AlphaBetaSearch::terminalState(const GameState & state, const size_t & depth) const
