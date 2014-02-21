@@ -135,13 +135,15 @@ bool Unit::canAttackTarget(const Unit & unit, const TimeType & gameTime) const
     // range of this unit attacking
     PositionType r = range();
 
+    const Position &ours=currentPosition(gameTime);
+    const Position &his=unit.currentPosition(gameTime);
 
-    PositionType lines[]={unit.y()-unit.type().dimensionUp(),
-            unit.y()+unit.type().dimensionDown(),
-            unit.x()-unit.type().dimensionLeft(),
-            unit.x()+unit.type().dimensionRight()};
+    PositionType lines[]={his.y()-unit.type().dimensionUp(),
+            his.y()+unit.type().dimensionDown(),
+            his.x()-unit.type().dimensionLeft(),
+            his.x()+unit.type().dimensionRight()};
 
-    PositionType dists[]={lines[0]-y(),lines[1]-y(),lines[2]-x(),lines[3]-x()};
+    PositionType dists[]={lines[0]-ours.y(),lines[1]-ours.y(),lines[2]-ours.x(),lines[3]-ours.x()};
 
     if(sign(dists[0])==sign(dists[1])){
         if(sign(dists[2])==sign(dists[3])){
@@ -159,6 +161,7 @@ bool Unit::canAttackTarget(const Unit & unit, const TimeType & gameTime) const
         return r >= std::min(abs(dists[2]),abs(dists[3]));
     }else{
         std::cerr<<"WARNING: Unit "<<ID()<<" is inside unit "<<unit.ID()<<std::endl;
+        return true;
     }
 
 }
