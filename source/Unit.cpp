@@ -135,6 +135,9 @@ bool Unit::canAttackTarget(const Unit & unit, const TimeType & gameTime) const
     // range of this unit attacking
     PositionType r = range();
 
+    if(!unit.type().isBuilding())
+        return (r * r) >= getDistanceSqToUnit(unit, gameTime);
+
     const Position &ours=currentPosition(gameTime);
     const Position &his=unit.currentPosition(gameTime);
 
