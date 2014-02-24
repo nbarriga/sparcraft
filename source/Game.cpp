@@ -64,19 +64,33 @@ void Game::play()
         PlayerPtr & toMove = _players[playerToMove];
         PlayerPtr & enemy = _players[state.getEnemy(playerToMove)];
 
+        static int lastTime=-1;
+        static IDType lastPlayer=-1;
+        if(lastTime==state.getTime()){
+        	std::cout<<"Player "<<PlayerModels::getName(toMove->getType())<<" missed a move "<<std::endl;
+        }
+        lastTime=state.getTime();
         state.beforeMoving();
 
         // generate the moves possible from this state
         state.generateMoves(moves[toMove->ID()], toMove->ID());
 
+        lastPlayer=playerToMove;
+        Timer playerTimer;
+        playerTimer.start();
         // the tuple of moves he wishes to make
         toMove->getMoves(state, moves[playerToMove], scriptMoves[playerToMove]);
-        
+//        std::cout<<"Player "<<PlayerModels::getName(toMove->getType())<<" took "<<playerTimer.getElapsedTimeInMilliSec()<<"[ms]"<<std::endl;
+//        assert(moves[playerToMove].numUnits()==scriptMoves[playerToMove].size());
         // if both players can move, generate the other player's moves
         if (state.bothCanMove())
         {
+        	lastPlayer=3;
             state.generateMoves(moves[enemy->ID()], enemy->ID());
+            playerTimer.start();
             enemy->getMoves(state, moves[enemy->ID()], scriptMoves[enemy->ID()]);
+//            std::cout<<"Player "<<PlayerModels::getName(enemy->getType())<<" took "<<playerTimer.getElapsedTimeInMilliSec()<<"[ms]"<<std::endl;
+//            assert(moves[enemy->ID()].numUnits()==scriptMoves[enemy->ID()].size());
 
             state.makeMoves(scriptMoves[enemy->ID()]);
         }
@@ -138,7 +152,56 @@ void Game::play()
 
     gameTimeMS = t.getElapsedTimeInMilliSec();
 }
-void Game::play(TimeType gameTimeToPlay) {
+
+void Game::playUntil(TimeType gameTimeToPlay) {
+    scriptMoves[Players::Player_One] = std::vector<UnitAction>(state.numUnits(Players::Player_One));
+    scriptMoves[Players::Player_Two] = std::vector<UnitAction>(state.numUnits(Players::Player_Two));
+
+    t.start();
+    TimeType startTime= state.getTime();
+    // play until there is no winner
+
+    while (state.getTime() - startTime < gameTimeToPlay)
+    {
+        Timer frameTimer;
+        frameTimer.start();
+
+        scriptMoves[0].clear();
+        scriptMoves[1].clear();
+
+        // the player that will move next
+        const IDType playerToMove(getPlayerToMove());
+        PlayerPtr & toMove = _players[playerToMove];
+        PlayerPtr & enemy = _players[state.getEnemy(playerToMove)];
+
+        state.beforeMoving();
+
+        // generate the moves possible from this state
+        state.generateMoves(moves[toMove->ID()], toMove->ID());
+
+        // the tuple of moves he wishes to make
+        toMove->getMoves(state, moves[playerToMove], scriptMoves[playerToMove]);
+
+        // if both players can move, generate the other player's moves
+        if (state.bothCanMove())
+        {
+            state.generateMoves(moves[enemy->ID()], enemy->ID());
+            enemy->getMoves(state, moves[enemy->ID()], scriptMoves[enemy->ID()]);
+
+            state.makeMoves(scriptMoves[enemy->ID()]);
+        }
+
+        // make the moves
+        state.makeMoves(scriptMoves[toMove->ID()]);
+
+        state.finishedMoving();
+        rounds++;
+    }
+
+    gameTimeMS = t.getElapsedTimeInMilliSec();
+}
+
+void Game::playToEndOrUntil(TimeType gameTimeToPlay) {
     scriptMoves[Players::Player_One] = std::vector<UnitAction>(state.numUnits(Players::Player_One));
     scriptMoves[Players::Player_Two] = std::vector<UnitAction>(state.numUnits(Players::Player_Two));
 

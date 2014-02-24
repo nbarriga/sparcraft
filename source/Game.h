@@ -48,7 +48,8 @@ public:
     Game(const GameState & initialState, size_t limit);
 
 	void            play();
-	void            play(TimeType gameTimeToPlay);
+	void            playUntil(TimeType gameTimeToPlay);
+	void            playToEndOrUntil(TimeType gameTimeToPlay);
     void            playIndividualScripts(UnitScriptData & scriptsChosen);
 	void            storeHistory(const bool & store);
 	bool            gameOver();
