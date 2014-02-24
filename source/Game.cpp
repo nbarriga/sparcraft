@@ -145,7 +145,10 @@ void Game::play(TimeType gameTimeToPlay) {
     t.start();
     TimeType startTime= state.getTime();
     // play until there is no winner
-    while (!gameOver() && (state.getTime() - startTime < gameTimeToPlay ))
+
+    while (((!state.playerDead(0)&&state.numUnits(1)>0)||
+    		(!state.playerDead(1)&&state.numUnits(0)>0)) &&
+    		(state.getTime() - startTime < gameTimeToPlay ))
     {
         Timer frameTimer;
         frameTimer.start();
