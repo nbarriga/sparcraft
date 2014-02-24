@@ -145,7 +145,7 @@ const std::string Position::getString() const
     ss << "(" << x() << ", " << y() << ")";
     return ss.str();
 }
-std::ostream& operator<< (std::ostream &out, Position &pos){
+std::ostream& operator<< (std::ostream &out, const Position &pos){
     out<<pos.getString();
     return out;
 }

@@ -63,7 +63,7 @@ public:
 
     void print() const;
     const std::string getString() const;
-    friend std::ostream& operator<< (std::ostream &out, Position &pos);
+    friend std::ostream& operator<< (std::ostream &out, const Position &pos);
 };
 
 
