@@ -989,6 +989,9 @@ bool GameState::playerDead(const IDType & player) const
 
  IDType GameState::whoCanMove() const
 {
+    if(numUnits(0) < 1) return Players::Player_Two;
+    if(numUnits(1) < 1) return Players::Player_One;
+
 	TimeType p1Time(getUnit(0,0).firstTimeFree());
 	TimeType p2Time(getUnit(1,0).firstTimeFree());
 
@@ -1228,6 +1231,7 @@ const Unit & GameState::getUnitDirect(const IDType & player, const IDType & unit
 
 bool GameState::bothCanMove() const
 {
+    if(numUnits(0) < 1 || numUnits(1) < 1) return false;
 	return getUnit(0, 0).firstTimeFree() == getUnit(1, 0).firstTimeFree();
 }
 
