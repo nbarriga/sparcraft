@@ -1,7 +1,7 @@
 CC=g++
 #CC=clang++ -fcolor-diagnostics
-#OPT_FLAGS=-O3
-OPT_FLAGS=-g 
+OPT_FLAGS=-O3 -g
+#OPT_FLAGS=-g 
 #SANITIZE_FLAGS=-fsanitize=undefined -fno-sanitize=object-size -fsanitize=unsigned-integer-overflow -fsanitize=address 
 
 WARN_FLAGS=-Wall -Wextra -Wno-switch -Wno-unused-parameter -Wno-unused-private-field
