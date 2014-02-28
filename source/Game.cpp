@@ -64,18 +64,18 @@ void Game::play()
         PlayerPtr & toMove = _players[playerToMove];
         PlayerPtr & enemy = _players[state.getEnemy(playerToMove)];
 
-        static int lastTime=-1;
-        static IDType lastPlayer=-1;
-        if(lastTime==state.getTime()){
-        	std::cout<<"Player "<<PlayerModels::getName(toMove->getType())<<" missed a move "<<std::endl;
-        }
-        lastTime=state.getTime();
+//        static int lastTime=-1;
+//        static IDType lastPlayer=-1;
+//        if(lastTime==state.getTime()){
+//        	std::cout<<"Player "<<PlayerModels::getName(toMove->getType())<<" missed a move "<<std::endl;
+//        }
+//        lastTime=state.getTime();
         state.beforeMoving();
 
         // generate the moves possible from this state
         state.generateMoves(moves[toMove->ID()], toMove->ID());
 
-        lastPlayer=playerToMove;
+//        lastPlayer=playerToMove;
         Timer playerTimer;
         playerTimer.start();
         // the tuple of moves he wishes to make
@@ -85,7 +85,7 @@ void Game::play()
         // if both players can move, generate the other player's moves
         if (state.bothCanMove())
         {
-        	lastPlayer=3;
+//        	lastPlayer=3;
             state.generateMoves(moves[enemy->ID()], enemy->ID());
             playerTimer.start();
             enemy->getMoves(state, moves[enemy->ID()], scriptMoves[enemy->ID()]);

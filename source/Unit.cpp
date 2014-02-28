@@ -21,7 +21,7 @@ Unit::Unit()
 Unit::Unit(const BWAPI::UnitType unitType, const Position & pos, const IDType & unitID, const IDType & playerID, 
            const HealthType & hp, const HealthType & energy, const TimeType & tm, const TimeType & ta) 
     : _unitType             (unitType)
-    , _range                (PlayerWeapon(&PlayerProperties::Get(playerID), unitType.groundWeapon()).GetMaxRange() + unitType.dimensionDown() + 3/* + Constants::Range_Addition*/)
+    , _range                (PlayerWeapon(&PlayerProperties::Get(playerID), unitType.groundWeapon()).GetMaxRange() + unitType.dimensionDown() + 5/* + Constants::Range_Addition*/)
     //, _range                (unitType.groundWeapon().maxRange() + Constants::Range_Addition)
     , _position             (pos)
     , _unitID               (unitID)
@@ -56,7 +56,7 @@ Unit::Unit(const BWAPI::UnitType unitType, const Position & pos, const IDType & 
 // constructor for units to construct basic units, sets some things automatically
 Unit::Unit(const BWAPI::UnitType unitType, const IDType & playerID, const Position & pos) 
     : _unitType             (unitType)
-    , _range                (PlayerWeapon(&PlayerProperties::Get(playerID), unitType.groundWeapon()).GetMaxRange() + unitType.dimensionDown() + 3/* + Constants::Range_Addition*/)
+    , _range                (PlayerWeapon(&PlayerProperties::Get(playerID), unitType.groundWeapon()).GetMaxRange() + unitType.dimensionDown() + 5/* + Constants::Range_Addition*/)
     //, _range                (unitType.groundWeapon().maxRange() + Constants::Range_Addition)
     , _position             (pos)
     , _unitID               (0)
