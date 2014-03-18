@@ -326,9 +326,9 @@ bool Map::canBuildHere(const BWAPI::UnitType & type, const SparCraft::Position &
 		System::FatalError("Map::canBuildHere(UnitType,Position) is only meant for building types.");
 	}
 
-	int startX = (pos.x() - type.dimensionLeft()) / TILE_SIZE;
+	int startX = floor((pos.x() - type.dimensionLeft()) / (float)TILE_SIZE);
 	int endX   = (pos.x() + type.dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-	int startY = (pos.y() - type.dimensionUp()) / TILE_SIZE;
+	int startY = floor((pos.y() - type.dimensionUp()) / (float)TILE_SIZE);
 	int endY   = (pos.y() + type.dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
 
 	if(startX<0 || endX>=(int)_buildTileWidth || startY<0 || endY>=(int)_buildTileHeight){
@@ -345,10 +345,11 @@ bool Map::canBuildHere(const BWAPI::UnitType & type, const SparCraft::Position &
 	    }
 	}
 
-	startX = (pos.x() - type.dimensionLeft()) / 8;
+	startX = floor((pos.x() - type.dimensionLeft()) / 8.0f);
 	endX   = (pos.x() + type.dimensionRight() + 8 - 1) / 8; // Division - round up
-	startY = (pos.y() - type.dimensionUp()) / 8;
+	startY = floor((pos.y() - type.dimensionUp()) / 8.0f);
 	endY   = (pos.y() + type.dimensionDown() + 8 - 1) / 8;
+
 	for (int x = startX; x < endX && x < (int)getWalkTileWidth(); ++x)
 	{
 	    for (int y = startY; y < endY && y < (int)getWalkTileHeight(); ++y)
