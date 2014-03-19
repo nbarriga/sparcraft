@@ -58,7 +58,7 @@ protected:
     void padString(std::string & str, const size_t & length);
     void setCurrentDateTime();
     std::string getDateTimeString();
-    svv getExpDescription(const size_t & p1, const size_t & p2, const size_t & state);
+    virtual svv getExpDescription(const size_t & p1, const size_t & p2, const size_t & state);
 
     std::vector<std::string> getLines(const std::string & filename);
 
