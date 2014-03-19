@@ -32,7 +32,7 @@ protected:
 	size_t				moveLimit;
 
 	GameState state;
-
+	std::vector<std::pair<Unit, TimeType> > _delayed;
 	// moves array to store moves in
 	MoveArray moves[2];
 	std::vector<UnitAction> scriptMoves[2];
@@ -44,6 +44,7 @@ public:
 #endif
 
 	// game constructor
+	Game(const GameState & initialState, PlayerPtr p1, PlayerPtr p2, size_t limit, const std::vector<std::pair<Unit, TimeType> > &delayed);
 	Game(const GameState & initialState, PlayerPtr p1, PlayerPtr p2, size_t limit);
     Game(const GameState & initialState, size_t limit);
 

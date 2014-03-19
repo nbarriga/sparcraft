@@ -2,6 +2,24 @@
 
 using namespace SparCraft;
 
+Game::Game(const GameState& initialState, PlayerPtr p1, PlayerPtr p2,
+        size_t limit, const std::vector<std::pair<Unit, TimeType> > &delayed)
+    :_numPlayers(0)
+    , _playerToMoveMethod(SparCraft::PlayerToMove::Alternate)
+    , rounds(0)
+    , moveLimit(limit)
+    , state(initialState)
+    ,_delayed(delayed.begin(),delayed.end()){
+    // add the players
+     _players[Players::Player_One] = p1;
+     _players[Players::Player_Two] = p2;
+
+ #ifdef USING_VISUALIZATION_LIBRARIES
+     disp = NULL;
+ #endif
+}
+
+
 Game::Game(const GameState & initialState, size_t limit)
     : _numPlayers(0)
     , _playerToMoveMethod(SparCraft::PlayerToMove::Alternate)
@@ -53,6 +71,29 @@ void Game::play()
             break;
         }
 
+        if(!_delayed.empty()&&_delayed.back().second<=state.getTime()){
+          GameState newState;
+          newState.checkCollisions=state.checkCollisions;
+          Map newMap=state.getMap();
+          newMap.clearAllUnits();
+          newState.setMap(newMap);
+          newState.setTime(state.getTime());
+          for(int p=0;p<2;p++){
+              for(size_t i(0); i<state.numUnits(p);i++){
+                  const Unit & ourUnit   (state.getUnit(p, i));
+                  newState.addUnit(ourUnit);
+              }
+          }
+
+          while(!_delayed.empty()&&_delayed.back().second<=state.getTime()){
+              newState.addUnit(_delayed.back().first);
+              std::cout<<"adding unit "<<_delayed.back().first.type().getName()<<" at time "<<
+                      state.getTime()<<std::endl;
+              _delayed.pop_back();
+          }
+          newState.finishedMoving();
+          state=newState;
+        }
         Timer frameTimer;
         frameTimer.start();
 
@@ -343,5 +384,4 @@ GameState & Game::getState()
 
     return (whoCanMove == Players::Player_Both) ? Players::Player_One : whoCanMove;
 }
-
 
