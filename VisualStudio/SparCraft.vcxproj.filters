@@ -103,11 +103,10 @@
     <ClCompile Include="..\source\AnimationFrameData.cpp">
       <Filter>data</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Player_Assault.cpp">
-      <Filter>simulation\players\script</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\Player_Defend.cpp">
-      <Filter>simulation\players\script</Filter>
+    <ClCompile Include="..\source\Map.cpp" />
+    <ClCompile Include="..\source\SearchExperiment.cpp" />
+    <ClCompile Include="..\source\Position.cpp">
+      <Filter>simulation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -140,9 +139,6 @@
     </ClInclude>
     <ClInclude Include="..\source\PortfolioGreedySearch.h">
       <Filter>search\Greedy</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Position.hpp">
-      <Filter>simulation</Filter>
     </ClInclude>
     <ClInclude Include="..\source\Timer.h">
       <Filter>util</Filter>
@@ -225,9 +221,6 @@
     <ClInclude Include="..\source\Unit.h">
       <Filter>simulation</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\Map.hpp">
-      <Filter>simulation</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\UnitProperties.h">
       <Filter>simulation\properties</Filter>
     </ClInclude>
@@ -252,11 +245,10 @@
     <ClInclude Include="..\source\AnimationFrameData.h">
       <Filter>data</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\Player_Assault.h">
-      <Filter>simulation\players\script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\Player_Defend.h">
-      <Filter>simulation\players\script</Filter>
+    <ClInclude Include="..\source\Map.h" />
+    <ClInclude Include="..\source\SearchExperiment.h" />
+    <ClInclude Include="..\source\Position.h">
+      <Filter>simulation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

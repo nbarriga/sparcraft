@@ -28,6 +28,8 @@ SearchExperiment::SearchExperiment()
 void SearchExperiment::init(const std::string & configFile)
 {
     configFileSmall = getBaseFilename(configFile);
+
+	std::cout << "new conf " << configFile << std::endl;
     parseConfigFile(configFile);
     writeConfig(configFile);
     setupResults();
@@ -183,7 +185,7 @@ std::vector<std::string> SearchExperiment::getLines(const std::string & filename
     std::ifstream fin(filename.c_str());
     if (!fin.is_open())
     {
-         System::FatalError("Problem Opening File: " + filename);
+         System::FatalError("Problem Opening File x: " + filename);
     }
 
 	std::string line;
@@ -228,8 +230,10 @@ void SearchExperiment::parseConfigFile(const std::string & filename)
         }
         else if (strcmp(option.c_str(), "MapFile") == 0)
         {
-            std::string fileString;
+			//for my windows path
+            std::string fileString; // = "W:/STARCRAFT Research/HierarchicalSearch/";
             iss >> fileString;
+			fileString = "W:/STARCRAFT Research/HierarchicalSearch/" + fileString;
             map = new Map;
             map->load(fileString);
         }
@@ -245,6 +249,8 @@ void SearchExperiment::parseConfigFile(const std::string & filename)
             std::string option;
             iss >> option;
             iss >> imageDir;
+
+			imageDir = "W:/STARCRAFT Research/sparcraft/starcraft_images/";
             if (strcmp(option.c_str(), "true") == 0)
             {
                 showDisplay = true;
@@ -354,7 +360,8 @@ void SearchExperiment::addState(const std::string & line)
     {
         std::string filename;
         iss >> filename;
-        
+        filename = "W:/STARCRAFT Research/HierarchicalSearch/" + filename;
+
         for (int i(0); i<numStates; ++i)
         {
             parseStateDescriptionFile(filename);
@@ -433,6 +440,7 @@ void SearchExperiment::addState(const std::string & line)
 
 void SearchExperiment::parseStateDescriptionFile(const std::string & fileName)
 {
+
     std::vector<std::string> lines = getLines(fileName);
     
     GameState currentState;
