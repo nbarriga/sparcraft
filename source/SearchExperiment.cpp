@@ -230,10 +230,8 @@ void SearchExperiment::parseConfigFile(const std::string & filename)
         }
         else if (strcmp(option.c_str(), "MapFile") == 0)
         {
-			//for my windows path
-            std::string fileString; // = "W:/STARCRAFT Research/HierarchicalSearch/";
+            std::string fileString; 
             iss >> fileString;
-			fileString = "W:/STARCRAFT Research/HierarchicalSearch/" + fileString;
             map = new Map;
             map->load(fileString);
         }
@@ -250,7 +248,6 @@ void SearchExperiment::parseConfigFile(const std::string & filename)
             iss >> option;
             iss >> imageDir;
 
-			imageDir = "W:/STARCRAFT Research/sparcraft/starcraft_images/";
             if (strcmp(option.c_str(), "true") == 0)
             {
                 showDisplay = true;
@@ -360,7 +357,6 @@ void SearchExperiment::addState(const std::string & line)
     {
         std::string filename;
         iss >> filename;
-        filename = "W:/STARCRAFT Research/HierarchicalSearch/" + filename;
 
         for (int i(0); i<numStates; ++i)
         {
