@@ -137,7 +137,8 @@ void Game::play()
         }
 
         // make the moves
-        state.makeMoves(scriptMoves[toMove->ID()]);
+        if(state.whoCanMove()==toMove->ID())
+            state.makeMoves(scriptMoves[toMove->ID()]);
 
 #ifdef USING_VISUALIZATION_LIBRARIES
         if (disp)
