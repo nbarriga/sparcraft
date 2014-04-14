@@ -66,7 +66,8 @@ void Game::play()
     // play until there is no winner
     while (!gameOver())
     {
-        if (moveLimit && rounds >= moveLimit)
+        //if (moveLimit && rounds >= moveLimit)
+		if (moveLimit && state.getTime() >= moveLimit)
         {
             break;
         }
