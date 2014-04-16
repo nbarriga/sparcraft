@@ -234,18 +234,18 @@ bool Map::doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & 
 	//todo: check against other units
 	//todo: check the way, not just the end position
 
-	int startX = (pixelPosition.x() - type.dimensionLeft()) / 8;
-	int endX   = (pixelPosition.x() + type.dimensionRight() + 8 - 1) / 8; // Division - round up
-	int startY = (pixelPosition.y() - type.dimensionUp()) / 8;
-	int endY   = (pixelPosition.y() + type.dimensionDown() + 8 - 1) / 8;
+	int startX = floorDiv(pixelPosition.x() - type.dimensionLeft(),8);
+	int endX   = ceilDiv(pixelPosition.x() + type.dimensionRight(),8);
+	int startY = floorDiv(pixelPosition.y() - type.dimensionUp(),8);
+	int endY   = ceilDiv(pixelPosition.y() + type.dimensionDown(),8);
 
-    if(startX<0 || endX>=(int)_walkTileWidth || startY<0 || endY>=(int)_walkTileHeight){
+    if(startX<0 || endX>(int)_walkTileWidth || startY<0 || endY>(int)_walkTileHeight){
         return true;
     }
 
-	for (int x = startX; x <= endX && x < (int)getWalkTileWidth(); ++x)
+	for (int x = startX; x < endX && x < (int)getWalkTileWidth(); ++x)
 	{
-		for (int y = startY; y <= endY && y < (int)getWalkTileHeight(); ++y)
+		for (int y = startY; y < endY && y < (int)getWalkTileHeight(); ++y)
 		{
 			if(_buildingDataWalkTile[x][y] == true){
 				return true;
@@ -326,12 +326,12 @@ bool Map::canBuildHere(const BWAPI::UnitType & type, const SparCraft::Position &
 		System::FatalError("Map::canBuildHere(UnitType,Position) is only meant for building types.");
 	}
 
-	int startX = floor((pos.x() - type.dimensionLeft()) / (float)TILE_SIZE);
-	int endX   = (pos.x() + type.dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-	int startY = floor((pos.y() - type.dimensionUp()) / (float)TILE_SIZE);
-	int endY   = (pos.y() + type.dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+	int startX = floorDiv((pos.x() - type.dimensionLeft()),TILE_SIZE);
+	int endX   = ceilDiv((pos.x() + type.dimensionRight()),TILE_SIZE);
+	int startY = floorDiv((pos.y() - type.dimensionUp()),TILE_SIZE);
+	int endY   = ceilDiv((pos.y() + type.dimensionDown()),TILE_SIZE);
 
-	if(startX<0 || endX>=(int)_buildTileWidth || startY<0 || endY>=(int)_buildTileHeight){
+	if(startX<0 || endX>(int)_buildTileWidth || startY<0 || endY>(int)_buildTileHeight){
 	    return false;
 	}
 
@@ -345,10 +345,10 @@ bool Map::canBuildHere(const BWAPI::UnitType & type, const SparCraft::Position &
 	    }
 	}
 
-	startX = floor((pos.x() - type.dimensionLeft()) / 8.0f);
-	endX   = (pos.x() + type.dimensionRight() + 8 - 1) / 8; // Division - round up
-	startY = floor((pos.y() - type.dimensionUp()) / 8.0f);
-	endY   = (pos.y() + type.dimensionDown() + 8 - 1) / 8;
+	startX = floorDiv((pos.x() - type.dimensionLeft()),8);
+	endX   = ceilDiv((pos.x() + type.dimensionRight()),8);
+	startY = floorDiv((pos.y() - type.dimensionUp()),8);
+	endY   = ceilDiv((pos.y() + type.dimensionDown()),8);
 
 	for (int x = startX; x < endX && x < (int)getWalkTileWidth(); ++x)
 	{
@@ -385,16 +385,16 @@ void Map::addUnit(BWAPI::Unit * unit)
 
 void Map::addUnit(const SparCraft::Unit & unit)
 {
-	int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
-	int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-	int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
-	int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+	int startX = floorDiv(unit.position().x() - unit.type().dimensionLeft(), TILE_SIZE);
+	int endX   = ceilDiv(unit.position().x() + unit.type().dimensionRight(), TILE_SIZE); // Division - round up
+	int startY = floorDiv(unit.position().y() - unit.type().dimensionUp(), TILE_SIZE);
+	int endY   = ceilDiv(unit.position().y() + unit.type().dimensionDown(),TILE_SIZE);
 
 	if(_buildTileWidth==0||_buildTileHeight==0){
 	    //map has not been set yet, accept everything
 	    return;
 	}
-	if(startX<0 || endX>=(int)_buildTileWidth || startY<0 || endY>=(int)_buildTileHeight){
+	if(startX<0 || endX>(int)_buildTileWidth || startY<0 || endY>(int)_buildTileHeight){
 	    std::stringstream ss;
 	    ss<<"Trying to place a "<<unit.type().getName()<<" outside the map at pos: X:"<<startX<<"-"<<endX<<" Y:"<<startY<<"-"<<endY;
 	    ss<<std::endl<<"Map size: "<<_buildTileWidth<<"X"<<_buildTileHeight;
@@ -419,10 +419,10 @@ void Map::addUnit(const SparCraft::Unit & unit)
 		}
 	}
 
-	startX = (unit.position().x() - unit.type().dimensionLeft()) / 8;
-	endX   = (unit.position().x() + unit.type().dimensionRight() + 8 - 1) / 8; // Division - round up
-	startY = (unit.position().y() - unit.type().dimensionUp()) / 8;
-	endY   = (unit.position().y() + unit.type().dimensionDown() + 8 - 1) / 8;
+	startX = floorDiv(unit.position().x() - unit.type().dimensionLeft(), 8);
+	endX   = ceilDiv(unit.position().x() + unit.type().dimensionRight(), 8); // Division - round up
+	startY = floorDiv(unit.position().y() - unit.type().dimensionUp(), 8);
+	endY   = ceilDiv(unit.position().y() + unit.type().dimensionDown(), 8);
 	for (int x = startX; x < endX && x < (int)getWalkTileWidth(); ++x)
 	{
 		for (int y = startY; y < endY && y < (int)getWalkTileHeight(); ++y)
@@ -445,10 +445,10 @@ void Map::addUnit(const SparCraft::Unit & unit)
 
 void Map::removeUnit(const SparCraft::Unit & unit)
 {
-	int startX = (unit.position().x() - unit.type().dimensionLeft()) / TILE_SIZE;
-	int endX   = (unit.position().x() + unit.type().dimensionRight() + TILE_SIZE - 1) / TILE_SIZE; // Division - round up
-	int startY = (unit.position().y() - unit.type().dimensionUp()) / TILE_SIZE;
-	int endY   = (unit.position().y() + unit.type().dimensionDown() + TILE_SIZE - 1) / TILE_SIZE;
+	int startX = floorDiv(unit.position().x() - unit.type().dimensionLeft(), TILE_SIZE);
+	int endX   = ceilDiv(unit.position().x() + unit.type().dimensionRight() ,TILE_SIZE); // Division - round up
+	int startY = floorDiv(unit.position().y() - unit.type().dimensionUp(), TILE_SIZE);
+	int endY   = ceilDiv(unit.position().y() + unit.type().dimensionDown(), TILE_SIZE);
 	for (int x = startX; x < endX && x < (int)getBuildTileWidth(); ++x)
 	{
 		for (int y = startY; y < endY && y < (int)getBuildTileHeight(); ++y)
@@ -462,10 +462,10 @@ void Map::removeUnit(const SparCraft::Unit & unit)
 		}
 	}
 
-	startX = (unit.position().x() - unit.type().dimensionLeft()) / 8;
-	endX   = (unit.position().x() + unit.type().dimensionRight() + 8 - 1) / 8; // Division - round up
-	startY = (unit.position().y() - unit.type().dimensionUp()) / 8;
-	endY   = (unit.position().y() + unit.type().dimensionDown() + 8 - 1) / 8;
+	startX = floorDiv(unit.position().x() - unit.type().dimensionLeft(),8);
+	endX   = ceilDiv(unit.position().x() + unit.type().dimensionRight(), 8); // Division - round up
+	startY = floorDiv(unit.position().y() - unit.type().dimensionUp(), 8);
+	endY   = ceilDiv(unit.position().y() + unit.type().dimensionDown(), 8);
 	for (int x = startX; x < endX && x < (int)getWalkTileWidth(); ++x)
 	{
 		for (int y = startY; y < endY && y < (int)getWalkTileHeight(); ++y)
@@ -559,6 +559,15 @@ void Map::load(const std::string & filename)
 	}
 
 	fin.close();
+}
+
+
+int Map::ceilDiv(int a, int b) {
+    return std::ceil(a/(float)b);
+}
+
+int Map::floorDiv(int a, int b) {
+    return std::floor(a/(float)b);
 }
 
 }
