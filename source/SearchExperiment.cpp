@@ -185,7 +185,7 @@ std::vector<std::string> SearchExperiment::getLines(const std::string & filename
     std::ifstream fin(filename.c_str());
     if (!fin.is_open())
     {
-         System::FatalError("Problem Opening File x: " + filename);
+         System::FatalError("Problem Opening File: " + filename);
     }
 
 	std::string line;
@@ -1050,4 +1050,8 @@ void SearchExperiment::printStateUnits(std::ofstream & results, GameState & stat
         }
     }
     results << ss.str();
+}
+
+void SparCraft::SearchExperiment::setMap(Map* map) {
+    this->map=map;
 }

@@ -54,7 +54,7 @@ protected:
 
     void setupResults();
     virtual void addPlayer(const std::string & line);
-    virtual void addState(const std::string & line);
+
     void padString(std::string & str, const size_t & length);
     void setCurrentDateTime();
     std::string getDateTimeString();
@@ -98,7 +98,8 @@ protected:
     void init(const std::string & configFile);
 
 public:
-
+    void setMap(Map *map);
+    virtual void addState(const std::string & line);
     SearchExperiment(const std::string & configFile);
     virtual ~SearchExperiment();
 
