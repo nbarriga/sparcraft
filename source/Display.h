@@ -119,7 +119,9 @@ class Display
 	void RenderMinimap();
 	void RenderTextOverlay();
 	void RenderInformation();
-	
+	SDL_Surface* flipVert(SDL_Surface* sfc);
+	void takeScreenShot(const std::string &filename);
+	void takeScreenShot();
 	const std::string getTextureFileName(const BWAPI::UnitType type) const;
 
 	void LoadTextures();

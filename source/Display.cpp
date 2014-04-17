@@ -1,4 +1,5 @@
 #include "Display.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #ifdef USING_VISUALIZATION_LIBRARIES
 
@@ -175,6 +176,12 @@ void Display::HandleEvents()
 		switch(event.type)
 		{
 			case SDL_KEYDOWN:
+			    switch(event.key.keysym.sym)
+			    {
+			    case SDLK_s:
+			        takeScreenShot();
+			        break;
+			    }
 			case SDL_KEYUP:
 			{
 				const bool pressed(event.key.state == SDL_PRESSED);
@@ -184,6 +191,7 @@ void Display::HandleEvents()
 					case SDLK_RIGHT:	br = pressed; break;
 					case SDLK_UP:		bu = pressed; break;
 					case SDLK_DOWN:		bd = pressed; break;
+
 				}
 			}
 			break;
@@ -224,6 +232,43 @@ void Display::HandleEvents()
 
 	cameraX = std::max(0, std::min(cameraX, mapPixelWidth-windowSizeX));
 	cameraY = std::max(0, std::min(cameraY, mapPixelHeight-windowSizeY));
+}
+
+void Display::takeScreenShot(){
+    boost::posix_time::time_duration td = boost::posix_time::microsec_clock::local_time().time_of_day();
+    std::stringstream ss;
+    ss<<"screenshot-"<<td.total_milliseconds()<<".bmp";
+    takeScreenShot(ss.str());
+
+}
+void Display::takeScreenShot(const std::string &filename){
+    SDL_Surface * image = SDL_CreateRGBSurface(SDL_SWSURFACE, windowSizeX, windowSizeY, 24, 0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+
+    //glReadBuffer(GL_FRONT);
+    glReadPixels(0, 0, windowSizeX, windowSizeY, GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
+    SDL_Surface *flipped=flipVert(image);
+    SDL_SaveBMP(flipped,filename.c_str());
+    SDL_FreeSurface(image);
+    SDL_FreeSurface(flipped);
+}
+SDL_Surface* Display::flipVert(SDL_Surface* sfc)
+{
+     SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
+             sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
+         sfc->format->Bmask, sfc->format->Amask);
+     uint8_t* pixels = (uint8_t*) sfc->pixels;
+     uint8_t* rpixels = (uint8_t*) result->pixels;
+     uint pitch = sfc->pitch;
+     uint pxlength = pitch*sfc->h;
+     assert(result != NULL);
+
+     for(uint line = 0; line < sfc->h; ++line) {
+         uint pos = line * pitch;
+         memcpy(&rpixels[pos],&pixels[(pxlength-pos)-pitch],pitch*sizeof(uint8_t));
+//         rpixels[pos..pos+pitch] = pixels[(pxlength-pos)-pitch..pxlength-pos];
+     }
+
+     return result;
 }
 
 void Display::RenderMainMap()
