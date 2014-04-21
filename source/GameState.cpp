@@ -831,6 +831,9 @@ void GameState::addUnit(const Unit & u)
 	_numUnits[u.player()]++;
 	_prevNumUnits[u.player()]++;
 
+
+	 _map.addUnit(getUnit(u.player(), _numUnits[u.player()]-1));
+
     // And do the clean-up
 	finishedMoving();
 	calculateStartingHealth();
@@ -839,7 +842,7 @@ void GameState::addUnit(const Unit & u)
     {
         System::FatalError("GameState has non-unique Unit ID values");
     }
-    _map.addUnit(getUnit(u.player(), _numUnits[u.player()]-1));
+
 }
 
 // Add a unit with given parameters to the state
@@ -861,6 +864,9 @@ void GameState::addUnit(const BWAPI::UnitType type, const IDType playerID, const
 	_numUnits[playerID]++;
 	_prevNumUnits[playerID]++;
 
+
+	_map.addUnit(getUnit(playerID, _numUnits[playerID]-1));//todo:this is wrong if units are sorted before
+
     // And do the clean-up
 	finishedMoving();
 	calculateStartingHealth();
@@ -869,7 +875,6 @@ void GameState::addUnit(const BWAPI::UnitType type, const IDType playerID, const
     {
         System::FatalError("GameState has non-unique Unit ID values");
     }
-	_map.addUnit(getUnit(playerID, _numUnits[playerID]-1));//todo:this is wrong if units are sorted before
 }
 
 // Add a given unit to the state
