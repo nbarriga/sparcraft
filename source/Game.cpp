@@ -371,7 +371,7 @@ double Game::getTime()
 // returns whether or not the game is over
 bool Game::gameOver()
 {
-    return state.isTerminal(); 
+    return state.isTerminal()&&_delayed.empty();
 }
 
 GameState & Game::getState()
