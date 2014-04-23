@@ -371,6 +371,11 @@ void Unit::setPreviousPosition(const TimeType & gameTime)
     _prevCurrentPos = _previousPosition + (_position - _previousPosition).scale(moveTimeRatio);
 }
 
+void Unit::resetPosition(const Position& p) {
+    _position=p;
+    _previousPosition=p;
+    _prevCurrentPos=p;
+}
 // returns the damage a unit does
  HealthType Unit::damage() const	
 { 
@@ -659,3 +664,5 @@ const std::string Unit::debugString() const
 
     return ss.str();
 }
+
+

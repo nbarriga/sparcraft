@@ -87,7 +87,7 @@ void Game::play()
           }
 
           while(!_delayed.empty()&&_delayed.back().second<=state.getTime()){
-              newState.addUnit(_delayed.back().first);
+              newState.addUnitClosestLegalPos(_delayed.back().first);
               std::cout<<"adding unit "<<_delayed.back().first.type().getName()<<" at time "<<
                       state.getTime()<<std::endl;
               _delayed.pop_back();

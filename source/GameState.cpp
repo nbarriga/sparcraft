@@ -845,6 +845,35 @@ void GameState::addUnit(const Unit & u)
 
 }
 
+void GameState::addUnitClosestLegalPos(const Unit & u){
+    checkFull(u.player());
+    System::checkSupportedUnitType(u.type());
+
+    // Calculate the unitID for this unit
+    // This will just be the current total number of units in the state
+    IDType unitID = _numUnits[Players::Player_One] + _numUnits[Players::Player_Two];
+
+    // Set the unit and it's unitID
+    getUnit(u.player(), _numUnits[u.player()]) = u;
+    getUnit(u.player(), _numUnits[u.player()]).setUnitID(unitID);
+
+    // Increment the number of units this player has
+    _numUnits[u.player()]++;
+    _prevNumUnits[u.player()]++;
+
+
+     _map.addUnitClosestLegalPos(getUnit(u.player(), _numUnits[u.player()]-1));
+
+    // And do the clean-up
+    finishedMoving();
+    calculateStartingHealth();
+
+    if (!checkUniqueUnitIDs())
+    {
+        System::FatalError("GameState has non-unique Unit ID values");
+    }
+}
+
 // Add a unit with given parameters to the state
 // This function will give the unit a unique unitID
 void GameState::addUnit(const BWAPI::UnitType type, const IDType playerID, const Position & pos)

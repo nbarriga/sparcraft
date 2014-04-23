@@ -48,8 +48,6 @@ public:
 	const size_t & getBuildTileHeight() const;
 	Position getWalkPosition(const Position & pixelPosition) const;
 
-
-
 	bool canWalkStraight(Position from ,Position to, int range) const;
 	std::pair<int,int> getClosestLegal(int xGoal, int yGoal) const;
 	bool doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const;
@@ -75,6 +73,7 @@ public:
 
 	void addUnit(BWAPI::Unit * unit);
 	void addUnit(const SparCraft::Unit & unit);
+	void addUnitClosestLegalPos(SparCraft::Unit & unit);
 
 	void removeUnit(const SparCraft::Unit & unit);
 	void clearAllUnits();

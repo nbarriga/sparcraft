@@ -89,6 +89,7 @@ public:
 	 PositionType      getDistanceSqToPosition(const Position & p, const TimeType & gameTime) const;
     const Position &        currentPosition(const TimeType & gameTime) const;
     void                    setPreviousPosition(const TimeType & gameTime);
+    void      resetPosition(const Position & p);
 
     // health and damage related functions
 	 HealthType        damage()                    const;

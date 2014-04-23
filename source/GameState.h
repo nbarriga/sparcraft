@@ -62,6 +62,7 @@ public:
     // Unit functions
     void                    sortUnits();
     void                    addUnit(const Unit & u);
+    void                    addUnitClosestLegalPos(const Unit & u);
     void                    addUnit(const BWAPI::UnitType unitType, const IDType playerID, const Position & pos);
     void                    addUnitWithID(const Unit & u);
     void                    addNeutralUnit(const Unit & unit);
