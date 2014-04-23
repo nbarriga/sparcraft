@@ -446,31 +446,28 @@ void Map::addUnit(const SparCraft::Unit & unit)
 
 void Map::addUnitClosestLegalPos(SparCraft::Unit& unit) {
     if(unit.type().isBuilding()){
-        if(canBuildHere(unit.type(),unit.pos())){
-            addUnit(unit);
-        }else{
-            Spiral sp(unit.x(),unit.y(),TILE_SIZE);
-            Position newPos;
-            do{
-                newPos=sp.getNext();
-            }while(!canBuildHere(unit.type(),newPos));
+        Spiral sp(unit.x(),unit.y(),TILE_SIZE);
+        Position newPos;
+
+        do{
+            newPos=sp.getNext();
+        }while(!canBuildHere(unit.type(),newPos));
+        if(!(newPos==unit.pos())){
             std::cout<<"Adding building "<<unit.type().getName()<<" in legal pos "<<newPos<<" (from "<<unit.pos()<<")"<<std::endl;
             unit.resetPosition(newPos);
-            addUnit(unit);
         }
+        addUnit(unit);
     }else{
-        if(!doesCollide(unit.type(),unit.pos())){
-            addUnit(unit);
-        }else{
-            Spiral sp(unit.x(),unit.y(),8);
-            Position newPos;
-            do{
-                newPos=sp.getNext();
-            }while(doesCollide(unit.type(),newPos));
+        Spiral sp(unit.x(),unit.y(),8);
+        Position newPos;
+        do{
+            newPos=sp.getNext();
+        }while(doesCollide(unit.type(),newPos));
+        if(!(newPos==unit.pos())){
             std::cout<<"Adding unit "<<unit.type().getName()<<" in legal pos "<<newPos<<" (from "<<unit.pos()<<")"<<std::endl;
             unit.resetPosition(newPos);
-            addUnit(unit);
         }
+        addUnit(unit);
     }
 }
 
