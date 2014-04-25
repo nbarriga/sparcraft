@@ -93,7 +93,7 @@ void Game::play()
               for(size_t i(0); i<state.numUnits(p);i++){
                   const Unit & ourUnit   (state.getUnit(p, i));
                   if(!ourUnit.type().isBuilding()){
-                      newState.addUnit(ourUnit);
+                      newState.addUnitClosestLegalPos(ourUnit);
                   }
               }
           }
