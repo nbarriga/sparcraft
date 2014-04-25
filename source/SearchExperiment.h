@@ -95,9 +95,10 @@ protected:
 
     //Use this combination of constructor + init function for derived functions
     SearchExperiment();
-    void init(const std::string & configFile);
+
 
 public:
+    void init(const std::string & configFile);
     void setMap(Map *map);
     virtual void addState(const std::string & line);
     SearchExperiment(const std::string & configFile);

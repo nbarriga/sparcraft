@@ -33,9 +33,10 @@ class Map
 	void invalidateDistances();
 	void calculateDistances(DistanceMap& dmap,int width, int height, int xGoal, int yGoal, int tileSize) const;
 
-	static int ceilDiv(int a, int b);
-	static int floorDiv(int a, int b);
+
 public:
+    static int ceilDiv(int a, int b);
+    static int floorDiv(int a, int b);
 
 	Map() ;
 	// constructor which sets a completely walkable map

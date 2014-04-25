@@ -79,13 +79,26 @@ void Game::play()
           newMap.clearAllUnits();
           newState.setMap(newMap);
           newState.setTime(state.getTime());
+          //add old buildings
           for(int p=0;p<2;p++){
               for(size_t i(0); i<state.numUnits(p);i++){
                   const Unit & ourUnit   (state.getUnit(p, i));
-                  newState.addUnit(ourUnit);
+                  if(ourUnit.type().isBuilding()){
+                      newState.addUnit(ourUnit);
+                  }
+              }
+          }
+          //add old non buildings
+          for(int p=0;p<2;p++){
+              for(size_t i(0); i<state.numUnits(p);i++){
+                  const Unit & ourUnit   (state.getUnit(p, i));
+                  if(!ourUnit.type().isBuilding()){
+                      newState.addUnit(ourUnit);
+                  }
               }
           }
 
+          //add new units
           while(!_delayed.empty()&&_delayed.back().second<=state.getTime()){
               newState.addUnitClosestLegalPos(_delayed.back().first);
               std::cout<<"adding unit "<<_delayed.back().first.type().getName()<<" at time "<<
