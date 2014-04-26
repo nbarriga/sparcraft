@@ -1309,10 +1309,10 @@ bool GameState::isTerminal() const
         return true;
     }
 
-//    if (_sameHPFrames > 200)
-//    {
-//        return true;
-//    }
+    if (_sameHPFrames > 200)
+    {
+        return true;
+    }
 
 	for (size_t p(0); p<Constants::Num_Players; ++p)
 	{
