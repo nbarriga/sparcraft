@@ -571,7 +571,7 @@ const boost::optional<const Unit&> GameState::getClosestEnemyUnitOpt(const IDTyp
 	const IDType enemyPlayer(getEnemy(player));
 	const Unit & myUnit(getUnit(player,unitIndex));
 
-	PositionType minDist(1000000);
+	PositionType minDist(std::numeric_limits<PositionType>::max());
 	IDType minUnitInd(0);
     IDType minUnitID(255);
     bool found(false);
@@ -606,6 +606,47 @@ const boost::optional<const Unit&> GameState::getClosestEnemyUnitOpt(const IDTyp
 	}else{
 		return boost::optional<const Unit&>(boost::none);
 	}
+}
+const boost::optional<const Unit&> GameState::getClosestEnemyThreatOpt(const IDType & player, const IDType & unitIndex) const
+{
+    const IDType enemyPlayer(getEnemy(player));
+    const Unit & myUnit(getUnit(player,unitIndex));
+
+    PositionType minDist(std::numeric_limits<PositionType>::max());
+    IDType minUnitInd(0);
+    IDType minUnitID(255);
+    bool found(false);
+
+//  Position currentPos = myUnit.currentPosition(_currentTime);
+
+    for (IDType u(0); u<_numUnits[enemyPlayer]; ++u)
+    {
+        const Unit & enemyUnit(getUnit(enemyPlayer, u));
+        if(enemyUnit.isAlive()&&enemyUnit.canAttackTarget(myUnit,_currentTime)){
+            PositionType distSq = myUnit.getDistanceSqToUnit(enemyUnit, _currentTime);
+
+            if ((distSq < minDist))// || ((distSq == minDist) && (enemyUnit.ID() < minUnitID)))
+            {
+                minDist = distSq;
+                minUnitInd = u;
+                minUnitID = enemyUnit.ID();
+                found = true;
+            }
+            else if ((distSq == minDist) && (enemyUnit.ID() < minUnitID))
+            {
+                minDist = distSq;
+                minUnitInd = u;
+                minUnitID = enemyUnit.ID();
+                found = true;
+            }
+        }
+    }
+
+    if(found){
+        return boost::optional<const Unit&>(getUnit(enemyPlayer, minUnitInd));
+    }else{
+        return boost::optional<const Unit&>(boost::none);
+    }
 }
 
 const boost::optional<const Unit&> GameState::getClosestEnemyBuildingOpt(

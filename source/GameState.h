@@ -79,6 +79,7 @@ public:
 
     bool isPowered(const SparCraft::Position &pos, const IDType & player) const;
     const boost::optional<const Unit&> getClosestEnemyUnitOpt(const IDType & player, const IDType & unitIndex) const;
+    const boost::optional<const Unit&> getClosestEnemyThreatOpt(const IDType & player, const IDType & unitIndex) const;
     const boost::optional<const Unit&> getClosestEnemyBuildingOpt(const IDType & player, const IDType & unitIndex) const;
     const boost::optional<const Unit&> getClosestOurUnitOpt(const IDType & player, const IDType & unitIndex) const;
     const boost::optional<const Unit&> getClosestOurBuildingOpt(const IDType & player, const IDType & unitIndex) const;
