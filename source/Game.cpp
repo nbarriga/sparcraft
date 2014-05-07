@@ -13,7 +13,8 @@ Game::Game(const GameState& initialState, PlayerPtr p1, PlayerPtr p2,
     // add the players
      _players[Players::Player_One] = p1;
      _players[Players::Player_Two] = p2;
-
+     p1->reset();
+     p2->reset();
  #ifdef USING_VISUALIZATION_LIBRARIES
      disp = NULL;
  #endif
@@ -42,7 +43,8 @@ Game::Game(const GameState & initialState, PlayerPtr p1, PlayerPtr p2, size_t li
     // add the players
     _players[Players::Player_One] = p1;
     _players[Players::Player_Two] = p2;
-
+    p1->reset();
+    p2->reset();
 #ifdef USING_VISUALIZATION_LIBRARIES
     disp = NULL;
 #endif

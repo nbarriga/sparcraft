@@ -22,6 +22,7 @@ public:
     void                setID(const IDType & playerid);
     virtual IDType      getType() { return PlayerModels::None; }
     virtual             ~Player(){}
+    virtual void        reset(){}
 };
 
 class CompareUnitDPSThreat
