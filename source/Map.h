@@ -52,6 +52,7 @@ public:
 	bool canWalkStraight(Position from ,Position to, int range) const;
 	std::pair<int,int> getClosestLegal(int xGoal, int yGoal) const;
 	bool doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const;
+	bool pixelCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const;
 
 	int getDistance(const SparCraft::Position & fromPosition, const SparCraft::Position & toPosition) const;
 

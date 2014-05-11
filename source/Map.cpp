@@ -254,6 +254,21 @@ bool Map::doesCollide(const BWAPI::UnitType & type, const SparCraft::Position & 
 		}
 	}
 	return false;
+
+//	if(_buildingDataWalkTile[floorDiv(pixelPosition.x(),8)][floorDiv(pixelPosition.y(),8)] == true){
+//	    return true;
+//	}
+//	return false;
+}
+
+bool Map::pixelCollide(const BWAPI::UnitType & type, const SparCraft::Position & pixelPosition) const{
+    //todo: check against other units
+    //todo: check the way, not just the end position
+
+  if(_buildingDataWalkTile[floorDiv(pixelPosition.x(),8)][floorDiv(pixelPosition.y(),8)] == true){
+      return true;
+  }
+  return false;
 }
 
 bool Map::isWalkable(const SparCraft::Position & pixelPosition) const

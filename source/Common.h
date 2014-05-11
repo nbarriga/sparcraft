@@ -39,7 +39,7 @@ namespace SparCraft
 		const size_t Max_Ordered_Moves			= 10;
 
 		// distance moved for a 'move' command
-		const size_t Move_Distance				= 16;
+		const size_t Move_Distance				= 8;
 
         // add between a move and attack as penalty
         const TimeType Move_Penalty             = 4;

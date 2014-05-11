@@ -232,11 +232,14 @@ void GameState::generateMoves(MoveArray & moves, const IDType & playerIndex) con
                 if (isWalkable(dest) || (unit.type().isFlyer() && isFlyable(dest)))
                 {
                 	if(checkCollisions){
-                		if(_map.doesCollide(unit.type(),dest)){
+                		if(_map.pixelCollide(unit.type(),dest)){
                 			//collision, so we won't add this move, but let's try walking less.
                 			dest = unit.pos() + Position(moveDistance/4*dir.x(), moveDistance/4*dir.y());
-                			if(_map.doesCollide(unit.type(),dest)){
-                				continue;
+                			if(_map.pixelCollide(unit.type(),dest)){
+//                			    dest = unit.pos() + Position(dir.x()?1:0, dir.y()?1:0);
+//                			    if(_map.pixelCollide(unit.type(),dest)){
+                			        continue;
+//                			    }
                 			}
                 		}
 
