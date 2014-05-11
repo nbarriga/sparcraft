@@ -138,6 +138,9 @@ void printStackTrace(int skip, std::ostream &out, unsigned int max_frames)
             	System::FatalError("Units which have unit projectiles not supported: " + type.getName());
             }
 
+            if (type.isFlyer()){//don't support flyers
+                System::FatalError("Flyers not supported: " + type.getName());
+            }
         }
 
         bool isSupportedUnitType(const BWAPI::UnitType & type)
@@ -174,6 +177,10 @@ void printStackTrace(int skip, std::ostream &out, unsigned int max_frames)
         			type == BWAPI::UnitTypes::Zerg_Broodling)
         	{
         		return false;
+        	}
+
+        	if (type.isFlyer()){//don't support flyers
+        	    return false;
         	}
 
         	return true;
